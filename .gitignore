@@ -1,6 +1,25 @@
 # Mac
 .DS_Store
 
+# Virtual environments
+venv/
+env/
+*.egg-info/
+
+# Environment variables
+.env
+
+# Django
+__pycache__/
+*.pyc
+db.sqlite3
+/staticfiles/
+media/
+
+
+# VS Code
+.vscode/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
