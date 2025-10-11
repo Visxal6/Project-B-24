@@ -21,12 +21,14 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ik_eizr40wc^54lscaa^2zy75nsn2l^=)fbnbi*z=#k$vy6&&a'
+#SECRET_KEY = 'django-insecure-ik_eizr40wc^54lscaa^2zy75nsn2l^=)fbnbi*z=#k$vy6&&a'
+
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['b-24-c9dae14a3216.herokuapp.com']
 
 
 # Application definition
@@ -124,3 +126,5 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+django_heroku.settings(locals())
