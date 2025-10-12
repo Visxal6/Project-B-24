@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="{% static 'users/register.css' %}">
 </head>
 <body>
+  {% load socialaccount %}
 
   <form method="post" action="">
     {% csrf_token %}
@@ -85,6 +86,13 @@
       Already have an account? <a href="#">Sign In</a>
     </small>
   </div>
+  {% load socialaccount %}
+    <div>
+      Google login
+      <a href="{% provider_login_url 'google' %}?next=/">
+        Login with Google
+      </a>
+    </div>
 
 </body>
 </html>
