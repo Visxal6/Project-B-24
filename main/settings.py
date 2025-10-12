@@ -37,6 +37,7 @@ ALLOWED_HOSTS = ['b-24-c9dae14a3216.herokuapp.com', '127.0.0.1', 'localhost']
 # List your app, so can be map (found)
 
 INSTALLED_APPS = [
+    'users.apps.UsersConfig',
     'app.apps.AppConfig',
     'django.contrib.admin',
     'django.contrib.auth',
