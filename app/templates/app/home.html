@@ -3,6 +3,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,25 +12,55 @@
   <!--Fonts-->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+    rel="stylesheet">
 
   <!--Styles-->
   <!-- <link rel="stylesheet" href="../../static/app/home.css"> -->
-   <link rel="stylesheet" href="{% static 'app/home.css' %}">
+  <link rel="stylesheet" href="{% static 'app/home.css' %}">
 
 </head>
+
 <body>
+  <!--header-->
+  <header class="header">
+    <!--logo-->
+    <a href="#home" class="logo">
+      cs3240 Project
+    </a>
+    <i class='bx bx-menu' id="menu-icon"></i>
+    <!--navbar-->
+    <nav class="navbar">
+      <a href="{% url 'app-home' %}" class="active">Home</a>
+      <a href="#about">About</a>
+      {% if user.is_authenticated %}
+      <a href="{% url 'profile' %}">Profile</a>
+      <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+      </form>
+
+      {% else %}
+      <a href="{% url 'login' %}">Login</a>
+      <a href="{% url 'register' %}">Register</a>
+      {% endif %}
+    </nav>
+  </header>
+
   <!--Flash Message-->
   {% if messages %}
   <div class="messages">
     {% for message in messages %}
-      <div class="alert {{ message.tags }}">
-        {{ message }}
-      </div>
+    <div class="alert {{ message.tags }}">
+      {{ message }}
+    </div>
     {% endfor %}
   </div>
   {% endif %}
   <h1>This the Dashboard</h1>
-  
+  <p>Nothing to see here yet</p>
+
 </body>
+
 </html>
