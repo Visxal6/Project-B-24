@@ -1,0 +1,103 @@
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  background-color: black;
+  padding: 24px 24px;
+  position: fixed;
+  top: 0px;
+  right: 0px;
+  left: 0px;
+  z-index: 1;
+}
+
+.navbar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.navbar a {
+  color: white;
+  margin-right: 24px;
+  margin-left: 24px;
+  border-bottom: 2px solid transparent;
+  transition: 0.3s ease;
+}
+
+.navbar a:hover {
+  transform: translateY(-5px);
+  border-bottom: 2px solid white;
+}
+
+#logout-button {
+  margin-right: 24px;
+  margin-left: 24px;
+}
+
+#login-button {
+  all: unset;
+  color: white;
+  background-color: black;
+  font-weight: 600;
+  font-size: 14px;
+  border: 2px solid white;
+  border-radius: 20px;
+  padding: 8px 24px;
+  cursor: pointer;
+  margin-right: 24px;
+  margin-left: 24px;
+  transition: 0.3s ease;
+}
+
+#login-button:hover {
+  background-color: white;
+  border: 2px solid black;
+  color: black;
+  transform: scale(1.1);
+}
+
+.logo {
+  color: white;
+}
+
+#menu-icon {
+  display: none;
+  width: 30px;
+  fill: white;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  #menu-icon {
+    display: block;
+  }
+
+  .navbar {
+    position: absolute;
+    top: 75px;
+    right: 0;
+    width: 100%;
+    flex-direction: column;
+    background-color: black;
+    display: none;
+  }
+
+  .navbar.active {
+    display: flex;
+  }
+
+  .navbar a {
+    margin: 24px;
+  }
+
+  #login-button {
+    margin: 24px;
+  }
+
+  #logout-button {
+    margin: 24px;
+    margin-bottom: 48px;
+  }
+}

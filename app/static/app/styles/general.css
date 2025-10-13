@@ -1,0 +1,31 @@
+* {
+  box-sizing: border-box;
+  font-family: 'Poppins';
+  text-decoration: none;
+  margin: 0px;
+  padding: 0px;
+  color: black;
+}
+
+.button {
+  color: white;
+  background-color: black;
+  font-weight: 600;
+  border: 2px solid white;
+  border-radius: 20px;
+  padding: 8px 24px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.button:hover {
+  background-color: white;
+  border: 2px solid black;
+  color: black;
+  transform: scale(1.1);
+}
+
+section {
+  min-height: 100vh;
+  padding: 40% 20%;
+}
