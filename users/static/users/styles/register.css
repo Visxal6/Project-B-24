@@ -1,0 +1,53 @@
+.register-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.register-container h2 {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.name-input {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 24px;
+}
+
+.register-form .error {
+  color: red;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.register-form button {
+  margin-top: 12px;
+}
+
+.auth-alt {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.oauth {
+  margin-top: 24px;
+  text-align: center;
+}
+
+.oauth a {
+  color: blue;
+  text-decoration: underline;
+}

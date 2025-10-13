@@ -1,0 +1,31 @@
+.login-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-container h2 {
+  margin-bottom: 24px;
+}
+
+.username-input {
+  display: flex;
+  flex-direction: column;
+}
+
+.password-input {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 24px;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#login-button-form {
+  margin-bottom: 24px;
+}

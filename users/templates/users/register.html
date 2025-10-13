@@ -1,22 +1,20 @@
+{% extends 'app/base.html' %}
 {% load static %}
+{% load socialaccount %}
 
-<!DOCTYPE html>
-<html lang="en">
+{% block title %}Register | CS3240 Project{% endblock %}
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Register</title>
-  <link rel="stylesheet" href="{% static 'users/register.css' %}">
-</head>
+{% block styles %}
+<link rel="stylesheet" href="{% static 'users/styles/register.css' %}">
+{% endblock %}
 
-<body>
-  {% load socialaccount %}
+{% block content %}
+<section id="register">
+  <div class="register-container">
+    <h2>Create Account</h2>
 
-  <form method="post" action="">
-    {% csrf_token %}
-    <fieldset>
-      <legend>Create Account</legend>
+    <form method="post" action="" class="register-form">
+      {% csrf_token %}
 
       <!--Flash Message-->
       {% if messages %}
@@ -28,7 +26,6 @@
         {% endfor %}
       </div>
       {% endif %}
-
 
       <!--Validation Feedback-->
       {% if form.errors %}
@@ -44,55 +41,68 @@
       </ul>
       {% endif %}
 
+      <div class="name-input">
+        <!-- First Name -->
+        <div class="input-field">
+          <label for="first_name">First Name</label>
+          <input id="first_name" name="first_name" type="text" value="{{ form.first_name.value|default_if_none:'' }}"
+            required>
+          <div class="error">{{ form.first_name.errors|striptags }}</div>
+        </div>
 
-      <!-- First Name -->
-      <label for="first_name">First Name</label>
-      <input id="first_name" name="first_name" type="text" value="{{ form.first_name.value|default_if_none:'' }}"
-        required>
-      <div class="error">{{ form.first_name.errors|striptags }}</div>
+        <!-- Last Name -->
+        <div class="input-field">
+          <label for="last_name">Last Name</label>
+          <input id="last_name" name="last_name" type="text" value="{{ form.last_name.value|default_if_none:'' }}"
+            required>
+          <div class="error">{{ form.last_name.errors|striptags }}</div>
+        </div>
+      </div>
 
-      <!-- Last Name -->
-      <label for="last_name">Last Name</label>
-      <input id="last_name" name="last_name" type="text" value="{{ form.last_name.value|default_if_none:'' }}" required>
-      <div class="error">{{ form.last_name.errors|striptags }}</div>
 
       <!-- Email -->
-      <label for="email">Email</label>
-      <input id="email" name="email" type="email" value="{{ form.email.value|default_if_none:'' }}" required>
-      <div class="error">{{ form.email.errors|striptags }}</div>
+      <div class="input-field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" value="{{ form.email.value|default_if_none:'' }}" required>
+        <div class="error">{{ form.email.errors|striptags }}</div>
+      </div>
 
       <!-- Username -->
-      <label for="username">Username</label>
-      <input id="username" name="username" type="text" value="{{ form.username.value|default_if_none:'' }}" required>
-      <div class="error">{{ form.username.errors|striptags }}</div>
+      <div class="input-field">
+        <label for="username">Username</label>
+        <input id="username" name="username" type="text" value="{{ form.username.value|default_if_none:'' }}" required>
+        <div class="error">{{ form.username.errors|striptags }}</div>
+      </div>
 
       <!-- Password -->
-      <label for="password1">Password</label>
-      <input id="password1" name="password1" type="password" required>
-      <div class="error">{{ form.password1.errors|striptags }}</div>
+      <div class="input-field">
+        <label for="password1">Password</label>
+        <input id="password1" name="password1" type="password" required>
+        <div class="error">{{ form.password1.errors|striptags }}</div>
+
+      </div>
 
       <!-- Confirm Password -->
-      <label for="password2">Confirm Password</label>
-      <input id="password2" name="password2" type="password" required>
-      <div class="error">{{ form.password2.errors|striptags }}</div>
+      <div class="input-field">
+        <label for="password2">Confirm Password</label>
+        <input id="password2" name="password2" type="password" required>
+        <div class="error">{{ form.password2.errors|striptags }}</div>
+        <button type="submit" class="button">Sign Up</button>
+      </div>
+    </form>
 
-      <button type="submit">Sign Up</button>
-    </fieldset>
-  </form>
+    <div class="auth-alt">
+      <small>Already have an account? <strong><a href="{% url 'login' %}">Sign In</a></strong></small>
+    </div>
 
-  <div>
-    <small>
-      Already have an account? <a href="{% url 'login' %}">Sign In</a>
-    </small>
+    <div class="oauth">
+      <span>Google login</span>
+      <a href="{% provider_login_url 'google' process='login' next='/' %}">
+        Sign in with Google
+      </a>
+
+
+    </div>
   </div>
-  {% load socialaccount %}
-  <div>
-    Google login
-    <a href="{% provider_login_url 'google' %}?next=/">
-      Login with Google
-    </a>
-  </div>
-
-</body>
-
-</html>
+</section>
+{% endblock %}
