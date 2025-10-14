@@ -1,6 +1,11 @@
 {% extends 'app/base.html' %}
+{% load static %}
 
 {% block title %}Dashboard | CS3240 Project{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'app/styles/home.css' %}">
+{% endblock %}
 
 {% block content %}
 <section id="home">
@@ -14,8 +19,94 @@
   <br>
   <br>
 
-  <h1>This is the Dashboard</h1>
-  <br>
-  <p>Nothing to see here yet</p>
+  <div class="feed">
+    <div class="post-container">
+      <div class="left-side">
+        <img src="../../static/app/assets/images/kakashi.png" alt="" class="profile-image">
+        <div></div>
+      </div>
+      <div class="right-side">
+        <div class="post-info">
+          <div class="username">
+            kakashi
+          </div>
+          <div class="date-posted">
+            2d
+          </div>
+        </div>
+
+        <div class="content">
+          <div class="text">
+            It’s been a while since I’ve taken on any students… looks like I’ll be meeting Team 7.
+          </div>
+          <img src="../../static/app/assets/images/team-7.png" alt="">
+        </div>
+        <div class="icons">
+          <img src="../../static/app/assets/icons/like.svg" alt="">
+          <img src="../../static/app/assets/icons/comment.svg" alt="">
+          <img src="../../static/app/assets/icons/save.svg" alt="">
+          <img src="../../static/app/assets/icons/upload.svg" alt="">
+        </div>
+      </div>
+    </div>
+    <div class="post-container">
+      <div class="left-side">
+        <img src="../../static/app/assets/images/naruto.png" alt="" class="profile-image">
+        <div></div>
+      </div>
+      <div class="right-side">
+        <div class="post-info">
+          <div class="username">
+            naruto
+          </div>
+          <div class="date-posted">
+            1d
+          </div>
+        </div>
+
+        <div class="content">
+          <div class="text">
+            No matter what happens… I’m not giving up on Sasuke!
+          </div>
+          <img src="../../static/app/assets/images/naruto-sasuke.jpg" alt="">
+        </div>
+        <div class="icons">
+          <img src="../../static/app/assets/icons/like.svg" alt="">
+          <img src="../../static/app/assets/icons/comment.svg" alt="">
+          <img src="../../static/app/assets/icons/save.svg" alt="">
+          <img src="../../static/app/assets/icons/upload.svg" alt="">
+        </div>
+      </div>
+    </div>
+    <div class="post-container">
+      <div class="left-side">
+        <img src="../../static/app/assets/images/sasuke.png" alt="" class="profile-image">
+        <div></div>
+      </div>
+      <div class="right-side">
+        <div class="post-info">
+          <div class="username">
+            sasuke
+          </div>
+          <div class="date-posted">
+            19h
+          </div>
+        </div>
+
+        <div class="content">
+          <div class="text">
+            That idiot never knows when to quit… always getting in my way.
+          </div>
+        </div>
+        <div class="icons">
+          <img src="../../static/app/assets/icons/like.svg" alt="">
+          <img src="../../static/app/assets/icons/comment.svg" alt="">
+          <img src="../../static/app/assets/icons/save.svg" alt="">
+          <img src="../../static/app/assets/icons/upload.svg" alt="">
+        </div>
+      </div>
+    </div>
+
+  </div>
 </section>
 {% endblock %}

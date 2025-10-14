@@ -1,0 +1,70 @@
+:root {
+  --bg: #282C34;
+  --bg-2: #2C313A;
+  --line: #42434a;
+  --hover: #3E4451;
+  --text: #b0b3c1;
+  --accent: #fff;
+}
+
+.feed {
+  display: flex;
+  flex-direction: column;
+}
+
+.post-container {
+  display: flex;
+  width: clamp(350px, 40vh, 500px);
+  border-top: 2px solid var(--line);
+  padding: clamp(25px, 1vh, 25px) clamp(4px, 1vh, 8px);
+}
+
+.left-side {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+.left-side img {
+  width: 50px;
+  height: 50px;
+}
+
+.right-side {
+  display: flex;
+  flex-direction: column;
+}
+
+.right-side .post-info {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  margin-top: 1.5rem;
+  gap: 1rem;
+}
+
+.content .text {
+  margin-bottom: 1.5rem;
+}
+
+.content img {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+
+.icons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.icons img {
+  width: 20px;
+  height: auto;
+}
