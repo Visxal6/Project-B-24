@@ -1,3 +1,9 @@
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .login-container {
   display: flex;
   flex-direction: column;
@@ -6,12 +12,30 @@
 }
 
 .login-container h2 {
-  margin-bottom: 24px;
+  font-size: clamp(26px, 4vh, 36px);
+  margin-bottom: 3rem;
 }
 
+.username-input label,
+.password-input label {
+  margin-bottom: 16px;
+  font-size: clamp(14px, 4vh, 16px);
+}
+
+.password-input,
 .username-input {
   display: flex;
   flex-direction: column;
+  width: clamp(200px, 1vh, 400px);
+  padding: clamp(8px, 1vh, 16px) clamp(8px, 1vh, 16px);
+}
+
+#id_username,
+#id_password {
+  width: clamp(200px, 1vh, 400px);
+  padding: clamp(4px, 1vh, 8px) clamp(8px, 1vh, 16px);
+  border: none;
+  border-radius: 20px;
 }
 
 .password-input {
@@ -24,8 +48,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
 }
 
 #login-button-form {
   margin-bottom: 24px;
+}
+
+.register-link {
+  color: white;
 }

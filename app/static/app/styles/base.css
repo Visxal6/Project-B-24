@@ -12,13 +12,14 @@
   position: fixed;
   inset: 0 auto 0 0;
   height: 100vh;
-  width: 250px;
+  width: clamp(225px, 1vw, 250px);
 
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 
-  padding: 5px 1em;
+  padding: clamp(8px, 1vw, 16px) clamp(16px, 1vw, 24px);
+  padding-bottom: 24px;
   background: var(--bg);
   border-right: 2px solid var(--line);
   z-index: 99;
@@ -153,7 +154,7 @@
   align-items: center;
   border-bottom: 2px solid var(--line);
   background: var(--bg);
-  padding: 12px 24px;
+  padding: clamp(4px, 1vw, 24px) clamp(16px, 1vw, 32px);
   position: fixed;
   top: 0;
   left: 0;
@@ -176,16 +177,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 12px 16px;
+  padding: .85em;
   gap: 1rem;
   color: var(--text);
   margin-left: 24px;
   margin-right: 24px;
 }
 
+#inbox-button:hover,
 #menu-icon:hover,
-#navbar ul li a:hover,
-#header .right-content-container div:hover {
+#navbar ul li a:hover {
   background: var(--hover);
   overflow: hidden;
   border-radius: 5px;
@@ -195,6 +196,7 @@
 .right-content-container,
 .right-content {
   display: flex;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
   gap: 1rem;
@@ -204,10 +206,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 12px 24px;
+  padding: .85em;
   color: var(--text);
   gap: 0.5rem;
 }
+
 
 
 .button {
@@ -232,6 +235,10 @@
   all: unset;
 }
 
+#login-button {
+  padding: 6px 24px;
+}
+
 #login-button,
 #logout-button {
   margin: 0 24px;
@@ -240,7 +247,7 @@
 #menu-icon {
   display: flex;
   cursor: pointer;
-  padding: 20px;
+  padding: .85em;
   border: 2px solid transparent;
   border-radius: 10px;
 }
@@ -250,8 +257,8 @@
 }
 
 .profile-image {
-  width: 40px;
-  height: 40px;
+  width: clamp(35px, 1vw, 40px);
+  height: clamp(35px, 1vw, 40px);
   border-radius: 50%;
   object-fit: cover;
   object-position: center;
@@ -265,13 +272,14 @@
 
   #navbar {
     position: absolute;
-    top: 75px;
+    top: 60px;
     right: 0;
     width: 100%;
     flex-direction: column;
     background: var(--bg);
     opacity: 0;
     visibility: hidden;
+    padding-bottom: 50px;
     transform: translateY(-10px);
     transition:
       opacity 0.3s ease,
@@ -298,4 +306,9 @@
   #logout-button {
     margin-bottom: 48px;
   }
+
+  #inbox-text {
+    display: none;
+  }
+
 }

@@ -11,6 +11,10 @@
   <link rel="stylesheet" href="{% static 'app/styles/base.css' %}">
   <link rel="stylesheet" href="{% static 'app/styles/general.css' %}">
 
+  <!-- Block for styles -->
+  {% block styles %}
+  {% endblock %}
+
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,7 +41,7 @@
         <div id="inbox-button">
           <a href="#">
             <img src="{% static 'app/assets/icons/inbox.svg' %}" alt="Inbox icon">
-            <span>Inbox</span>
+            <span id="inbox-text">Inbox</span>
           </a>
         </div>
 
@@ -135,7 +139,7 @@
     </ul>
 
     <ul>
-      <li>
+      <li class="settings-button">
         <a href="#">
           <img src="{% static 'app/assets/icons/settings.svg' %}" alt="Settings icon">
           <span>Settings</span>

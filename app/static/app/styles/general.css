@@ -13,11 +13,11 @@
   padding: 0;
   text-decoration: none;
   list-style: none;
-  -webkit-tap-highlight-color: transparent;
 }
 
 html {
   font-family: Poppins, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: clamp(14px, 1vw, 16px);
   line-height: 1.5rem;
 }
 

@@ -1,3 +1,10 @@
+body {
+  padding: 75px 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .register-container {
   display: flex;
   flex-direction: column;
@@ -6,8 +13,9 @@
 }
 
 .register-container h2 {
-  margin-bottom: 24px;
-  text-align: center;
+  font-size: clamp(24px, 4vh, 32px);
+  margin-bottom: 3rem;
+  margin-top: 4rem;
 }
 
 .register-form {
@@ -18,6 +26,7 @@
 .input-field {
   display: flex;
   flex-direction: column;
+  margin-bottom: 16px;
 }
 
 .name-input {
@@ -25,6 +34,36 @@
   flex-direction: row;
   align-items: center;
   gap: 24px;
+}
+
+label {
+  margin-bottom: 8px;
+  font-size: clamp(14px, 1vh, 16px);
+}
+
+
+input {
+  width: clamp(225px, 25vh, 400px);
+  padding: clamp(4px, 1vh, 6px) clamp(8px, 1vh, 16px);
+  border: none;
+  border-radius: 5px;
+}
+
+.name-input .input-field input {
+  width: clamp(100px, 11.5vh, 150px);
+  padding: clamp(4px, 1vh, 6px) clamp(8px, 1vh, 16px);
+
+}
+
+.sign-up-button-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+#sign-up-button {
+  padding: 8px 16px;
 }
 
 .register-form .error {
@@ -42,12 +81,17 @@
   text-align: center;
 }
 
+.auth-alt small strong a {
+  color: white;
+}
+
 .oauth {
   margin-top: 24px;
   text-align: center;
 }
 
 .oauth a {
-  color: blue;
+  color: white;
+  font-weight: 600;
   text-decoration: underline;
 }

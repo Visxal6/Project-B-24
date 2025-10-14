@@ -87,7 +87,9 @@
         <label for="password2">Confirm Password</label>
         <input id="password2" name="password2" type="password" required>
         <div class="error">{{ form.password2.errors|striptags }}</div>
-        <button type="submit" class="button">Sign Up</button>
+        <div class="sign-up-button-container">
+          <button type="submit" class="button" id="sign-up-button">Sign Up</button>
+        </div>
       </div>
     </form>
 
@@ -96,7 +98,7 @@
     </div>
 
     <div class="oauth">
-      <span>Google login</span>
+      <span>Google login?</span>
       <a href="{% provider_login_url 'google' process='login' next='/' %}">
         Sign in with Google
       </a>
