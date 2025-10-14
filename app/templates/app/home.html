@@ -4,18 +4,18 @@
 
 {% block content %}
 <section id="home">
-  <!--Flash Message-->
   {% if messages %}
   <div class="messages">
     {% for message in messages %}
-    <div class="alert {{ message.tags }}">
-      {{ message }}
-    </div>
+    <div class="alert {{ message.tags }}">{{ message }}</div>
     {% endfor %}
   </div>
   {% endif %}
+  <br>
+  <br>
 
   <h1>This is the Dashboard</h1>
+  <br>
   <p>Nothing to see here yet</p>
 </section>
 {% endblock %}

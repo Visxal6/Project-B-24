@@ -3,56 +3,171 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}CS3240 Project{% endblock %}</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Home{% endblock %}</title>
 
-  <!--Fonts-->
+  <!-- Styles -->
+  <link rel="stylesheet" href="{% static 'app/styles/base.css' %}">
+  <link rel="stylesheet" href="{% static 'app/styles/general.css' %}">
+
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+    rel="stylesheet">
 
-  <!--Styles-->
-  <link rel="stylesheet" href="{% static 'app/styles/general.css' %}">
-  <link rel="stylesheet" href="{% static 'app/styles/home.css' %}">
-
-  <!--Block for Styles-->
-  {% block styles %}
-  {% endblock %}
-
+  <!-- Scripts -->
+  <script src="{% static 'app/scripts/base.js' %}" defer></script>
 </head>
 
 <body>
-  <!--header-->
-  <header class="header">
-    <a href="{% url 'app-home' %}" class="logo">cs3240 Project</a>
 
-    <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
-      <path
-        d="M96 160C96 142.3 110.3 128 128 128L512 128C529.7 128 544 142.3 544 160C544 177.7 529.7 192 512 192L128 192C110.3 192 96 177.7 96 160zM96 320C96 302.3 110.3 288 128 288L512 288C529.7 288 544 302.3 544 320C544 337.7 529.7 352 512 352L128 352C110.3 352 96 337.7 96 320zM544 480C544 497.7 529.7 512 512 512L128 512C110.3 512 96 497.7 96 480C96 462.3 110.3 448 128 448L512 448C529.7 448 544 462.3 544 480z" />
-    </svg>
+  <!-- Header -->
+  <header id="header">
+    <div>
+      <img id="menu-icon" src="{% static 'app/assets/icons/menu.svg' %}" alt="Menu icon">
+    </div>
 
-    <nav class="navbar">
-      <a href="{% url 'app-home' %}" class="active">Home</a>
-      {% if user.is_authenticated %}
-      <a href="{% url 'profile' %}">Profile</a>
-      <form method="post" action="{% url 'logout' %}">
-        {% csrf_token %}
-        <button class="button" id="logout-button" type="submit">Logout</button>
-      </form>
-      {% else %}
-      <a href="{% url 'login' %}" id="login-button">Login</a>
-      {% endif %}
-    </nav>
+    <div class="right-content-container">
+      <div class="right-content">
+
+        <!-- Inbox -->
+        <div id="inbox-button">
+          <a href="#">
+            <img src="{% static 'app/assets/icons/inbox.svg' %}" alt="Inbox icon">
+            <span>Inbox</span>
+          </a>
+        </div>
+
+        <!-- Profile button (image only) -->
+        <div id="profile-button">
+          <img class="profile-image" src="{% static 'app/assets/images/takina-inoue-img.jpg' %}" alt="Profile icon">
+        </div>
+      </div>
+
+      <!-- Header nav -->
+      <nav id="navbar">
+        <ul>
+          <li>
+            <a href="{% url 'profile' %}"
+              class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+              <img src="{% static 'app/assets/icons/profile.svg' %}" alt="Profile icon">
+              <span>Profile</span>
+            </a>
+          </li>
+        </ul>
+
+        {% if user.is_authenticated %}
+        <!-- LOGOUT (form) -->
+        <form method="post" action="{% url 'logout' %}"> {# or 'account_logout' (allauth) #}
+          {% csrf_token %}
+          <button class="button" id="logout-button" type="submit">Logout</button>
+        </form>
+        {% else %}
+        <!-- LOGIN (link) -->
+        <a class="button" id="login-button" href="{% url 'login' %}"> {# or 'account_login' (allauth) #}
+          <span>Login</span>
+        </a>
+        {% endif %}
+      </nav>
+    </div>
   </header>
 
-  <!-- content from child templates -->
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <ul class="block1">
+      <li>
+        <span class="logo">
+          <img class="profile-image" src="{% static 'app/assets/images/takina-inoue-img.jpg' %}" alt="Profile icon">
+        </span>
+        <button id="toggle-btn">
+          <img src="{% static 'app/assets/icons/double-arrow.svg' %}" alt="Menu icon">
+        </button>
+      </li>
+
+      <li class="{% if request.resolver_match.url_name == 'app-home' %}active{% endif %}">
+        <a href="{% url 'app-home' %}">
+          <img src="{% static 'app/assets/icons/home.svg' %}" alt="Home icon">
+          <span>Home</span>
+        </a>
+      </li>
+
+      <li class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+        <a href="#">
+          <img src="{% static 'app/assets/icons/dashboard.svg' %}" alt="Dashboard icon">
+          <span>Dashboard</span>
+        </a>
+      </li>
+
+      <li>
+        <button class="dropdown-btn">
+          <img src="{% static 'app/assets/icons/todo-list.svg' %}" alt="Todo-List icon">
+          <span>Todo-List</span>
+          <img class="arrow-down" src="{% static 'app/assets/icons/keyboard_arrow.svg' %}" alt="Arrow Down">
+        </button>
+        <ul class="sub-menu">
+          <div>
+            <li><a href="#">List Item</a></li>
+            <li><a href="#">List Item</a></li>
+            <li><a href="#">List Item</a></li>
+          </div>
+        </ul>
+      </li>
+
+      <li>
+        <button class="dropdown-btn">
+          <img src="{% static 'app/assets/icons/channels.svg' %}" alt="Channels icon">
+          <span>Channels</span>
+          <img class="arrow-down" src="{% static 'app/assets/icons/keyboard_arrow.svg' %}" alt="Arrow Down">
+        </button>
+        <ul class="sub-menu">
+          <div>
+            <li><a href="#">Channel</a></li>
+            <li><a href="#">Channel</a></li>
+            <li><a href="#">Channel</a></li>
+            <li><a href="#">Channel</a></li>
+            <li><a href="#">Channel</a></li>
+          </div>
+        </ul>
+      </li>
+    </ul>
+
+    <ul>
+      <li>
+        <a href="#">
+          <img src="{% static 'app/assets/icons/settings.svg' %}" alt="Settings icon">
+          <span>Settings</span>
+        </a>
+      </li>
+
+      {% if user.is_authenticated %}
+      <li>
+        <form method="post" action="{% url 'logout' %}"> {# or 'account_logout' #}
+          {% csrf_token %}
+          <button type="submit" id="logout-sidebar-button">
+            <img src="{% static 'app/assets/icons/logout.svg' %}" alt="Logout icon">
+            <span>Logout</span>
+          </button>
+        </form>
+      </li>
+      {% endif %}
+    </ul>
+  </aside>
+
+  <!-- Main -->
   <main>
     {% block content %}
+    <section>
+      <div class="container">
+        <h2>Hello World</h2>
+        <p>Lorem ipsum dolor sit amet...</p>
+      </div>
+    </section>
     {% endblock %}
   </main>
 
-  <script src="{% static 'app/scripts/header.js' %}"></script>
 </body>
 
 </html>
