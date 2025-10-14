@@ -19,7 +19,7 @@
   justify-content: space-between;
 
   padding: clamp(8px, 1vw, 16px) clamp(16px, 1vw, 24px);
-  padding-bottom: 24px;
+  padding-bottom: 60px;
   background: var(--bg);
   border-right: 2px solid var(--line);
   z-index: 99;
