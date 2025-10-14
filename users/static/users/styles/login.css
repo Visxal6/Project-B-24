@@ -58,3 +58,14 @@ body {
 .register-link {
   color: white;
 }
+
+.oauth {
+  margin-top: 24px;
+  text-align: center;
+}
+
+.oauth a {
+  color: white;
+  font-weight: 600;
+  text-decoration: underline;
+}

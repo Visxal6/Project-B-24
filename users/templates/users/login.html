@@ -1,5 +1,6 @@
 {% extends 'app/base.html' %}
 {% load static %}
+{% load socialaccount %}
 
 {% block title %}Login | CS3240 Project{% endblock %}
 
@@ -25,8 +26,20 @@
       <button id="login-button-form" class="button" type="submit">Log In</button>
     </form>
 
-    <small>Don’t have an account? <strong><a class="register-link" href="{% url 'register' %}">Sign
-          up</a></strong></small>
+    <small>
+      Don’t have an account? <strong><a class="register-link" href="{% url 'register' %}">Sign
+          Up</a></strong>
+    </small>
+
+    <div class="oauth">
+      <small>
+        <span>Google login?</span>
+        <a href="{% provider_login_url 'google' process='login' next='/' %}">
+          Sign in with Google
+        </a>
+      </small>
+    </div>
+
   </div>
 </section>
 {% endblock %}
