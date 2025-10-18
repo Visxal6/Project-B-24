@@ -9,3 +9,4 @@ def home(request):
         messages.success(request, f"Welcome back, {request.user.username}!")
 
     return render(request, 'app/home.html')
+

@@ -23,3 +23,10 @@ def register(request):
 @login_required
 def profile(request):
     return render(request, 'users/profile.html')
+
+
+def dashboard(request):
+    if request.user.is_authenticated:
+        messages.success(request, f"Welcome back, {request.user.username}!")
+
+    return render(request, 'users/dashboard.html')

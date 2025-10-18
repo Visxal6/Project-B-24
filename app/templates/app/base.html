@@ -47,7 +47,7 @@
 
         <!-- Profile button (image only) -->
         <div id="profile-button">
-          <img class="profile-image" src="{% static 'app/assets/images/takina-inoue-img.jpg' %}" alt="Profile icon">
+          <img class="profile-image" src="{% static 'app/assets/icons/profile.svg' %}" alt="Profile icon">
         </div>
       </div>
 
@@ -84,7 +84,7 @@
     <ul class="block1">
       <li>
         <span class="logo">
-          <img class="profile-image" src="{% static 'app/assets/images/takina-inoue-img.jpg' %}" alt="Profile icon">
+          <img class="profile-image" src="{% static 'app/assets/icons/profile.svg' %}" alt="Profile icon">
         </span>
         <button id="toggle-btn">
           <img src="{% static 'app/assets/icons/double-arrow.svg' %}" alt="Menu icon">
@@ -99,7 +99,7 @@
       </li>
 
       <li class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
-        <a href="#">
+        <a href="{% url 'dashboard' %}">
           <img src="{% static 'app/assets/icons/dashboard.svg' %}" alt="Dashboard icon">
           <span>Dashboard</span>
         </a>
@@ -163,12 +163,6 @@
   <!-- Main -->
   <main>
     {% block content %}
-    <section>
-      <div class="container">
-        <h2>Hello World</h2>
-        <p>Lorem ipsum dolor sit amet...</p>
-      </div>
-    </section>
     {% endblock %}
   </main>
 

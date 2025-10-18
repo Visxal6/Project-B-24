@@ -19,7 +19,7 @@
   justify-content: space-between;
 
   padding: clamp(8px, 1vw, 16px) clamp(16px, 1vw, 24px);
-  padding-bottom: 50px;
+  padding-bottom: 20px;
   background: var(--bg);
   border-right: 2px solid var(--line);
   z-index: 99;
@@ -257,8 +257,8 @@
 }
 
 .profile-image {
-  width: clamp(35px, 1vw, 40px);
-  height: clamp(35px, 1vw, 40px);
+  width: 25px;
+  height: auto;
   border-radius: 50%;
   object-fit: cover;
   object-position: center;
@@ -298,7 +298,7 @@
   }
 
   #sidebar {
-    padding-bottom: 125px;
+    padding-bottom: 40px;
   }
 
   #navbar a,
