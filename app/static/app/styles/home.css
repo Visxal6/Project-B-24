@@ -1,7 +1,8 @@
 :root {
-  --bg: #282C34;
-  --bg-2: #2C313A;
+  --bg: #1A1A1D;
+  --bg-2: #252529;
   --line: #42434a;
+  --button: #23a55a;
   --hover: #3E4451;
   --text: #b0b3c1;
   --accent: #fff;

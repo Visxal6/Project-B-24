@@ -1,0 +1,28 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard | CS3240 Project{% endblock %}
+
+{% block styles %}
+
+{% endblock %}
+
+{% block content %}
+<form method="get">
+  <input name="q" value="{{ q }}" placeholder="Search users…" />
+  <button>Search</button>
+</form>
+
+<ul>
+  {% for u in results %}
+    <li>
+      {{ u.username }} ({{ u.email }})
+      <form method="post" action="{% url 'social:send_request' u.id %}">{% csrf_token %}
+        <button>Add Friend</button>
+      </form>
+    </li>
+  {% empty %}
+    {% if q %}<li>No results</li>{% endif %}
+  {% endfor %}
+</ul>
+{% endblock %}

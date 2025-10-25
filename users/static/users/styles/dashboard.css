@@ -40,7 +40,7 @@ main {
   transform: scale(1.1);
   background: white;
   color: var(--bg);
-  
+
   .img-container {
     background: var(--bg);
   }
@@ -122,6 +122,14 @@ main {
 }
 
 /* alignment */
-.rank { text-align: left; }
-.points { text-align: left; }
-.user { text-align: left; }
+.rank { 
+  text-align: left; 
+}
+
+.points { 
+  text-align: left; 
+}
+
+.user { 
+  text-align: left; 
+}

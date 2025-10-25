@@ -1,0 +1,12 @@
+<h2>Incoming Friend Requests</h2>
+<ul>
+  {% for r in requests %}
+    <li>
+      {{ r.from_user.username }}
+      <form method="post" action="{% url 'social:accept_request' r.id %}">{% csrf_token %}<button>Accept</button></form>
+      <form method="post" action="{% url 'social:decline_request' r.id %}">{% csrf_token %}<button>Decline</button></form>
+    </li>
+  {% empty %}
+    <li>No pending requests.</li>
+  {% endfor %}
+</ul>

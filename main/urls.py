@@ -30,5 +30,6 @@ urlpatterns = [
     path('profile/', user_views.profile, name='profile'),
     path('accounts/', include('allauth.urls')),
     path('dashboard/', user_views.dashboard, name= 'dashboard'),
+    path('social/', include('social.urls')),
 
 ]

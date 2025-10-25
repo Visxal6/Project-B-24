@@ -1,0 +1,15 @@
+<h3>Chat with {{ other.username }}</h3>
+
+<div>
+  {% for m in messages %}
+    <p><strong>{{ m.sender.username }}:</strong> {{ m.body }} <small>{{ m.created_at }}</small></p>
+  {% empty %}
+    <p>No messages yet.</p>
+  {% endfor %}
+</div>
+
+<form method="post" action="{% url 'social:send_message' convo.id %}">
+  {% csrf_token %}
+  <input name="body" placeholder="Type a message…" />
+  <button>Send</button>
+</form>

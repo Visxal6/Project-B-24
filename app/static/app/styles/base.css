@@ -1,11 +1,13 @@
 :root {
-  --bg: #282C34;
-  --bg-2: #2C313A;
+  --bg: #1A1A1D;
+  --bg-2: #252529;
   --line: #42434a;
+  --button: #23a55a;
   --hover: #3E4451;
   --text: #b0b3c1;
   --accent: #fff;
 }
+
 
 /* ===== Sidebar ===== */
 #sidebar {
@@ -21,7 +23,6 @@
   padding: clamp(8px, 1vw, 16px) clamp(16px, 1vw, 24px);
   padding-bottom: 20px;
   background: var(--bg);
-  border-right: 2px solid var(--line);
   z-index: 99;
 
   transform: translateX(-100%);
@@ -152,7 +153,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 2px solid var(--line);
   background: var(--bg);
   padding: clamp(4px, 1vw, 24px) clamp(16px, 1vw, 32px);
   position: fixed;
@@ -214,10 +214,10 @@
 
 
 .button {
-  color: var(--bg);
-  background: #fff;
+  color: #fff;
+  background: var(--button);
   font-weight: 600;
-  border: 2px solid #fff;
+  border: 2px solid transparent;
   border-radius: 20px;
   padding: 10px 24px;
   cursor: pointer;

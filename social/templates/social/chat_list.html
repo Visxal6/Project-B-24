@@ -1,0 +1,8 @@
+<h2>Chats</h2>
+<ul>
+  {% for c in convos %}
+    <li><a href="{% url 'social:chat_detail' c.id %}">Conversation {{ c.id }}</a></li>
+  {% empty %}
+    <li>No conversations yet.</li>
+  {% endfor %}
+</ul>

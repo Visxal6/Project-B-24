@@ -1,0 +1,31 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard | CS3240 Project{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'social/styles/friends.css' %}">
+{% endblock %}
+
+{% block content %}
+<section>
+  <a href="{% url 'social:user_search' %}">
+    <button class="button" id="add-friends">
+      Add Friends
+    </button>
+  </a>
+  <div class="friends-container">
+    <h2>Your Friends</h2>
+    <ul>
+      {% for f in friends %}
+        <li>
+          {{ f.username }}
+          <a href="{% url 'social:start_chat' f.id %}">Message</a>
+        </li>
+      {% empty %}
+        <li>You have no friends yet.</li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+{% endblock %}

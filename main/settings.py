@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    'social',
 ]
 
 SOCIALACCOUNT_LOGIN_ON_GET = True
