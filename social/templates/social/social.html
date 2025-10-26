@@ -1,0 +1,63 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard | CS3240 Project{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'social/styles/social.css' %}">
+{% endblock %}
+
+{% block content %}
+<section>
+  <div id="message-container">
+    <div class="friends-link">
+      <img src="../../static/social/icons/social.svg" alt="social icon">
+      <span>Friends</span>
+    </div>
+    <hr class="separator">
+    <div class="message-header">
+      <img src="../../static/social/icons/message.svg" alt="message icon">
+      <span>Messages</span>
+    </div>
+    <div id="messages">
+      <ul>
+        {% for c in convos %}
+        <li><a href="{% url 'social:chat_detail' c.id %}">Conversation {{ c.id }}</a></li>
+        {% empty %}
+        <li>No conversations yet.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div id="friends-container">
+    <div id="add-friend-container">
+      <a href="{% url 'social:user_search' %}">
+        <button class="button" id="add-friends">
+          <img src="../../static/social/icons/plus.svg" alt="">
+          Add Friends
+        </button>
+      </a>
+    </div>
+
+    <div class="friends-list">
+      <h2>Friends</h2>
+      <ul>
+        {% for f in friends %}
+        <li class="friend">
+          <span class="friends-username">{{ f.username }}</span>
+          <div class="message-button">
+            <a href="{% url 'social:start_chat' f.id %}">
+              <img src="../../static/social/icons/message.svg" alt="message icon">
+              <img src="../../static/social/icons/user.svg" alt="message icon">
+            </a>
+          </div>
+        </li>
+        {% empty %}
+        <li>You have no friends yet.</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+  </div>
+</section>
+{% endblock %}

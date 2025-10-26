@@ -1,0 +1,150 @@
+:root {
+  --bg: #1A1A1D;
+  --bg-2: #252529;
+  --line: #42434a;
+  --button: #23a55a;
+  --hover: #252529;
+  --text: #b0b3c1;
+  --accent: #fff;
+}
+
+body {
+  padding: 0;
+}
+
+main {
+  all: unset;
+}
+
+
+section {
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding-top: 65px;
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+}
+
+#message-container {
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  left: 0px;
+  top: 0px;
+  width: 300px;
+  bottom: 0px;
+  padding: 3rem;
+  background-color: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+}
+
+.separator {
+  border: none;
+  height: 1px;
+  background: var(--line);
+}
+
+.message-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  transition: .3s ease;
+  border-radius: 5px;
+}
+
+.friends-link {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  transition: .3s ease;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.friends-link:hover {
+  background-color: var(--hover);
+}
+
+.friends-link img,
+.message-header img {
+  width: 25px;
+  height: auto;
+}
+
+.friends-link span,
+.message-header span {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+#messages {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+}
+
+#friends-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  padding: 3rem;
+}
+
+#add-friends {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  padding-top: .5rem;
+}
+
+#add-friends img {
+  width: 20px;
+  height: auto;
+}
+
+.friends-list h2 {
+  margin-bottom: 2rem;
+}
+
+.friend {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 1rem 0rem;
+  padding: 1rem 2rem;
+  border-top: 1px solid var(--line);
+  transition: 0.3s ease;
+  cursor: pointer;
+}
+
+.friend:hover {
+  background-color: var(--bg);
+
+  .message-button a img {
+    background-color: var(--bg-2);
+
+  }
+}
+
+.friends-username {
+  font-size: 1.1rem;
+}
+
+.message-button a img {
+  width: 30px;
+  height: auto;
+  padding: 5px;
+  margin-right: 1rem;
+  border-radius: 50%;
+  transition: 0.3s ease;
+}

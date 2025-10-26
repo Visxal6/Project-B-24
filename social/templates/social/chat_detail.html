@@ -1,15 +1,55 @@
-<h3>Chat with {{ other.username }}</h3>
+{% extends 'app/base.html' %}
+{% load static %}
 
-<div>
-  {% for m in messages %}
-    <p><strong>{{ m.sender.username }}:</strong> {{ m.body }} <small>{{ m.created_at }}</small></p>
-  {% empty %}
-    <p>No messages yet.</p>
-  {% endfor %}
-</div>
+{% block title %}Dashboard | CS3240 Project{% endblock %}
 
-<form method="post" action="{% url 'social:send_message' convo.id %}">
-  {% csrf_token %}
-  <input name="body" placeholder="Type a message…" />
-  <button>Send</button>
-</form>
+{% block styles %}
+<link rel="stylesheet" href="{% static 'social/styles/social.css' %}">
+<link rel="stylesheet" href="{% static 'social/styles/chat.css' %}">
+{% endblock %}
+
+{% block content %}
+<section>
+  <div id="message-container">
+    <div class="friends-link">
+      <img src="{static 'social/icons/social.svg}" alt="">
+      <span>Friends</span>
+    </div>
+    <hr class="separator">
+    <div class="message-header">
+      <img src="../../static/social/icons/message.svg" alt="">
+      <span>Messages</span>
+    </div>
+    <div id="chats">
+      <ul>
+        {% for c in convos %}
+        <li><a href="{% url 'social:chat_detail' c.id %}">Conversation {{ c.id }}</a></li>
+        {% empty %}
+        <li>No conversations yet.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="chat-box">
+    <h3>Chat with {{ other.username }}</h3>
+
+    <div class="chat-messages">
+      {% for m in messages %}
+      <span>{{ m.sender.username }}: {{ m.body }}
+        <small>{{ m.created_at }}</small>
+      </span>
+      {% empty %}
+      <span>No messages yet.</span>
+      {% endfor %}
+    </div>
+
+    <div class="box-chat">
+      <form method="post" action="{% url 'social:send_message' convo.id %}">
+        {% csrf_token %}
+        <input name="body" placeholder="Type a message…" />
+        <button>Send</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}
