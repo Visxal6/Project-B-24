@@ -16,37 +16,46 @@ main {
   all: unset;
 }
 
-
-section {
-  min-height: 100vh;
-  min-height: 100dvh;
-  padding-top: 65px;
-  display: flex;
-  flex-direction: row;
-  gap: 24px;
+/* Two-column layout: sidebar | chat; prevent page scroll */
+section.chat-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  height: 100vh;
+  /* fill viewport */
+  overflow: hidden;
+  /* page doesn't scroll */
+  padding: 65px 0px 0px;
+  /* top gap for header */
 }
 
+/* Sidebar container (no page scroll) */
 #message-container {
   display: flex;
   flex-direction: column;
-  position: sticky;
-  left: 0px;
-  top: 0px;
-  width: 300px;
-  bottom: 0px;
+  height: 100%;
+  /* match grid cell */
+  overflow: hidden;
+  /* no scroll on whole sidebar */
   padding: 3rem;
+  border-bottom: 1px solid var(--line);
+  border-radius: 8px;
   background-color: var(--bg);
-  border: 1px solid var(--line);
-  border-radius: 5px;
+}
+
+#message-container a {
+  text-decoration: none;
+  color: var(--text);
 }
 
 .separator {
   border: none;
   height: 1px;
   background: var(--line);
+  margin: 8px 0;
 }
 
-.message-header {
+.message-header,
+.friends-link {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -58,14 +67,6 @@ section {
 }
 
 .friends-link {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  padding: 1rem;
-  transition: .3s ease;
-  border-radius: 5px;
   cursor: pointer;
 }
 
@@ -83,12 +84,6 @@ section {
 .message-header span {
   font-size: 1.2rem;
   font-weight: 600;
-}
-
-#messages {
-  display: flex;
-  flex-direction: column;
-  padding: 1rem;
 }
 
 #friends-container {
@@ -132,7 +127,6 @@ section {
 
   .message-button a img {
     background-color: var(--bg-2);
-
   }
 }
 
@@ -147,4 +141,41 @@ section {
   margin-right: 1rem;
   border-radius: 50%;
   transition: 0.3s ease;
+}
+
+/* Only the chats list inside sidebar scrolls */
+#chats {
+  flex: 1;
+  min-height: 0;
+  /* critical for inner scrolling */
+  overflow-y: auto;
+}
+
+#chats ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#chats li {
+  padding: 6px 0;
+}
+
+#chats a {
+  display: flex;
+  text-decoration: none;
+  color: var(--accent);
+  font-weight: 600;
+  padding: 1rem;
+}
+
+@media (max-width: 900px) {
+  section.chat-layout {
+    grid-template-columns: 1fr;
+    height: calc(100vh - 65px);
+  }
+
+  #message-container {
+    order: 2;
+  }
 }

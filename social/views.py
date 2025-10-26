@@ -5,6 +5,9 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Q
 from django.utils import timezone
+from django.db.models import Max
+from django.db import models, transaction
+from django.db.models import Count
 
 from django.conf import settings
 from .models import FriendRequest, Friendship, Conversation, Message
@@ -76,33 +79,88 @@ def decline_request(request, req_id):
 
 @login_required
 def friends_list(request):
+    """Show the friends page with sidebar chats."""
     friends = Friendship.friends_of(request.user).order_by("username")
-    return render(request, "social/social.html", {"friends": friends})
+    convos = _sidebar_convos(request)  # for the sidebar
+    return render(
+        request,
+        "social/social.html",
+        {
+            "friends": friends,
+            "convos": convos,
+            "convo": None,  # no active chat selected
+        },
+    )
 
 
 @login_required
 def start_chat_with_friend(request, user_id):
     other = get_object_or_404(get_user_model(), id=user_id)
-    convo = Conversation.get_or_create_dm(request.user, other)
+    convo = Conversation.get_or_create_dm(
+        request.user, other)  # <- use the models.Conversation
     return redirect("social:chat_detail", convo_id=convo.id)
 
 
 @login_required
 def chat_list(request):
-    # Show all conversations the user is in (this can include non-friends → “people we message”)
-    convos = request.user.conversations.all().order_by("-updated_at")
-    return render(request, "social/chat_list.html", {"convos": convos})
+    convos_qs = (
+        request.user.conversations
+        .prefetch_related("participants", "messages")
+        .annotate(last_msg_at=Max("messages__created_at"))
+        .order_by("-last_msg_at", "-updated_at")
+    )
+
+    items = []
+    for c in convos_qs:
+        other = c.participants.exclude(id=request.user.id).first()
+        items.append({
+            "id": c.id,
+            "other": other,                         # a User object
+            "display": other.get_full_name() or other.username if other else f"Conversation {c.id}",
+            "last": c.messages.last(),
+        })
+
+    return render(request, "social/chat_list.html", {"items": items})
+
+
+def _sidebar_convos(request):
+    qs = (
+        request.user.conversations
+        .prefetch_related("participants", "messages")
+        .annotate(last_msg_at=Max("messages__created_at"))
+        .order_by("-last_msg_at", "-updated_at")
+    )
+
+    convos = []
+    for c in qs:
+        # show only the other participant's username
+        other = c.participants.exclude(id=request.user.id).first()
+        if other:
+            display = other.username
+        else:
+            display = f"Conversation {c.id}"
+        convos.append({"id": c.id, "display": display})
+    return convos
 
 
 @login_required
 def chat_detail(request, convo_id):
+    """Show the chat detail page with messages and sidebar."""
     convo = get_object_or_404(
         Conversation, id=convo_id, participants=request.user)
     msgs = convo.messages.select_related("sender").all()
-    # For UI: who is the other participant?
-    others = convo.participants.exclude(id=request.user.id)
-    other = others.first() if others.exists() else None
-    return render(request, "social/chat_detail.html", {"convo": convo, "messages": msgs, "other": other})
+    other = convo.participants.exclude(id=request.user.id).first()
+    convos = _sidebar_convos(request)  # same helper used in both
+    return render(
+        request,
+        "social/chat_detail.html",
+        {
+            "convo": convo,
+            "messages": msgs,
+            "other": other,
+            "convos": convos,  # sidebar list
+        },
+    )
 
 
 @login_required

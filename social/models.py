@@ -1,11 +1,11 @@
 # social/models.py
 from django.conf import settings
 from django.db import models, transaction
-from django.db.models import Q, UniqueConstraint
-from django.contrib.auth import get_user_model   
+from django.db.models import Q, UniqueConstraint, Count, F
+from django.contrib.auth import get_user_model
 
-User = settings.AUTH_USER_MODEL 
-UserModel = get_user_model()  
+User = settings.AUTH_USER_MODEL
+UserModel = get_user_model()
 
 
 class FriendRequest(models.Model):
@@ -15,9 +15,12 @@ class FriendRequest(models.Model):
         DECLINED = "declined", "Declined"
         CANCELED = "canceled", "Canceled"
 
-    from_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sent_requests")
-    to_user   = models.ForeignKey(User, on_delete=models.CASCADE, related_name="received_requests")
-    status    = models.CharField(max_length=16, choices=Status.choices, default=Status.PENDING)
+    from_user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="sent_requests")
+    to_user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="received_requests")
+    status = models.CharField(
+        max_length=16, choices=Status.choices, default=Status.PENDING)
     created_at = models.DateTimeField(auto_now_add=True)
     responded_at = models.DateTimeField(null=True, blank=True)
 
@@ -53,8 +56,10 @@ class FriendRequest(models.Model):
 
 
 class Friendship(models.Model):
-    user   = models.ForeignKey(User, on_delete=models.CASCADE, related_name="friendships")
-    friend = models.ForeignKey(User, on_delete=models.CASCADE, related_name="related_to")
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="friendships")
+    friend = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="related_to")
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -74,44 +79,76 @@ class Friendship(models.Model):
 
 
 class Conversation(models.Model):
-    participants = models.ManyToManyField(User, through="ConversationParticipant", related_name="conversations")
+    participants = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        through="ConversationParticipant",
+        related_name="conversations",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     @staticmethod
     def get_or_create_dm(u1, u2):
-        qs = Conversation.objects.filter(
-            participants=u1
-        ).filter(
-            participants=u2
-        ).annotate(
-            count=models.Count("participants")
-        ).filter(count=2)
+        """
+        Reuse the existing 1:1 DM between u1 and u2; create it if missing.
+        Finds conversations that:
+          - contain BOTH users, and
+          - have EXACTLY two participants total.
+        """
+        if u1.id == u2.id:
+            return None  # optional: block self-DMs
+
+        # Count how many of the two target users are in the convo (match=2)
+        # and how many participants the convo has in total (total=2).
+        qs = (
+            Conversation.objects
+            .annotate(total=Count("participants", distinct=True))
+            # exactly two participants overall
+            .filter(total=2)
+            .annotate(
+                match=Count(
+                    "participants",
+                    filter=Q(participants__in=[u1.id, u2.id]),
+                    distinct=True,
+                )
+            )
+            # both u1 and u2 are in it
+            .filter(match=2)
+            .order_by("-updated_at", "id")
+        )
+
         convo = qs.first()
         if convo:
             return convo
-        convo = Conversation.objects.create()
-        ConversationParticipant.objects.bulk_create([
-            ConversationParticipant(conversation=convo, user=u1),
-            ConversationParticipant(conversation=convo, user=u2),
-        ])
-        return convo
+
+        # Otherwise create the DM atomically (and avoid duplicate through rows)
+        with transaction.atomic():
+            convo = Conversation.objects.create()
+            ConversationParticipant.objects.get_or_create(
+                conversation=convo, user=u1)
+            ConversationParticipant.objects.get_or_create(
+                conversation=convo, user=u2)
+            return convo
 
 
 class ConversationParticipant(models.Model):
     conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE)
-    user         = models.ForeignKey(User, on_delete=models.CASCADE)
-    joined_at    = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE)
+    joined_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        # prevents duplicate through-rows
         unique_together = [("conversation", "user")]
 
 
 class Message(models.Model):
-    conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE, related_name="messages")
-    sender       = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sent_messages")
-    body         = models.TextField()
-    created_at   = models.DateTimeField(auto_now_add=True)
+    conversation = models.ForeignKey(
+        Conversation, on_delete=models.CASCADE, related_name="messages")
+    sender = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="sent_messages")
+    body = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ["created_at"]
