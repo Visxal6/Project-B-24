@@ -96,14 +96,10 @@ class Conversation(models.Model):
           - have EXACTLY two participants total.
         """
         if u1.id == u2.id:
-            return None  # optional: block self-DMs
-
-        # Count how many of the two target users are in the convo (match=2)
-        # and how many participants the convo has in total (total=2).
+            return None
         qs = (
             Conversation.objects
             .annotate(total=Count("participants", distinct=True))
-            # exactly two participants overall
             .filter(total=2)
             .annotate(
                 match=Count(
@@ -112,7 +108,6 @@ class Conversation(models.Model):
                     distinct=True,
                 )
             )
-            # both u1 and u2 are in it
             .filter(match=2)
             .order_by("-updated_at", "id")
         )
@@ -121,7 +116,6 @@ class Conversation(models.Model):
         if convo:
             return convo
 
-        # Otherwise create the DM atomically (and avoid duplicate through rows)
         with transaction.atomic():
             convo = Conversation.objects.create()
             ConversationParticipant.objects.get_or_create(

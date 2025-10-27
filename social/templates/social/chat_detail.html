@@ -29,17 +29,15 @@
 </div>
 
 <script>
-  // auto-scroll messages to bottom on load
   const msgs = document.getElementById('chatMessages');
   if (msgs) msgs.scrollTop = msgs.scrollHeight;
 
-  // textarea: auto-expand + Enter=send, Shift+Enter=newline
   const textarea = document.querySelector('.box-chat textarea');
   const form = textarea?.closest('form');
 
   function autoResize(el) {
     el.style.height = 'auto';
-    el.style.height = Math.min(el.scrollHeight, 200) + 'px'; // capped by CSS max-height too
+    el.style.height = Math.min(el.scrollHeight, 200) + 'px';
   }
 
   if (textarea && form) {

@@ -13,7 +13,14 @@
   </div>
 
   <div class="friends-list">
-    <h2>Friends</h2>
+    <div>
+      <h2>Friends</h2>
+      <div>
+        <a href="{% url 'social:incoming_requests' %}">
+          <span class="request">Request</span>
+        </a>
+      </div>
+    </div>
     <ul>
       {% for f in friends %}
       <li class="friend">

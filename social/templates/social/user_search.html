@@ -4,25 +4,27 @@
 {% block title %}Dashboard | CS3240 Project{% endblock %}
 
 {% block styles %}
-
+<link rel="stylesheet" href="{% static 'social/styles/search-friend.css' %}">
 {% endblock %}
 
 {% block content %}
-<form method="get">
-  <input name="q" value="{{ q }}" placeholder="Search users…" />
-  <button>Search</button>
-</form>
+<div class="search-container">
+  <form method="get" class="search-friend-form">
+    <input class="search-friend-bar" name="q" value="{{ q }}" placeholder="Search users…" />
+    <button class="button search-button">Search</button>
+  </form>
 
-<ul>
-  {% for u in results %}
+  <ul class="user-list">
+    {% for u in results %}
     <li>
-      {{ u.username }} ({{ u.email }})
+      <span>{{ u.username }}</span>
       <form method="post" action="{% url 'social:send_request' u.id %}">{% csrf_token %}
-        <button>Add Friend</button>
+        <button class="button add-friend-button-search">Add Friend</button>
       </form>
     </li>
-  {% empty %}
+    {% empty %}
     {% if q %}<li>No results</li>{% endif %}
-  {% endfor %}
-</ul>
+    {% endfor %}
+  </ul>
+</div>
 {% endblock %}

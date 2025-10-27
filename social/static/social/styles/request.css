@@ -1,0 +1,32 @@
+:root {
+  --bg: #1A1A1D;
+  --bg-2: #252529;
+  --line: #42434a;
+  --button: #23a55a;
+  --hover: #252529;
+  --text: #b0b3c1;
+  --accent: #fff;
+}
+
+.request-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.request-button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.decline-request-button,
+.accept-request-button {
+  font-size: 12px;
+  padding: 6px 16px;
+}
+
+.decline-request-button {
+  background: #FA5053;
+}

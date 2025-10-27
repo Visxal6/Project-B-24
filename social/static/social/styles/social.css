@@ -169,6 +169,27 @@ section.chat-layout {
   padding: 1rem;
 }
 
+.friends-list>div:first-child {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.request {
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 1rem;
+  cursor: pointer;
+  transition: 0.3s ease;
+  color: var(--text);
+}
+
+.request:hover {
+  color: #fff;
+}
+
+
 @media (max-width: 900px) {
   section.chat-layout {
     grid-template-columns: 1fr;

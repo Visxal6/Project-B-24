@@ -6,7 +6,11 @@
 {% block styles %}
 <link rel="stylesheet" href="{% static 'social/styles/social.css' %}">
 <link rel="stylesheet" href="{% static 'social/styles/chat.css' %}">
+
+{% block extra_styles %}
 {% endblock %}
+{% endblock %}
+
 
 {% block content %}
 <section class="chat-layout">
@@ -40,6 +44,7 @@
     </div>
   </div>
 
-  {% block chat_main %}{% endblock %}
+  {% block chat_main %}
+  {% endblock %}
 </section>
 {% endblock %}

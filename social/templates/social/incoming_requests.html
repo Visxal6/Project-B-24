@@ -1,12 +1,44 @@
-<h2>Incoming Friend Requests</h2>
-<ul>
-  {% for r in requests %}
-    <li>
-      {{ r.from_user.username }}
-      <form method="post" action="{% url 'social:accept_request' r.id %}">{% csrf_token %}<button>Accept</button></form>
-      <form method="post" action="{% url 'social:decline_request' r.id %}">{% csrf_token %}<button>Decline</button></form>
-    </li>
-  {% empty %}
-    <li>No pending requests.</li>
-  {% endfor %}
-</ul>
+{% extends 'social/base_chat.html' %}
+{% load static %}
+
+{% block extra_styles %}
+<link rel="stylesheet" href="{% static 'social/styles/request.css' %}">
+{% endblock %}
+
+{% block chat_main %}
+<div id="friends-container">
+  <div id="add-friend-container">
+    <a href="{% url 'social:user_search' %}">
+      <button class="button" id="add-friends">
+        <img src="{% static 'social/icons/plus.svg' %}" alt="add icon">
+        Add Friends
+      </button>
+    </a>
+  </div>
+  <div class="friends-list">
+    <div>
+      <h2>Request</h2>
+    </div>
+    <div>
+      <ul class="request-list">
+        {% for r in requests %}
+        <li>
+          <span>{{ r.from_user.username }}</span>
+          <div class="request-button-container">
+            <form method="post" action="{% url 'social:accept_request' r.id %}">{% csrf_token %}<button
+                class="button accept-request-button">Accept</button>
+            </form>
+            <form method="post" action="{% url 'social:decline_request' r.id %}">{% csrf_token %}<button
+                class="button decline-request-button">Decline</button>
+            </form>
+          </div>
+        </li>
+        {% empty %}
+        <li>No pending requests.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
