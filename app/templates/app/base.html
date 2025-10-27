@@ -39,7 +39,7 @@
 
         <!-- Inbox -->
         <div id="inbox-button">
-          <a href="#">
+          <a href="{% url 'social:friends' %}">
             <img src="{% static 'app/assets/icons/inbox.svg' %}" alt="Inbox icon">
             <span id="inbox-text">Inbox</span>
           </a>
@@ -104,6 +104,14 @@
           <span>Dashboard</span>
         </a>
       </li>
+
+      <li class="{% if request.resolver_match.namespace == 'social' %}active{% endif %}">
+        <a href="{% url 'social:friends' %}">
+          <img src="{% static 'app/assets/icons/social.svg' %}" alt="Social icon">
+          <span>Social</span>
+        </a>
+      </li>
+
 
       <li>
         <button class="dropdown-btn">

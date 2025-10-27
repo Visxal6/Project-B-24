@@ -1,0 +1,54 @@
+{% extends 'social/base_chat.html' %}
+{% load static %}
+
+{% block chat_main %}
+<div class="chat-box">
+  <h3>Chat with {{ other.username }}</h3>
+
+  <div class="chat-messages" id="chatMessages">
+    {% for m in messages %}
+    <span>
+      {{ m.sender.username }}
+      <small>{{ m.created_at }}</small>
+    </span>
+    <div class="msg">
+      {{ m.body }}
+    </div>
+    {% empty %}
+    <span>No messages yet.</span>
+    {% endfor %}
+  </div>
+
+  <div class="box-chat">
+    <form method="post" action="{% url 'social:send_message' convo.id %}">
+      {% csrf_token %}
+      <textarea name="body" placeholder="Type a message…" required></textarea>
+      <button type="submit">Send</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  const msgs = document.getElementById('chatMessages');
+  if (msgs) msgs.scrollTop = msgs.scrollHeight;
+
+  const textarea = document.querySelector('.box-chat textarea');
+  const form = textarea?.closest('form');
+
+  function autoResize(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 200) + 'px';
+  }
+
+  if (textarea && form) {
+    autoResize(textarea);
+    textarea.addEventListener('input', () => autoResize(textarea));
+    textarea.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        form.submit();
+      }
+    });
+  }
+</script>
+{% endblock %}

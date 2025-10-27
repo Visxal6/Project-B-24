@@ -1,0 +1,41 @@
+{% extends 'social/base_chat.html' %}
+{% load static %}
+
+{% block chat_main %}
+<div id="friends-container">
+  <div id="add-friend-container">
+    <a href="{% url 'social:user_search' %}">
+      <button class="button" id="add-friends">
+        <img src="{% static 'social/icons/plus.svg' %}" alt="add icon">
+        Add Friends
+      </button>
+    </a>
+  </div>
+
+  <div class="friends-list">
+    <div>
+      <h2>Friends</h2>
+      <div>
+        <a href="{% url 'social:incoming_requests' %}">
+          <span class="request">Request</span>
+        </a>
+      </div>
+    </div>
+    <ul>
+      {% for f in friends %}
+      <li class="friend">
+        <span class="friends-username">{{ f.username }}</span>
+        <div class="message-button">
+          <a href="{% url 'social:start_chat' f.id %}">
+            <img src="{% static 'social/icons/message.svg' %}" alt="message icon">
+            <img src="{% static 'social/icons/user.svg' %}" alt="user icon">
+          </a>
+        </div>
+      </li>
+      {% empty %}
+      <li>You have no friends yet.</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}

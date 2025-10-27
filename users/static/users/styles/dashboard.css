@@ -1,8 +1,9 @@
 :root {
-  --bg: #282C34;
-  --bg-2: #2C313A;
+  --bg: #1A1A1D;
+  --bg-2: #252529;
   --line: #42434a;
-  --hover: #3E4451;
+  --button: #23a55a;
+  --hover: #252529;
   --text: #b0b3c1;
   --accent: #fff;
 }
@@ -37,10 +38,10 @@ main {
 }
 
 .dashboard-widget:hover {
-  transform: scale(1.1);
+  transform: scale(1.05);
   background: white;
   color: var(--bg);
-  
+
   .img-container {
     background: var(--bg);
   }
@@ -64,7 +65,7 @@ main {
   height: auto;
 }
 
-.dashboard-widget span{
+.dashboard-widget span {
   font-size: 1.2rem;
   font-weight: 600;
 }
@@ -104,7 +105,7 @@ main {
 /* each row */
 .row {
   display: grid;
-  grid-template-columns: 1fr 1fr 1.2fr; 
+  grid-template-columns: 1fr 1fr 1.2fr;
   align-items: center;
   padding: 12px 16px;
   border-bottom: 1px solid var(--line);
@@ -122,6 +123,14 @@ main {
 }
 
 /* alignment */
-.rank { text-align: left; }
-.points { text-align: left; }
-.user { text-align: left; }
+.rank {
+  text-align: left;
+}
+
+.points {
+  text-align: left;
+}
+
+.user {
+  text-align: left;
+}
