@@ -5,6 +5,7 @@
 <div class="chat-box">
   <h3>Chat with {{ other.username }}</h3>
 
+  <!--Prints prev message-->
   <div class="chat-messages" id="chatMessages">
     {% for m in messages %}
     <span>
@@ -23,12 +24,15 @@
     <form method="post" action="{% url 'social:send_message' convo.id %}">
       {% csrf_token %}
       <textarea name="body" placeholder="Type a message…" required></textarea>
-      <button type="submit">Send</button>
+      <button type="submit">
+        Send
+      </button>
     </form>
   </div>
 </div>
 
 <script>
+  // Script for send message when we press return
   const msgs = document.getElementById('chatMessages');
   if (msgs) msgs.scrollTop = msgs.scrollHeight;
 

@@ -16,11 +16,20 @@ class FriendRequest(models.Model):
         CANCELED = "canceled", "Canceled"
 
     from_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="sent_requests")
+        User, 
+        on_delete=models.CASCADE, 
+        related_name="sent_requests"
+        )
     to_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="received_requests")
+        User, 
+        on_delete=models.CASCADE, 
+        related_name="received_requests"
+        )
     status = models.CharField(
-        max_length=16, choices=Status.choices, default=Status.PENDING)
+        max_length=16, 
+        choices=Status.choices, 
+        default=Status.PENDING)
+    
     created_at = models.DateTimeField(auto_now_add=True)
     responded_at = models.DateTimeField(null=True, blank=True)
 
@@ -57,9 +66,15 @@ class FriendRequest(models.Model):
 
 class Friendship(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="friendships")
+        User, 
+        on_delete=models.CASCADE, 
+        related_name="friendships"
+        )
     friend = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="related_to")
+        User, 
+        on_delete=models.CASCADE, 
+        related_name="related_to"
+        )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -89,12 +104,6 @@ class Conversation(models.Model):
 
     @staticmethod
     def get_or_create_dm(u1, u2):
-        """
-        Reuse the existing 1:1 DM between u1 and u2; create it if missing.
-        Finds conversations that:
-          - contain BOTH users, and
-          - have EXACTLY two participants total.
-        """
         if u1.id == u2.id:
             return None
         qs = (
@@ -127,20 +136,29 @@ class Conversation(models.Model):
 
 class ConversationParticipant(models.Model):
     conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+        )
+    
     joined_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        # prevents duplicate through-rows
         unique_together = [("conversation", "user")]
 
 
 class Message(models.Model):
     conversation = models.ForeignKey(
-        Conversation, on_delete=models.CASCADE, related_name="messages")
+        Conversation, 
+        on_delete=models.CASCADE, 
+        related_name="messages"
+        )
     sender = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="sent_messages")
+        User, 
+        on_delete=models.CASCADE, 
+        related_name="sent_messages"
+        )
+    
     body = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 

@@ -1,7 +1,9 @@
 {% extends 'app/base.html' %}
 {% load static %}
 
-{% block title %}Dashboard | CS3240 Project{% endblock %}
+{% block title %}
+  Search Friend
+{% endblock %}
 
 {% block styles %}
 <link rel="stylesheet" href="{% static 'social/styles/search-friend.css' %}">
@@ -9,21 +11,26 @@
 
 {% block content %}
 <div class="search-container">
+  <!-- Request: /social/user_search?q=input-value -->
   <form method="get" class="search-friend-form">
     <input class="search-friend-bar" name="q" value="{{ q }}" placeholder="Search users…" />
     <button class="button search-button">Search</button>
   </form>
 
+  <!-- User list -->
   <ul class="user-list">
     {% for u in results %}
     <li>
       <span>{{ u.username }}</span>
+      <!-- Request: /social/request/<int:user_id>/ -->
       <form method="post" action="{% url 'social:send_request' u.id %}">{% csrf_token %}
         <button class="button add-friend-button-search">Add Friend</button>
       </form>
     </li>
     {% empty %}
-    {% if q %}<li>No results</li>{% endif %}
+    {% if q %}
+      <li>No results</li>
+    {% endif %}
     {% endfor %}
   </ul>
 </div>
