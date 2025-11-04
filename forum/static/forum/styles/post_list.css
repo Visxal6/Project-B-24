@@ -1,0 +1,34 @@
+.forum-img {
+    max-width: 300px;
+    max-height: 200px;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 8px;
+    display: block;
+    margin: 0 auto;
+}
+
+.forum-card {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 24px;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 350px;
+}
+
+.forum-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    justify-content: flex-start;
+}
+
+.forum-card-body {
+    width: 100%;
+    text-align: center;
+}

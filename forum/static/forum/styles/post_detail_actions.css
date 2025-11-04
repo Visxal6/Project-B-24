@@ -1,0 +1,35 @@
+.post-action-btn {
+    min-width: 130px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.btn {
+    border-radius: 18px;
+    font-weight: 500;
+    font-size: 1rem;
+    padding: 8px 22px;
+    border: none;
+    transition: background 0.2s, color 0.2s;
+    margin-bottom: 0;
+}
+
+.btn-secondary {
+    background: #e3eafc;
+    color: #2353a2;
+}
+
+.btn-secondary:hover {
+    background: #d0dbf7;
+    color: #163a6b;
+}
+
+.btn-danger {
+    background: #ffebee;
+    color: #c62828;
+}
+
+.btn-danger:hover {
+    background: #ffcdd2;
+    color: #b71c1c;
+}

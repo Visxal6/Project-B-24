@@ -1,0 +1,10 @@
+.post-detail-img {
+    max-width: 100%;
+    max-height: 400px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto 16px auto;
+    border-radius: 8px;
+}

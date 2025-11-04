@@ -1,0 +1,33 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+
+{% block content %}
+{% block styles %}
+  <link rel="stylesheet" href="{% static 'forum/styles/post_list.css' %}">
+  <link rel="stylesheet" href="{% static 'forum/styles/new_post_button.css' %}">
+{% endblock %}
+
+  <a href="{% url 'forum:post_create' %}" class="new-post-btn">
+    <svg viewBox="0 0 24 24"><path d="M12 5v14m7-7H5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+    New Post
+  </a>
+  <div class="forum-grid">
+  {% for post in posts %}
+    <div class="forum-card">
+      <div class="forum-image-container">
+        {% if post.image %}
+        <img src="{{ post.image.url }}" alt="Post image" class="forum-img">
+        {% endif %}
+      </div>
+      <div class="forum-card-body">
+        <h5 class="forum-card-title">{{ post.author.username }}</h5>
+        <p class="forum-card-text">{{ post.caption|truncatechars:100 }}</p>
+        <a href="{% url 'forum:post_detail' post.pk %}" class="btn btn-sm btn-outline-primary">View</a>
+      </div>
+    </div>
+  {% empty %}
+    <p>No posts yet.</p>
+  {% endfor %}
+  </div>
+{% endblock %}
