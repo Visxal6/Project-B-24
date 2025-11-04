@@ -32,4 +32,6 @@ urlpatterns = [
     path('profile/', user_views.profile, name='profile'),
     path('dashboard/', user_views.dashboard, name='dashboard'),
 
+    # Test
+    path("", include("app_test.urls")),
 ]
