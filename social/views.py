@@ -1,4 +1,6 @@
 # social/views.py
+from django.views.decorators.http import require_http_methods
+from django.http import JsonResponse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -13,6 +15,8 @@ User = settings.AUTH_USER_MODEL
 UserModel = get_user_model()
 
 # Search and return user that match the input
+
+
 @login_required
 def user_search(request):
     # Get user name from query
@@ -22,20 +26,20 @@ def user_search(request):
     # Find users
     if q:
         results = UserModel.objects.filter(
-            Q(username__icontains=q) | 
-            Q(first_name__icontains=q) | 
-            Q(last_name__icontains=q) | 
+            Q(username__icontains=q) |
+            Q(first_name__icontains=q) |
+            Q(last_name__icontains=q) |
             Q(email__icontains=q)
         ).exclude(id=request.user.id)[:20]
 
     # Return users results
-    return render(request, "social/user_search.html", 
-                  {"q": q, 
+    return render(request, "social/user_search.html",
+                  {"q": q,
                    "results": results
                    })
 
 
-# Send friend request 
+# Send friend request
 @login_required
 def send_friend_request(request, user_id):
     # Find user
@@ -45,55 +49,63 @@ def send_friend_request(request, user_id):
     if to_user == request.user:
         messages.error(request, "You cannot add yourself.")
         return redirect("social:user_search")
-    
+
     # Already friends
     if Friendship.friends_of(request.user).filter(id=to_user.id).exists():
         messages.info(request, "Already friends.")
         return redirect("social:user_search")
-    
+
     # Pending request
     existing = FriendRequest.objects.filter(
-        (Q(from_user=request.user, to_user=to_user) | 
-         Q(from_user=to_user, to_user=request.user)) & 
-         Q(status="pending")
+        (Q(from_user=request.user, to_user=to_user) |
+         Q(from_user=to_user, to_user=request.user)) &
+        Q(status="pending")
     ).first()
 
     if existing:
         messages.info(request, "Request already pending.")
         return redirect("social:user_search")
-    
+
     # Send request
     FriendRequest.objects.create(from_user=request.user, to_user=to_user)
     messages.success(request, "Friend request sent.")
     return redirect("social:user_search")
 
 # Incoming Request
+
+
 @login_required
 def incoming_requests(request):
     # Retrieves all pending request
     reqs = FriendRequest.objects.filter(
         to_user=request.user, status="pending"
-        ).order_by("-created_at")
-    
-    return render(request, "social/incoming_requests.html", 
+    ).order_by("-created_at")
+
+    return render(request, "social/incoming_requests.html",
                   {
-                    "requests": reqs
+                      "requests": reqs
                   })
 
 # Accept request
+
+
 @login_required
 def accept_request(request, req_id):
     # Get friend request
-    fr = get_object_or_404(FriendRequest, id=req_id, to_user=request.user, status="pending")
+    fr = get_object_or_404(FriendRequest, id=req_id,
+                           to_user=request.user, status="pending")
     fr.accept()
 
     messages.success(request, f"You are now friends with {fr.from_user}.")
     return redirect("social:friends")
 
 # Decline request
+
+
 @login_required
 def decline_request(request, req_id):
-    fr = get_object_or_404(FriendRequest, id=req_id, to_user=request.user, status="pending")
+    fr = get_object_or_404(FriendRequest, id=req_id,
+                           to_user=request.user, status="pending")
     fr.decline()
 
     messages.info(request, "Friend request declined.")
@@ -117,10 +129,10 @@ def start_chat_with_friend(request, user_id):
 def send_message(request, convo_id):
     # Get conversation
     convo = get_object_or_404(
-        Conversation, 
-        id=convo_id, 
+        Conversation,
+        id=convo_id,
         participants=request.user
-        )
+    )
 
     # Get message from body
     body = request.POST.get("body", "").strip()
@@ -128,11 +140,11 @@ def send_message(request, convo_id):
     # Create message
     if body:
         Message.objects.create(
-            conversation=convo, 
-            sender=request.user, 
+            conversation=convo,
+            sender=request.user,
             body=body
-            )
-        
+        )
+
     return redirect("social:chat_detail", convo_id=convo.id)
 
 
@@ -140,14 +152,14 @@ def send_message(request, convo_id):
 def friends_list(request):
     """Show the friends page with sidebar chats."""
     friends = Friendship.friends_of(request.user).order_by("username")
-    convos = _sidebar_convos(request)  
+    convos = _sidebar_convos(request)
     return render(
         request,
         "social/social.html",
         {
             "friends": friends,
             "convos": convos,
-            "convo": None,  
+            "convo": None,
         },
     )
 
@@ -200,7 +212,7 @@ def chat_detail(request, convo_id):
         Conversation, id=convo_id, participants=request.user)
     msgs = convo.messages.select_related("sender").all()
     other = convo.participants.exclude(id=request.user.id).first()
-    convos = _sidebar_convos(request) 
+    convos = _sidebar_convos(request)
     return render(
         request,
         "social/chat_detail.html",
@@ -208,6 +220,56 @@ def chat_detail(request, convo_id):
             "convo": convo,
             "messages": msgs,
             "other": other,
-            "convos": convos,  
+            "convos": convos,
         },
     )
+
+
+# new need testing
+@login_required
+def chat_messages_api(request, convo_id):
+    convo = get_object_or_404(
+        Conversation, id=convo_id, participants=request.user)
+    after = request.GET.get("after")
+    qs = convo.messages.select_related("sender")
+    if after:
+        qs = qs.filter(id__gt=after)
+
+    if not after:
+        qs = qs.order_by("-id")[:50]
+
+    msgs = qs.order_by("id").values(
+        "id", "body", "created_at",
+        "sender__username",
+    )
+
+    data = [{
+        "id": m["id"],
+        "body": m["body"],
+        "created_at": m["created_at"].isoformat(),
+        "sender": m["sender__username"],
+    } for m in msgs]
+
+    return JsonResponse({"messages": data})
+
+
+@require_http_methods(["POST"])
+@login_required
+def send_message_api(request, convo_id):
+    convo = get_object_or_404(
+        Conversation, id=convo_id, participants=request.user)
+    body = (request.POST.get("body") or "").strip()
+    if not body:
+        return JsonResponse({"ok": False, "error": "empty"}, status=400)
+
+    msg = Message.objects.create(
+        conversation=convo, sender=request.user, body=body)
+    return JsonResponse({
+        "ok": True,
+        "message": {
+            "id": msg.id,
+            "body": msg.body,
+            "created_at": msg.created_at.isoformat(),
+            "sender": request.user.username,
+        }
+    }, status=201)

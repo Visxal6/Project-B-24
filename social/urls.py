@@ -7,7 +7,8 @@ app_name = "social"
 urlpatterns = [
     # Friends
     path("friends/", views.friends_list, name="friends"),
-    path("friends/start-chat/<int:user_id>/", views.start_chat_with_friend, name="start_chat"),
+    path("friends/start-chat/<int:user_id>/",
+         views.start_chat_with_friend, name="start_chat"),
 
     # Search
     path("", views.user_search, name="user_search"),
@@ -15,10 +16,19 @@ urlpatterns = [
 
     # Request
     path("requests/", views.incoming_requests, name="incoming_requests"),
-    path("requests/<int:req_id>/accept/", views.accept_request, name="accept_request"),
-    path("requests/<int:req_id>/decline/", views.decline_request, name="decline_request"),
+    path("requests/<int:req_id>/accept/",
+         views.accept_request, name="accept_request"),
+    path("requests/<int:req_id>/decline/",
+         views.decline_request, name="decline_request"),
 
     # Chat
     path("chats/<int:convo_id>/", views.chat_detail, name="chat_detail"),
     path("chats/<int:convo_id>/send/", views.send_message, name="send_message"),
+
+    # new paths need testing
+    path("api/chats/<int:convo_id>/messages/",
+         views.chat_messages_api, name="chat_messages_api"),
+    path("api/chats/<int:convo_id>/send/",
+         views.send_message_api, name="send_message_api"),
+
 ]
