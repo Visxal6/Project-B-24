@@ -31,7 +31,10 @@ load_dotenv(BASE_DIR / ".env")
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DJANGO_DEBUG", "false").lower() == "true"
+# Accept either DJANGO_DEBUG or DEBUG in environment variables. Some
+# setups (like the project's .env) set DEBUG, while cloud configs may set
+# DJANGO_DEBUG.
+DEBUG = os.getenv("DJANGO_DEBUG", os.getenv("DEBUG", "false")).lower() == "true"
 
 ALLOWED_HOSTS = ['b-24-c9dae14a3216.herokuapp.com', '127.0.0.1', 'localhost']
 CSRF_TRUSTED_ORIGINS = ['https://b-24-c9dae14a3216.herokuapp.com']
@@ -57,7 +60,20 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'social',
+    'storages',
 ]
+
+AWS_S3_CUSTOM_DOMAIN = f'{os.environ["AWS_STORAGE_BUCKET_NAME"]}.s3.amazonaws.com'
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
+AWS_LOCATION = 'static' # Or 'media' or a custom path
+
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+# For media files (if applicable)
+#MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
 
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
@@ -105,13 +121,25 @@ WSGI_APPLICATION = 'main.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    "default": dj_database_url.config(
-        env="DATABASE_URL",
-        conn_max_age=600,
-        ssl_require=True
-    )
-}
+# Use a simple SQLite DB for local development when DEBUG is True so
+# `manage.py makemigrations` and other commands work without a running
+# Postgres instance. In production (DEBUG False) use DATABASE_URL via
+# dj_database_url as before.
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+else:
+    DATABASES = {
+        "default": dj_database_url.config(
+            env="DATABASE_URL",
+            conn_max_age=600,
+            ssl_require=True
+        )
+    }
 
 
 # Password validation
@@ -168,4 +196,7 @@ LOGIN_URL = 'login'
 
 LOGOUT_REDIRECT_URL = 'logout'
 
-django_heroku.settings(locals())
+if not DEBUG:
+    # Only apply django-heroku settings in non-debug (production) mode so
+    # it doesn't override local DB settings used for development.
+    django_heroku.settings(locals())
