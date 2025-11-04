@@ -20,14 +20,17 @@
       <h2>Request</h2>
     </div>
     <div>
+      <!--Get request list and printed-->
       <ul class="request-list">
         {% for r in requests %}
         <li>
           <span>{{ r.from_user.username }}</span>
           <div class="request-button-container">
+            <!--requests/<int:req_id>/accept/-->
             <form method="post" action="{% url 'social:accept_request' r.id %}">{% csrf_token %}<button
                 class="button accept-request-button">Accept</button>
             </form>
+            <!--requests/<int:req_id>/decline/-->
             <form method="post" action="{% url 'social:decline_request' r.id %}">{% csrf_token %}<button
                 class="button decline-request-button">Decline</button>
             </form>

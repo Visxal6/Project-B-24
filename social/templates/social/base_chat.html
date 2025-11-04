@@ -1,19 +1,22 @@
 {% extends 'app/base.html' %}
 {% load static %}
 
-{% block title %}Dashboard | CS3240 Project{% endblock %}
+{% block title %}
+ Base Chat
+{% endblock %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'social/styles/social.css' %}">
-<link rel="stylesheet" href="{% static 'social/styles/chat.css' %}">
+  <link rel="stylesheet" href="{% static 'social/styles/social.css' %}">
+  <link rel="stylesheet" href="{% static 'social/styles/chat.css' %}">
 
-{% block extra_styles %}
-{% endblock %}
+  {% block extra_styles %}
+  {% endblock %}
 {% endblock %}
 
 
 {% block content %}
 <section class="chat-layout">
+  <!--Social Sidebar-->
   <div id="message-container">
     <a href="{% url 'social:friends' %}">
       <div class="friends-link">
@@ -21,7 +24,12 @@
         <span>Friends</span>
       </div>
     </a>
-
+    <a href="{% url 'social:incoming_requests' %}">
+      <div class="friends-link">
+        <img src="{% static 'social/icons/plus.svg' %}" alt="social icon">
+        <span>Request</span>
+      </div>
+    </a>
     <hr class="separator">
 
     <div class="message-header">
@@ -29,6 +37,7 @@
       <span>Messages</span>
     </div>
 
+    <!--Chats-->
     <div id="chats">
       <ul>
         {% for c in convos %}
@@ -44,6 +53,7 @@
     </div>
   </div>
 
+  <!--Content-->
   {% block chat_main %}
   {% endblock %}
 </section>
