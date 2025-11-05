@@ -3,87 +3,47 @@
 {% block title %}Profile | CS3240 Project{% endblock %}
 
 {% block content %}
-<section id="profile" style="max-width:700px;margin:auto;padding:30px;background:#f8f9fa;border-radius:12px;border:1px solid #ddd;">
+<section id="profile" style="max-width:600px;margin:auto;padding:20px;background:#f9f9f9;border-radius:10px;border:1px solid #ddd;">
+  <h1 style="text-align:center;">Welcome, {{ user.username }}!</h1>
 
-  <h1 style="text-align:center;margin-bottom:10px;">{{ user.first_name }} {{ user.last_name }}</h1>
-  <p style="text-align:center;color:#777;margin-bottom:30px;">@{{ user.username }}</p>
-
-  <!-- {% if messages %}
-    <div style="margin-bottom:15px;">
+  {% if messages %}
+    <div style="margin:10px 0;">
       {% for message in messages %}
-        {% if 'success' in message.tags %}
-          <div style="padding:10px;border-radius:5px;margin-bottom:5px;background-color:#d4edda;color:#155724;">
-            {{ message }}
-          </div>
-        {% elif 'error' in message.tags or 'danger' in message.tags %}
-          <div style="padding:10px;border-radius:5px;margin-bottom:5px;background-color:#f8d7da;color:#721c24;">
-            {{ message }}
-          </div>
-        {% else %}
-          <div style="padding:10px;border-radius:5px;margin-bottom:5px;background-color:#fff3cd;color:#856404;">
-            {{ message }}
-          </div>
-        {% endif %}
+        <div>
+          {{ message }}
+        </div>
       {% endfor %}
     </div>
-  {% endif %} -->
+  {% endif %}
 
-  <!-- Display Mode -->
-  <div id="display-mode" style="line-height:1.8;">
-    <p><strong>First Name:</strong> {{ user.first_name }}</p>
-    <p><strong>Last Name:</strong> {{ user.last_name }}</p>
-    <p><strong>Email:</strong> {{ user.email }}</p>
-    <p><strong>Username:</strong> {{ user.username }}</p>
-    <p><strong>Member since:</strong> {{ user.date_joined|date:"F j, Y" }}</p>
+  <form method="POST" style="display:flex;flex-direction:column;gap:10px;">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
 
-    <div style="text-align:center;margin-top:20px;">
-      <button type="button" onclick="toggleEdit(true)" style="
-        background-color:#4CAF50;color:white;padding:10px 20px;
-        border:none;border-radius:5px;cursor:pointer;">Edit Profile</button>
+    {% for field in form %}
+      <label for="{{ field.id_for_label }}" style="font-weight:bold;">{{ field.label }}</label>
+      {{ field }}
+      {% if field.errors %}
+        <div style="color:red;font-size:0.9em;">{{ field.errors|join:", " }}</div>
+      {% endif %}
+    {% endfor %}
 
-      <a href="{% url 'password_change' %}" style="
-        background-color:#007BFF;color:white;padding:10px 20px;
-        border:none;border-radius:5px;text-decoration:none;margin-left:10px;">
-        Change Password
-      </a>
+    <button type="submit" style="
+      background-color:#4CAF50;
+      color:white;
+      padding:10px;
+      border:none;
+      border-radius:5px;
+      cursor:pointer;
+      font-size:1em;
+      margin-top:10px;
+    ">
+      Save Changes
+    </button>
+  </form>
 
-      <a href="{% url 'logout' %}" style="
-        background-color:#dc3545;color:white;padding:10px 20px;
-        border:none;border-radius:5px;text-decoration:none;margin-left:10px;">
-        Log Out
-      </a>
-    </div>
-  </div>
-
-  <!-- Edit Mode -->
-  <div id="edit-mode" style="display:none;">
-    <form method="POST" style="display:flex;flex-direction:column;gap:10px;">
-      {% csrf_token %}
-      {% for field in form %}
-        <label for="{{ field.id_for_label }}" style="font-weight:bold;">{{ field.label }}</label>
-        {{ field }}
-        {% if field.errors %}
-          <div style="color:red;font-size:0.9em;">{{ field.errors|join:", " }}</div>
-        {% endif %}
-      {% endfor %}
-
-      <div style="display:flex;justify-content:center;margin-top:10px;gap:10px;">
-        <button type="submit" style="
-          background-color:#4CAF50;color:white;padding:10px 20px;
-          border:none;border-radius:5px;cursor:pointer;">Save Changes</button>
-        <button type="button" onclick="toggleEdit(false)" style="
-          background-color:#6c757d;color:white;padding:10px 20px;
-          border:none;border-radius:5px;cursor:pointer;">Cancel</button>
-      </div>
-    </form>
-  </div>
+  <p style="margin-top:20px;text-align:center;color:#555;">
+    Member since {{ user.date_joined|date:"F j, Y" }}
+  </p>
 </section>
-
-<script>
-  // simple toggle between display and edit
-  function toggleEdit(showEdit) {
-    document.getElementById('display-mode').style.display = showEdit ? 'none' : 'block';
-    document.getElementById('edit-mode').style.display = showEdit ? 'block' : 'none';
-  }
-</script>
 {% endblock %}
