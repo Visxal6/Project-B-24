@@ -35,6 +35,8 @@ urlpatterns = [
     path('dashboard/', user_views.dashboard, name='dashboard'),
     path('forum/', include('forum.urls', namespace='forum')),
 
+    # Test
+    path("", include("app_test.urls")),
 ]
 
 if settings.DEBUG:

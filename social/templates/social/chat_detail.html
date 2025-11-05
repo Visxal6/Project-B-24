@@ -5,15 +5,17 @@
 <div class="chat-box">
   <h3>Chat with {{ other.username }}</h3>
 
-  <!--Prints prev message-->
+  <!-- Messages -->
   <div class="chat-messages" id="chatMessages">
     {% for m in messages %}
-    <span>
-      {{ m.sender.username }}
-      <small>{{ m.created_at }}</small>
-    </span>
-    <div class="msg">
-      {{ m.body }}
+    <div class="msg-wrap" data-id="{{ m.id }}">
+      <span>
+        {{ m.sender.username }}
+        <small>{{ m.created_at }}</small>
+      </span>
+      <div class="msg">
+        {{ m.body }}
+      </div>
     </div>
     {% empty %}
     <span>No messages yet.</span>
@@ -21,38 +23,117 @@
   </div>
 
   <div class="box-chat">
-    <form method="post" action="{% url 'social:send_message' convo.id %}">
+    <!-- point to the API (no full-page reload) -->
+    <form id="sendForm" method="post" action="{% url 'social:send_message_api' convo.id %}">
       {% csrf_token %}
-      <textarea name="body" placeholder="Type a message…" required></textarea>
-      <button type="submit">
-        Send
-      </button>
+      <textarea id="msgInput" name="body" placeholder="Type a message…" required></textarea>
+      <button type="submit">Send</button>
     </form>
   </div>
 </div>
 
 <script>
-  // Script for send message when we press return
-  const msgs = document.getElementById('chatMessages');
-  if (msgs) msgs.scrollTop = msgs.scrollHeight;
+  const msgsBox = document.getElementById('chatMessages');
+  const form = document.getElementById('sendForm');
+  const input = document.getElementById('msgInput');
 
-  const textarea = document.querySelector('.box-chat textarea');
-  const form = textarea?.closest('form');
-
+  // keep your auto-resize
   function autoResize(el) {
     el.style.height = 'auto';
     el.style.height = Math.min(el.scrollHeight, 200) + 'px';
   }
+  autoResize(input);
+  input.addEventListener('input', () => autoResize(input));
 
-  if (textarea && form) {
-    autoResize(textarea);
-    textarea.addEventListener('input', () => autoResize(textarea));
-    textarea.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        form.submit();
-      }
-    });
+  // scroll to bottom initially
+  function scrollToBottom() { msgsBox.scrollTop = msgsBox.scrollHeight; }
+  scrollToBottom();
+
+  // Enter to send (no shift)
+  input.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      form.requestSubmit();
+    }
+  });
+
+  // CSRF helper
+  function getCookie(name) {
+    const m = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+    return m ? m.pop() : '';
   }
+  const csrftoken = getCookie('csrftoken');
+
+  function lastId() {
+    const last = msgsBox.querySelector('.msg-wrap:last-of-type');
+    return last ? last.getAttribute('data-id') : '';
+  }
+
+  function atBottom() {
+    const threshold = 30;
+    return (msgsBox.scrollTop + msgsBox.clientHeight) >= (msgsBox.scrollHeight - threshold);
+  }
+
+  function appendMessages(list) {
+    if (!list || !list.length) return;
+    const wasBottom = atBottom();
+    const frag = document.createDocumentFragment();
+    for (const m of list) {
+      const wrap = document.createElement('div');
+      wrap.className = 'msg-wrap';
+      wrap.setAttribute('data-id', m.id);
+      wrap.innerHTML = `
+        <span>
+          ${m.sender}
+          <small>${new Date(m.created_at).toLocaleString()}</small>
+        </span>
+        <div class="msg"></div>
+      `;
+      wrap.querySelector('.msg').textContent = m.body; // safe text
+      frag.appendChild(wrap);
+    }
+    msgsBox.appendChild(frag);
+    if (wasBottom) scrollToBottom();
+  }
+
+  // Poll for new messages every 2s
+  async function poll() {
+    const after = lastId();
+    const url = `{% url 'social:chat_messages_api' convo.id %}` + (after ? `?after=${after}` : '');
+    try {
+      const res = await fetch(url, { credentials: 'same-origin' });
+      if (!res.ok) return;
+      const data = await res.json();
+      appendMessages(data.messages);
+    } catch (e) {
+    }
+  }
+  setInterval(poll, 2000);
+  // also fire once quickly
+  poll();
+
+  // AJAX send — no page reload
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const body = input.value.trim();
+    if (!body) return;
+
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        headers: { 'X-CSRFToken': csrftoken },
+        body: new URLSearchParams({ body })
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data.ok && data.message) {
+        appendMessages([data.message]);   // show immediately
+        input.value = '';
+        autoResize(input);
+        scrollToBottom();
+      }
+    } catch (e) {
+    }
+  });
 </script>
 {% endblock %}

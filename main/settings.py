@@ -31,10 +31,7 @@ load_dotenv(BASE_DIR / ".env")
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# Accept either DJANGO_DEBUG or DEBUG in environment variables. Some
-# setups (like the project's .env) set DEBUG, while cloud configs may set
-# DJANGO_DEBUG.
-DEBUG = os.getenv("DJANGO_DEBUG", os.getenv("DEBUG", "false")).lower() == "true"
+DEBUG = os.getenv("DJANGO_DEBUG", "false").lower() == "true"
 
 ALLOWED_HOSTS = ['b-24-c9dae14a3216.herokuapp.com', '127.0.0.1', 'localhost']
 CSRF_TRUSTED_ORIGINS = ['https://b-24-c9dae14a3216.herokuapp.com']
@@ -61,9 +58,11 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'social',
-    'storages',
+    'app_test',
+    'storages',  # Required for S3
 ]
 
+<<<<<<< HEAD
 AWS_S3_CUSTOM_DOMAIN = f'{os.environ["AWS_STORAGE_BUCKET_NAME"]}.s3.amazonaws.com' if os.environ.get('AWS_STORAGE_BUCKET_NAME') else None
 AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
@@ -84,6 +83,8 @@ DEFAULT_FILE_STORAGE = 'main.storages.MediaStorage'
 
 
 
+=======
+>>>>>>> 83602b5b94ff2a2f6c171ca87b84647d33c980a0
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
 SOCIALACCOUNT_PROVIDERS = {
@@ -130,25 +131,13 @@ WSGI_APPLICATION = 'main.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# Use a simple SQLite DB for local development when DEBUG is True so
-# `manage.py makemigrations` and other commands work without a running
-# Postgres instance. In production (DEBUG False) use DATABASE_URL via
-# dj_database_url as before.
-if DEBUG:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
-else:
-    DATABASES = {
-        "default": dj_database_url.config(
-            env="DATABASE_URL",
-            conn_max_age=600,
-            ssl_require=True
-        )
-    }
+DATABASES = {
+    "default": dj_database_url.config(
+        env="DATABASE_URL",
+        conn_max_age=600,
+        ssl_require=True
+    )
+}
 
 
 # Password validation
@@ -209,7 +198,26 @@ LOGIN_URL = 'login'
 
 LOGOUT_REDIRECT_URL = 'logout'
 
-if not DEBUG:
-    # Only apply django-heroku settings in non-debug (production) mode so
-    # it doesn't override local DB settings used for development.
-    django_heroku.settings(locals())
+django_heroku.settings(locals())
+
+# AWS Settings
+AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
+AWS_S3_REGION_NAME = os.environ.get("AWS_S3_REGION_NAME", "us-east-1")
+
+AWS_QUERYSTRING_AUTH = True
+AWS_DEFAULT_ACL = None
+AWS_S3_FILE_OVERWRITE = False
+AWS_S3_SIGNATURE_VERSION = "s3v4"
+AWS_QUERYSTRING_EXPIRE = 86400
+
+# Use S3 for media storage
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}

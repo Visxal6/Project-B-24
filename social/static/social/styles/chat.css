@@ -110,3 +110,22 @@
 .box-chat button:hover {
   background: #0062cc;
 }
+
+/* cellphones view */
+@media (max-width: 768px) {
+  #message-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+
+  span {
+    display: none;
+  }
+
+  #chats {
+    display: none;
+  }
+
+}
