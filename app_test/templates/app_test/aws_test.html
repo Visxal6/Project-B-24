@@ -17,9 +17,12 @@
   <hr>
 
   <h3>Uploaded Images:</h3>
+
   {% for img in images %}
   <div style="margin:10px 0;">
+    <!--img row -> image field -> get url-->
     <img src="{{ img.image.url }}" alt="uploaded image" style="max-width:250px;">
+    <!-- img row -> uploaded_at -->
     <p>{{ img.uploaded_at }}</p>
   </div>
   {% empty %}
