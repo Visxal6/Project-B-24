@@ -10,4 +10,4 @@ def aws_test_view(request):
         return redirect("aws-test")
 
     images = TestImage.objects.all().order_by("-uploaded_at")
-    return render(request, "aws_test.html", {"images": images})
+    return render(request, "app_test/aws_test.html", {"images": images})
