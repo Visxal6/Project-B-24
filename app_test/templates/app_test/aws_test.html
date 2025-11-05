@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>AWS Test</title>
+</head>
+
+<body>
+  <h2>Upload to S3 test</h2>
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="image" accept="image/*" required>
+    <button type="submit">Upload</button>
+  </form>
+
+  <hr>
+
+  <h3>Uploaded Images:</h3>
+  {% for img in images %}
+  <div style="margin:10px 0;">
+    <img src="{{ img.image.url }}" alt="uploaded image" style="max-width:250px;">
+    <p>{{ img.uploaded_at }}</p>
+  </div>
+  {% empty %}
+  <p>No images yet.</p>
+  {% endfor %}
+</body>
+
+</html>

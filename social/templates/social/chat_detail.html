@@ -106,7 +106,6 @@
       const data = await res.json();
       appendMessages(data.messages);
     } catch (e) {
-      // optional: console.warn(e);
     }
   }
   setInterval(poll, 2000);
@@ -134,7 +133,6 @@
         scrollToBottom();
       }
     } catch (e) {
-      // optional: console.warn(e);
     }
   });
 </script>
