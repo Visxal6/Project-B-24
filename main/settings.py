@@ -45,6 +45,7 @@ SITE_ID = 4
 INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'app.apps.AppConfig',
+    'forum.apps.ForumConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -61,6 +62,29 @@ INSTALLED_APPS = [
     'storages',  # Required for S3
 ]
 
+<<<<<<< HEAD
+AWS_S3_CUSTOM_DOMAIN = f'{os.environ["AWS_STORAGE_BUCKET_NAME"]}.s3.amazonaws.com' if os.environ.get('AWS_STORAGE_BUCKET_NAME') else None
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
+# Locations
+AWS_LOCATION = os.environ.get('AWS_LOCATION', 'static')
+AWS_MEDIA_LOCATION = os.environ.get('AWS_MEDIA_LOCATION', 'media')
+
+# S3 settings
+AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME')
+AWS_DEFAULT_ACL = None
+AWS_QUERYSTRING_AUTH = False
+
+# Storage backends
+# Use a dedicated MediaStorage class to keep media files under a 'media/' prefix
+# Static files use WhiteNoise in DEBUG for local dev and S3 in production.
+DEFAULT_FILE_STORAGE = 'main.storages.MediaStorage'
+
+
+
+=======
+>>>>>>> 83602b5b94ff2a2f6c171ca87b84647d33c980a0
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
 SOCIALACCOUNT_PROVIDERS = {
@@ -152,7 +176,11 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# In DEBUG use WhiteNoise for static files; in production use S3-backed storage
+if DEBUG:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+else:
+    STATICFILES_STORAGE = 'main.storages.StaticStorage'
 
 
 # Default primary key field type

@@ -31,8 +31,9 @@
 
   <!-- Header -->
   <header id="header">
-    <div>
+    <div style="display: flex; align-items: center;">
       <img id="menu-icon" src="{% static 'app/assets/icons/menu.svg' %}" alt="Menu icon">
+      {% block page_title %}{% endblock %}
     </div>
 
     <div class="right-content-container">
