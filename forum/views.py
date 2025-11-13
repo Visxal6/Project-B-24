@@ -47,3 +47,6 @@ def leaderboard_list(request):
     posts = Post.objects.filter(tag='leaderboard').order_by('-created_at')
     return render(request, 'forum/leaderboard_list.html', {'posts': posts})
 
+def cio_list(request):
+    posts = Post.objects.filter(tag='cio_leaders').order_by('-created_at')
+    return render(request, 'forum/cio_list.html', {'posts': posts})

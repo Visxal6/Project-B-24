@@ -14,6 +14,7 @@ class Post(models.Model):
         ('general', 'General'),
         ('food', 'Food'),
         ('leaderboard', 'Leaderboard'),
+        ('cio_leaders', 'CIO Leaders'),
     ]
 
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='forum_posts')
