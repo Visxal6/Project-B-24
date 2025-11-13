@@ -38,3 +38,24 @@
     padding-bottom: 20px;
     overflow-wrap: anywhere;
 }
+
+.comment-input {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.comment-input-text {
+    display: flex;
+    align-items: center;
+    border-radius: 18px;
+    font-size: 0.8rem;
+    padding-left: 10px;
+    padding-top: 6px;
+    width: 60%;
+}
+
+.text-no-comments {
+    padding-top: 30px;
+}

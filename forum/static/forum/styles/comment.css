@@ -1,0 +1,45 @@
+.comment-container {
+    width: 100%;
+}
+
+.comment-body {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding-bottom: 5px;
+    max-width: 80%;
+}
+
+.btn {
+    border-radius: 18px;
+    font-weight: 500;
+    font-size: 0.8rem;
+    padding: 8px 22px;
+    border: none;
+    transition: background 0.2s, color 0.2s;
+    margin-bottom: 0;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background: rgb(150, 150, 150);
+}
+
+.btn-container {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.reply-form {
+    display: flex;
+    flex-direction: row;
+}
+
+.input-reply {
+    margin-left: 50px;
+}
+
+.comment-timestamp {
+    font-size: 0.8em;
+}

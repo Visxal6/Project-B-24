@@ -13,4 +13,4 @@ class PostForm(forms.ModelForm):
         }
 
 class CommentForm(forms.Form):
-    content = forms.CharField(widget=forms.Textarea(attrs={'rows': 2, 'cols': 50}))
+    content = forms.CharField(widget=forms.Textarea(attrs={'rows': 1, 'cols': 50, 'class' : 'comment-input-text', 'placeholder' : 'Write a comment...'}))

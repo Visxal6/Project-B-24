@@ -33,3 +33,22 @@
     background: #ffcdd2;
     color: #b71c1c;
 }
+
+.btn-add-comment {
+    border-radius: 18px;
+    font-weight: 500;
+    font-size: 0.8rem;
+    padding: 8px 22px;
+    border: none;
+    transition: background 0.2s, color 0.2s;
+    margin-bottom: 0;
+    cursor: pointer;
+}
+
+.btn-add-comment:hover {
+    background: rgb(150, 150, 150);
+}
+
+.card {
+    padding-bottom: 60px;
+}

@@ -7,13 +7,25 @@
   <link rel="stylesheet" href="{% static 'forum/styles/post_detail_actions.css' %}">
 {% endblock %}
 
-<title>{% block title %}Channels | Post Details{% endblock %}</title>
+{% block title %}
+  Channels | Post Details
+{% endblock %}
 
 {% block content %}
   {% url 'forum:post_list' as default_url %}
 
   <div class="container">
     <div class="card">
+        <div class="card-body">
+        <h3 class="card-title">{{ post.title }}</h3>
+        <h5 class="card-user">{{ post.author.username }}</h5>
+        <p class="card-timestamp">Posted {{ post.created_at }}</p>
+        <p class="card-text">{{ post.caption }}</p>
+      </div>
+      {% if post.image %}
+        <img src="{{ post.image.url }}" class="post-detail-img" alt="Post image">
+      {% endif %}
+
       <div style="display: flex; gap: 12px; margin-bottom: 1rem; align-items: center;">
         <a href="{{ request.GET.next|default:default_url }}" class="btn btn-secondary post-action-btn">Back</a>
           {% if user.is_authenticated and user == post.author %}
@@ -23,16 +35,6 @@
             </form>
           {% endif %}
       </div>
-
-      <div class="card-body">
-        <h3 class="card-title">{{ post.title }}</h3>
-        <h5 class="card-user">{{ post.author.username }}</h5>
-        <p class="card-timestamp">Posted {{ post.created_at }}</p>
-        <p class="card-text">{{ post.caption }}</p>
-      </div>
-      {% if post.image %}
-        <img src="{{ post.image.url }}" class="post-detail-img" alt="Post image">
-      {% endif %}
     
     </div>
 
@@ -40,11 +42,11 @@
       <h2>Comments</h2>
 
       {% if user.is_authenticated %}
-        <form method="post">
+        <form class="comment-input" method="post">
             {% csrf_token %}
             {{ form.content }}
             <input type="hidden" name="parent_id" value="">
-            <button type="submit">Add Comment</button>
+            <button class="btn-add-comment" type="submit">Add Comment</button>
         </form>
       {% else %}
           <p><a href="{% url 'login' %}">Log in</a> to add a comment.</p>
@@ -53,8 +55,19 @@
       {% for comment in comments %}
         {% include 'forum/comment.html' with comment=comment %}
       {% empty %}
-        <p>No comments yet. Be the first to comment!</p>
+        <p class="text-no-comments">No comments yet. Be the first to comment!</p>
       {% endfor %}
     </div>
   </div>
+
+  <script>
+    function toggleReplyForm(commentId) {
+      const formDiv = document.getElementById('reply-form-' + commentId);
+      if (formDiv.style.display === 'none') {
+        formDiv.style.display = 'block';
+      } else {
+        formDiv.style.display = 'none';
+      }
+    }
+  </script>
 {% endblock %}
