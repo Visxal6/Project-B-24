@@ -7,9 +7,11 @@
     display: block;
     margin: 0 auto 16px auto;
     border-radius: 8px;
+    padding-bottom: 20px;
 }
 
 .card-body {
+    max-width: 700px;
 }
 
 .card-title {
@@ -28,9 +30,5 @@
 
 .card-text {
     padding-top: 20px;
-    padding-bottom: 20px;
-}
-
-.post-detail-img {
     padding-bottom: 20px;
 }
