@@ -42,3 +42,8 @@ def post_create(request):
 def food_list(request):
     posts = Post.objects.filter(tag='food').order_by('-created_at')
     return render(request, 'forum/food_list.html', {'posts': posts})
+
+def leaderboard_list(request):
+    posts = Post.objects.filter(tag='leaderboard').order_by('-created_at')
+    return render(request, 'forum/leaderboard_list.html', {'posts': posts})
+
