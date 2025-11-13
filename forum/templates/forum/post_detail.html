@@ -1,6 +1,7 @@
 {% extends 'app/base.html' %}
 {% load static %}
 
+
 {% block styles %}
   <link rel="stylesheet" href="{% static 'forum/styles/post_detail.css' %}">
   <link rel="stylesheet" href="{% static 'forum/styles/post_detail_actions.css' %}">
@@ -9,6 +10,8 @@
 <title>{% block title %}Channels | Post Details{% endblock %}</title>
 
 {% block content %}
+  {% url 'forum:post_list' as default_url %}
+
   <div class="card">
     <div class="card-body">
       <h3 class="card-title">{{ post.title }}</h3>
@@ -20,7 +23,7 @@
       <img src="{{ post.image.url }}" class="post-detail-img" alt="Post image">
     {% endif %}
   <div style="display: flex; gap: 12px; margin-bottom: 1rem; align-items: center;">
-  <a href="{% url 'forum:post_list' %}" class="btn btn-secondary post-action-btn">Back to list</a>
+  <a href="{{ request.GET.next|default:default_url }}" class="btn btn-secondary post-action-btn">Back</a>
       {% if user.is_authenticated and user == post.author %}
         <form action="{% url 'forum:post_delete' post.pk %}" method="post" style="display:inline; margin: 0;">
           {% csrf_token %}

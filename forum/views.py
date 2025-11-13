@@ -17,7 +17,7 @@ def post_delete(request, pk):
 
 
 def post_list(request):
-    posts = Post.objects.select_related('author').all()
+    posts = Post.objects.filter(tag='general').order_by('-created_at')
     return render(request, 'forum/post_list.html', {'posts': posts})
 
 
@@ -38,3 +38,7 @@ def post_create(request):
     else:
         form = PostForm()
     return render(request, 'forum/post_create.html', {'form': form})
+
+def food_list(request):
+    posts = Post.objects.filter(tag='food').order_by('-created_at')
+    return render(request, 'forum/food_list.html', {'posts': posts})
