@@ -10,6 +10,7 @@ def forum_image_upload_to(instance, filename):
 class Post(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='forum_posts')
     image = models.ImageField(upload_to=forum_image_upload_to)
+    title = models.CharField(max_length=200, default="Untitled")
     caption = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
