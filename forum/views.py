@@ -2,8 +2,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
-from .models import Post
-from .forms import PostForm
+from .models import Post, Comment
+from .forms import PostForm, CommentForm
 
 @login_required
 def post_delete(request, pk):
@@ -23,7 +23,25 @@ def post_list(request):
 
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
-    return render(request, 'forum/post_detail.html', {'post': post})
+    comments = post.comments.filter(parent__isnull=True)
+
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            parent_id = request.POST.get('parent_id')
+            parent_comment = Comment.objects.get(id=parent_id) if parent_id else None
+            Comment.objects.create(
+                post=post,
+                author=request.user,
+                content=form.cleaned_data['content'],
+                parent=parent_comment
+            )
+            return redirect('forum:post_detail', pk=post.pk)
+    else:
+        form = CommentForm()
+
+    return render(request, 'forum/post_detail.html', { 'post': post , 'comments': comments , 'form': form })
+
 
 
 @login_required

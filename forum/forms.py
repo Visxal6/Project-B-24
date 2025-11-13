@@ -11,3 +11,6 @@ class PostForm(forms.ModelForm):
             'caption': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Enter caption'}),
             'tag': forms.Select(attrs={'class': 'form-control'}),
         }
+
+class CommentForm(forms.Form):
+    content = forms.CharField(widget=forms.Textarea(attrs={'rows': 2, 'cols': 50}))

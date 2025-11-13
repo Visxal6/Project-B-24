@@ -1,0 +1,22 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block content %}
+<div style="margin-left: {{ comment.level }}em; margin-bottom: 1em; border-left: 1px solid #ccc; padding-left: 0.5em;">
+    <p><strong>{{ comment.author }}</strong>: {{ comment.content }}</p>
+
+    {% if user.is_authenticated %}
+        <!-- Reply form -->
+        <form method="post" style="margin-top: 0.5em;">
+            {% csrf_token %}
+            {{ form.content }}
+            <input type="hidden" name="parent_id" value="{{ comment.id }}">
+            <button type="submit">Reply</button>
+        </form>
+    {% endif %}
+
+    {% for reply in comment.replies.all %}
+        {% include 'forum/comment.html' with comment=reply %}
+    {% endfor %}
+</div>
+{% endblock %}
