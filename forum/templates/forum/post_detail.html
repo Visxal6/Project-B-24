@@ -7,15 +7,15 @@
 {% endblock %}
 {% block content %}
   <div class="card">
-    {% if post.image %}
-      <img src="{{ post.image.url }}" class="post-detail-img" alt="Post image">
-    {% endif %}
     <div class="card-body">
       <h3 class="card-title">{{ post.title }}</h3>
       <h5 class="card-user">{{ post.author.username }}</h5>
+      <p class="card-timestamp">Posted {{ post.created_at }}</p>
       <p class="card-text">{{ post.caption }}</p>
-      <p class="text-muted">Posted {{ post.created_at }}</p>
     </div>
+    {% if post.image %}
+      <img src="{{ post.image.url }}" class="post-detail-img" alt="Post image">
+    {% endif %}
   <div style="display: flex; gap: 12px; margin-bottom: 1rem; align-items: center;">
   <a href="{% url 'forum:post_list' %}" class="btn btn-secondary post-action-btn">Back to list</a>
       {% if user.is_authenticated and user == post.author %}

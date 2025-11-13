@@ -16,8 +16,7 @@
     margin-bottom: 24px;
     background: #fff;
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    flex-direction: row;
     max-width: 350px;
 }
 
@@ -29,6 +28,15 @@
 }
 
 .forum-card-body {
-    width: 100%;
-    text-align: center;
+    width: 350px;
+    text-align: left;
+    padding-left: 10px;
+}
+
+.form-card-title {
+    color: black;
+}
+
+.forum-card-user {
+    color: rgb(86, 86, 86);
 }

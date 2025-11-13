@@ -8,3 +8,29 @@
     margin: 0 auto 16px auto;
     border-radius: 8px;
 }
+
+.card-body {
+}
+
+.card-title {
+    font-size: 40px;
+    padding-bottom: 20px;
+}
+
+.card-user {
+    font-size: 20px;
+    padding-bottom: 5px;
+}
+
+.card-card-timestamp {
+    padding-bottom: 20px;
+}
+
+.card-text {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.post-detail-img {
+    padding-bottom: 20px;
+}
