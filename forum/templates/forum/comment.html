@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="comment-container" style="container: {{ comment.level }}em; margin-bottom: 1em; border-left: 1px solid #ccc; padding-left: 0.5em;">
+<div class="comment-container" style="container: {{ comment.level }}em; margin-bottom: 1em; border-left: 1px solid #ccc; padding-left: 2em;">
     {% if not comment.is_deleted %}
     
     <div class="comment-body">
@@ -32,8 +32,8 @@
                 <input type="hidden" name="parent_id" value="{{ comment.id }}">
                    
                 <div class="btn-container">
-                    <button class="btn-small" type="submit">Submit Reply</button>
-                    <button class="btn-small" type="button" onclick="toggleReplyForm({{ comment.id }})">Cancel</button>
+                    <button class="btn" type="submit" style="margin-left: 10px;">Submit Reply</button>
+                    <button class="btn" type="button" onclick="toggleReplyForm({{ comment.id }})">Cancel</button>
                 </div>
     
             </form>

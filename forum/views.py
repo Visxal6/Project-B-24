@@ -69,13 +69,14 @@ def cio_list(request):
     posts = Post.objects.filter(tag='cio_leaders').order_by('-created_at')
     return render(request, 'forum/cio_list.html', {'posts': posts})
 
+@login_required
 def comment_delete(request, pk):
     comment = get_object_or_404(Comment, pk=pk)
 
     if comment.author != request.user:
         return HttpResponseForbidden("You are not allowed to delete this post.")
     
-    comment.is_deleted = True
-    comment.save()
+    if request.method == 'POST':
+        comment.delete()
     
     return redirect('forum:post_detail', pk=comment.post.pk)
