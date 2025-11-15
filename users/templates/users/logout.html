@@ -5,22 +5,21 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="{% static 'users/styles/logout.css' %}">
-  <title>Logout</title>
-</head>
+{% block styles %}
+<link rel="stylesheet" href="{% static 'users/styles/logout.css' %}">
+{% endblock %}
 
-<body>
-  <h1>You have been successful logout.</h1>
-  <div>
-    <a href="{% url 'login' %}">Login</a>
+{% block title %}Logout{% endblock %}
+
+{% block content %}
+
+  <div class="logout-container">
+    <h1 class="logout-message">You have been successful logout.</h1>
+    <div>
+      <a class="button" id="login-button" href="{% url 'login' %}"> {# or 'account_login' (allauth) #}
+          <span>Login</span>
+        </a>
+    </div>
   </div>
-  <div>
-    <a href="{% url 'app-home' %}">Go back</a>
-  </div>
 
-</body>
-
-</html>
+{% endblock %}
