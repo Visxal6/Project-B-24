@@ -62,7 +62,8 @@ INSTALLED_APPS = [
     'storages',  # Required for S3
 ]
 
-AWS_S3_CUSTOM_DOMAIN = f'{os.environ["AWS_STORAGE_BUCKET_NAME"]}.s3.amazonaws.com' if os.environ.get('AWS_STORAGE_BUCKET_NAME') else None
+AWS_S3_CUSTOM_DOMAIN = f'{os.environ["AWS_STORAGE_BUCKET_NAME"]}.s3.amazonaws.com' if os.environ.get(
+    'AWS_STORAGE_BUCKET_NAME') else None
 AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
 }
@@ -79,7 +80,6 @@ AWS_QUERYSTRING_AUTH = False
 # Use a dedicated MediaStorage class to keep media files under a 'media/' prefix
 # Static files use WhiteNoise in DEBUG for local dev and S3 in production.
 DEFAULT_FILE_STORAGE = 'main.storages.MediaStorage'
-
 
 
 SOCIALACCOUNT_LOGIN_ON_GET = True
@@ -190,7 +190,7 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-LOGIN_REDIRECT_URL = 'app-home'
+LOGIN_REDIRECT_URL = 'post_login_redirect'
 LOGIN_URL = 'login'
 
 LOGOUT_REDIRECT_URL = 'logout'
