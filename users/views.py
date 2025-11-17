@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .forms import UserRegisterForm, UserUpdateForm
+from .forms import UserRegisterForm, UserUpdateForm, UserProfileForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 
@@ -20,20 +20,32 @@ def register(request):
         return render(request, 'users/register.html', {'form': form})
 
 
+
 @login_required
 def profile(request):
+    user = request.user
+    profile = user.userprofile
+
     if request.method == 'POST':
-        form = UserUpdateForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Your profile has been updated successfully!')
+        user_form = UserUpdateForm(request.POST, instance=user)
+        profile_form = UserProfileForm(request.POST, instance=profile)
+
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(request, "Your profile has been updated!")
             return redirect('profile')
         else:
-            messages.error(request, 'Please correct the errors below.')
+            messages.error(request, "Please fix the errors below.")
     else:
-        form = UserUpdateForm(instance=request.user)
+        user_form = UserUpdateForm(instance=user)
+        profile_form = UserProfileForm(instance=profile)
 
-    return render(request, 'users/profile.html', {'form': form})
+    return render(
+        request,
+        'users/profile.html',
+        {'form': user_form, 'profile_form': profile_form}
+    )
 
 
 def dashboard(request):

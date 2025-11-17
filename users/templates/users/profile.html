@@ -13,13 +13,16 @@
     }
 
     .page-header {
-        width: 100vw !important;
-        margin-left: calc(-50vw + 50%);
+        position: relative;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+        width: 100vw;
         padding: 40px 0;
         background: linear-gradient(to right, #4caf50, #66bb6a);
         color: white;
         text-align: center;
-        box-sizing: border-box;
     }
 
     .page-header h1 {
@@ -141,42 +144,43 @@
 <div class="content-wrapper">
 
     {% if messages %}
-    <div class="messages">
-        {% for message in messages %}
+        <div class="messages">
+            {% for message in messages %}
             <div class="message-item">{{ message }}</div>
-        {% endfor %}
-    </div>
+            {% endfor %}
+        </div>
     {% endif %}
 
-    <!-- User Info Section -->
     <div class="section">
-        <h2>Basic Information</h2>
+        <h2>Your Profile Information</h2>
 
         <form method="POST">
             {% csrf_token %}
-            {{ form.non_field_errors }}
 
-            {% for field in form %}
-                <div>
-                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                    {{ field }}
-                    {% if field.errors %}
-                        <div class="error-text">{{ field.errors|join:", " }}</div>
-                    {% endif %}
-                </div>
+            {{ user_form.non_field_errors }}
+            {{ profile_form.non_field_errors }}
+
+            <!-- Render UserUpdateForm fields -->
+            {% for field in user_form %}
+            <div>
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <div style="color:red; font-size:13px;">{{ field.errors|join:", " }}</div>
+                {% endif %}
+            </div>
             {% endfor %}
 
-            <!-- Bio -->
-            <div class="full-width">
-                <label for="bio">Short Bio</label>
-                <textarea name="bio" placeholder="Tell us a little about yourself...">{{ bio }}</textarea>
+            <!-- Render UserProfileForm fields -->
+            {% for field in profile_form %}
+            <div class="{% if field.name == 'bio' or field.name == 'sustainability_interests' %}full-row{% endif %}">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <div style="color:red; font-size:13px;">{{ field.errors|join:", " }}</div>
+                {% endif %}
             </div>
-
-            <!-- Sustainability Interests -->
-            <div class="full-width">
-                <label for="interests">Sustainability Interests</label>
-                <textarea name="interests" placeholder="Recycling, clean energy, reducing waste...">{{ interests }}</textarea>
-            </div>
+            {% endfor %}
 
             <div class="submit-container">
                 <button type="submit" class="submit-btn">Save Changes</button>
