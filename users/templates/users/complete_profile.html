@@ -1,0 +1,60 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'users/styles/multistep-form.css' %}">
+{% endblock %}
+
+{% block content %}
+<section id="complete-profile">
+  <div class="wizard-card">
+    <h2>Complete your profile</h2>
+
+    <form method="post" class="form-wizard">
+      {% csrf_token %}
+
+      <div class="steps-container">
+        <div class="step current" data-step="0">
+          <h3>I'm a...</h3>
+          <div class="choice-group single-choice">
+            <input type="radio" id="role-student" name="role" value="student" hidden required>
+            <label for="role-student" class="choice-btn">Student</label>
+
+            <input type="radio" id="role-cio" name="role" value="cio" hidden>
+            <label for="role-cio" class="choice-btn">CIO</label>
+          </div>
+        </div>
+
+        <div class="step" data-step="1">
+          <h3>My interests</h3>
+          <p class="help-text">Pick as many as you like.</p>
+
+          <div class="choice-group multi-choice">
+            <input type="checkbox" id="interest-sports" name="interests" value="sports" hidden>
+            <label for="interest-sports" class="choice-btn">Sports</label>
+
+            <input type="checkbox" id="interest-recycling" name="interests" value="recycling" hidden>
+            <label for="interest-recycling" class="choice-btn">Recycling</label>
+
+            <input type="checkbox" id="interest-food" name="interests" value="food" hidden>
+            <label for="interest-food" class="choice-btn">Food</label>
+
+            <input type="checkbox" id="interest-music" name="interests" value="music" hidden>
+            <label for="interest-music" class="choice-btn">Music</label>
+
+            <!-- add more interest -->
+          </div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button type="button" class="prev-btn" hidden>Back</button>
+        <button type="button" class="next-btn">Next</button>
+        <button type="submit" class="submit-btn" hidden>Finish</button>
+      </div>
+    </form>
+  </div>
+
+  <script src="{% static 'users/scripts/multistep-form.js' %}"></script>
+</section>
+{% endblock %}

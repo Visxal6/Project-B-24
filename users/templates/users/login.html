@@ -2,7 +2,7 @@
 {% load static %}
 {% load socialaccount %}
 
-{% block title %}Login | CS3240 Project{% endblock %}
+{% block title %}Login{% endblock %}
 
 {% block styles %}
 <link rel="stylesheet" href="{% static 'users/styles/login.css' %}">
@@ -34,7 +34,8 @@
     <div class="oauth">
       <small>
         <span>Google login?</span>
-        <a href="{% provider_login_url 'google' process='login' next='/' %}">
+        {% url 'post_login_redirect' as next_url %}
+        <a href="{% provider_login_url 'google' process='login' next=next_url %}">
           Sign in with Google
         </a>
       </small>
