@@ -264,6 +264,13 @@
   object-position: center;
 }
 
+.sidebar-pfp {
+  width: 35px;
+  height: 33px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
 /* ===== Mobile ===== */
 @media (max-width: 768px) {
   #profile-button {

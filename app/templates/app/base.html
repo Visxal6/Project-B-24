@@ -59,8 +59,20 @@
           <li>
             <a href="{% url 'profile' %}"
               class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
-              <img src="{% static 'app/assets/icons/profile.svg' %}" alt="Profile icon">
-              <span>Profile</span>
+              
+              {% if request.user.profile_picture and request.user.profile_picture.image and request.user.profile_picture.image.name %}
+              <img src="{{ request.user.profile_picture.image.url }}" alt="Profile picture" class="sidebar-pfp">
+              {% else %}
+                <img src="{% static 'app/assets/icons/profile.svg' %}" alt="Profile icon">
+              {% endif %}
+
+              <span>
+                {% if request.user.first_name %}
+                  {{ request.user.first_name }}
+                {% else %}
+                  Profile
+                {% endif %}
+              </span>
             </a>
           </li>
         </ul>
