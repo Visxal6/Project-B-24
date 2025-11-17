@@ -28,5 +28,9 @@ class Profile(models.Model):
 
     is_completed = models.BooleanField(default=False)
 
+    @property
+    def is_leader(self):
+        return self.role == "cio"
+
     def __str__(self):
         return f"{self.user.username} profile"

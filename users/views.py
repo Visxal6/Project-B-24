@@ -114,10 +114,6 @@ def post_login_redirect(request):
 
     return redirect('app-home')
 
-@property
-def is_leader(self):
-    return self.role == "cio"
-
 @login_required
 def profile_view(request, username):
     # Get the User and Profile being viewed

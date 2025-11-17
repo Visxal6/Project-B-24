@@ -141,8 +141,8 @@
             <li><a href="{% url 'forum:post_list' %}">General</a></li>
             <li><a href="{% url 'forum:food_list' %}">Food</a></li>
             <li><a href="{% url 'forum:leaderboard_list' %}">Leaderboard</a></li>
-            {% if user.is_leader %}
-              <li><a href="{% url 'forum:cio_list' %}">CIO Leaders</a></li>
+            {% if user.profile.is_leader %}
+                <li><a href="{% url 'forum:cio_list' %}">CIO Leaders</a></li>
             {% endif %}
           </div>
         </ul>
