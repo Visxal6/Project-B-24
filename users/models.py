@@ -13,32 +13,20 @@ class Interest(models.Model):
 
 class Profile(models.Model):
     ROLE_CHOICES = [
-        ('student', 'Student'),
-        ('cio', 'CIO'),
-        ('other', 'Other'),
+        ("student", "Student"),
+        ("cio", "CIO"),
+        ("other", "Other"),
     ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, blank=True)
-    is_completed = models.BooleanField(default=False)
+    bio = models.TextField(blank=True, null=True)
 
     interests = models.ManyToManyField(
-        Interest, blank=True, related_name="profiles")
+        Interest, blank=True, related_name="profiles"
+    )
+
+    is_completed = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.user.username} profile"
-
-
-@receiver(post_save, sender=User)
-def create_profile_for_new_user(sender, instance, created, **kwargs):
-    if created:
-        Profile.objects.create(user=instance)
-
-class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-
-    bio = models.TextField(blank=True, null=True)
-    sustainability_interests = models.TextField(blank=True, null=True)
-
-    def __str__(self):
-        return f"{self.user.username}'s profile"

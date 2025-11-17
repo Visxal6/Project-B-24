@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import Profile
-from .models import UserProfile
+
 
 class UserRegisterForm(UserCreationForm):
     first_name = forms.CharField(max_length=150, required=True)
@@ -27,14 +27,10 @@ class UserUpdateForm(forms.ModelForm):
         fields = ["first_name", "last_name", "email", "username"]
 
 
-class ProfileCompleteForm(forms.ModelForm):
+class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ["role", "interests"]
+        fields = ["role", "bio", "interests"]
         widgets = {
             "interests": forms.CheckboxSelectMultiple(),
         }
-class UserProfileForm(forms.ModelForm):
-    class Meta:
-        model = UserProfile
-        fields = ["bio", "sustainability_interests"]
