@@ -33,3 +33,12 @@ class Profile(models.Model):
 def create_profile_for_new_user(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    bio = models.TextField(blank=True, null=True)
+    sustainability_interests = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.user.username}'s profile"

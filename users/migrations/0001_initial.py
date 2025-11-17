@@ -20,6 +20,11 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('role', models.CharField(blank=True, choices=[('student', 'Student'), ('cio', 'CIO'), ('other', 'Other')], max_length=20)),
                 ('is_completed', models.BooleanField(default=False)),
+            name='UserProfile',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('bio', models.TextField(blank=True, null=True)),
+                ('sustainability_interests', models.TextField(blank=True, null=True)),
                 ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
