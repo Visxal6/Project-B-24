@@ -139,7 +139,10 @@
 </div> -->
 
 <div class="content-wrapper">
-
+    <div class="page-header">
+        <h1>{{ user.first_name }} {{ user.last_name }}</h1>
+        <div class="page-sub">@{{ user.username }}</div>
+    </div>
     {% if messages %}
     <div class="messages">
         {% for message in messages %}
