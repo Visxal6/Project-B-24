@@ -62,25 +62,6 @@ INSTALLED_APPS = [
     'storages',  # Required for S3
 ]
 
-AWS_S3_CUSTOM_DOMAIN = f'{os.environ["AWS_STORAGE_BUCKET_NAME"]}.s3.amazonaws.com' if os.environ.get(
-    'AWS_STORAGE_BUCKET_NAME') else None
-AWS_S3_OBJECT_PARAMETERS = {
-    'CacheControl': 'max-age=86400',
-}
-# Locations
-AWS_LOCATION = os.environ.get('AWS_LOCATION', 'static')
-AWS_MEDIA_LOCATION = os.environ.get('AWS_MEDIA_LOCATION', 'media')
-
-# S3 settings
-AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME')
-AWS_DEFAULT_ACL = None
-AWS_QUERYSTRING_AUTH = False
-
-# Storage backends
-# Use a dedicated MediaStorage class to keep media files under a 'media/' prefix
-# Static files use WhiteNoise in DEBUG for local dev and S3 in production.
-DEFAULT_FILE_STORAGE = 'main.storages.MediaStorage'
-
 
 SOCIALACCOUNT_LOGIN_ON_GET = True
 

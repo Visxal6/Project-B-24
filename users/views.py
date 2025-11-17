@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .models import Profile, Interest
 from .forms import UserRegisterForm, UserUpdateForm
+from .models import Profile, ProfilePicture
 
 
 def register(request):
@@ -63,6 +64,34 @@ def profile(request):
             'form': form,
             'bio': profile.bio,
             'interests': interests_string,
+        },
+    )
+
+
+@login_required
+def profile_view(request):
+    picture, _ = ProfilePicture.objects.get_or_create(user=request.user)
+
+    profile = Profile.objects.get(user=request.user)
+
+    if request.method == "POST":
+        if "image" in request.FILES:
+            picture.image = request.FILES["image"]
+            picture.save()
+            messages.success(request, "Profile picture updated!")
+            return redirect("profile-view")
+
+    form = UserUpdateForm(instance=request.user)
+    interest_list = profile.interests.all()
+
+    return render(
+        request,
+        "users/profile-view.html",
+        {
+            "form": form,
+            "picture": picture,
+            "bio": profile.bio,
+            "interests": interest_list,
         },
     )
 
