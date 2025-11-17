@@ -18,7 +18,15 @@
     <div class="card">
         <div class="card-body">
         <h3 class="card-title">{{ post.title }}</h3>
-        <h5 class="card-user">{{ post.author.username }}</h5>
+        <h5 class="card-user">
+          {% if request.user == post.author %}
+              {{ post.author.username }}
+          {% else %}
+              <a href="{% url 'users:profile' username=post.author.username %}">
+                  {{ post.author.username }}
+              </a>
+          {% endif %}
+        </h5>
         <p class="card-timestamp">Posted {{ post.created_at }}</p>
         <p class="card-text">{{ post.caption }}</p>
       </div>

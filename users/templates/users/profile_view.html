@@ -1,0 +1,190 @@
+{% extends 'app/base.html' %}
+
+{% block title %}Profile | CS3240 Project{% endblock %}
+
+{% block content %}
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f7f7f7;
+        margin: 0;
+        padding: 0;
+    }
+
+    main {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+    }
+
+    .page-header {
+        margin-top: 60px;
+        width: 100%;
+        padding: 20px 0;
+        background: linear-gradient(to right, #4caf50, #66bb6a);
+        color: white;
+        text-align: center;
+    }
+
+    .page-header h1 {
+        margin: 0;
+        font-size: 32px;
+        font-weight: bold;
+    }
+
+
+    .page-sub {
+        font-size: 16px;
+        opacity: 0.9;
+        margin-top: 5px;
+    }
+
+    .content-wrapper {
+        clear: both;
+        width: 90%;
+        max-width: 1100px;
+        margin: 40px auto;
+    }
+
+    .section {
+        background: white;
+        padding: 30px;
+        margin-bottom: 30px;
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+    }
+
+    .section h2 {
+        margin-top: 0;
+        font-size: 22px;
+        color: #333;
+        padding-bottom: 10px;
+    }
+
+    form {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px 30px;
+    }
+
+    .full-width {
+        grid-column: 1 / span 2;
+    }
+
+    label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        display: block;
+        color: #444;
+    }
+
+    input,
+    textarea {
+        width: 100%;
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        background: #fafafa;
+        font-size: 14px;
+    }
+
+    textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    input:focus,
+    textarea:focus {
+        outline: none;
+        border-color: #4CAF50;
+    }
+
+    .submit-container {
+        grid-column: 1 / span 2;
+        text-align: right;
+        margin-top: 10px;
+    }
+
+    .submit-btn {
+        background: #4CAF50;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: 0.2s ease;
+    }
+
+    .submit-btn:hover {
+        background: #43a047;
+    }
+
+    .messages {
+        margin-bottom: 20px;
+    }
+
+    .message-item {
+        padding: 12px 15px;
+        background: #e8f5e9;
+        border-left: 4px solid #4caf50;
+        margin-bottom: 10px;
+        border-radius: 4px;
+        color: #2e7d32;
+    }
+
+    .footer-note {
+        text-align: center;
+        margin-top: 30px;
+        color: #777;
+        font-size: 14px;
+    }
+
+    h3 {
+        color: #333;
+        padding-bottom: 5px;
+        padding-top: 5px;
+    }
+</style>
+
+
+<!-- <div class="page-header">
+    <h1>{{ user.first_name }} {{ user.last_name }}</h1>
+    <div class="page-sub">@{{ user.username }}</div>
+</div> -->
+
+<div class="content-wrapper">
+    <div class="page-header">
+        <h1>{{ user.first_name }} {{ user.last_name }}</h1>
+        <div class="page-sub">@{{ user.username }}</div>
+    </div>
+
+    <!-- User Info Section -->
+    <div class="section">
+        <h2>Basic Information</h2>
+
+        <div class="full-width">
+            <h3>Bio</h3>
+            <p>{{ profile.bio }}</p>
+        </div>
+
+        <div class="full-width">
+            <h3>Sustainability Interests</h3>
+            {% for interest in profile.interests.all %}
+                {{ interest.name }}{% if not forloop.last %}, {% endif %}
+            {% empty %}
+                No interests listed.
+            {% endfor %}
+        </div>
+
+    </div>
+
+    <div class="footer-note">
+        Member since {{ user.date_joined|date:"F j, Y" }}
+    </div>
+
+</div>
+
+{% endblock %}

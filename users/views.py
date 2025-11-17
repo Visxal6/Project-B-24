@@ -1,9 +1,9 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .models import Profile, Interest
-from .forms import UserRegisterForm, UserUpdateForm
+from .forms import UserRegisterForm, UserUpdateForm, ProfileForm
 
 
 def register(request):
@@ -113,3 +113,21 @@ def post_login_redirect(request):
         return redirect('complete_profile')
 
     return redirect('app-home')
+
+@property
+def is_leader(self):
+    return self.role == "cio"
+
+@login_required
+def profile_view(request, username):
+    # Get the User and Profile being viewed
+    user = get_object_or_404(User, username=username)
+    profile = get_object_or_404(Profile, user=user)
+
+    template_name = "users/profile_view.html"
+    context = {
+            "user": user,
+            "profile": profile,
+        }
+
+    return render(request, template_name, context)
