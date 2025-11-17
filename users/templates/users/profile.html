@@ -46,7 +46,7 @@
         padding: 30px;
         margin-bottom: 30px;
         border-radius: 10px;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
     }
 
     .section h2 {
@@ -72,7 +72,8 @@
         color: #444;
     }
 
-    input, textarea {
+    input,
+    textarea {
         width: 100%;
         padding: 10px;
         border-radius: 6px;
@@ -86,7 +87,8 @@
         resize: vertical;
     }
 
-    input:focus, textarea:focus {
+    input:focus,
+    textarea:focus {
         outline: none;
         border-color: #4CAF50;
     }
@@ -147,7 +149,7 @@
     {% if messages %}
     <div class="messages">
         {% for message in messages %}
-            <div class="message-item">{{ message }}</div>
+        <div class="message-item">{{ message }}</div>
         {% endfor %}
     </div>
     {% endif %}
@@ -161,13 +163,13 @@
             {{ form.non_field_errors }}
 
             {% for field in form %}
-                <div>
-                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                    {{ field }}
-                    {% if field.errors %}
-                        <div class="error-text">{{ field.errors|join:", " }}</div>
-                    {% endif %}
-                </div>
+            <div>
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <div class="error-text">{{ field.errors|join:", " }}</div>
+                {% endif %}
+            </div>
             {% endfor %}
 
             <!-- Bio -->
@@ -179,7 +181,8 @@
             <!-- Sustainability Interests -->
             <div class="full-width">
                 <label for="interests">Sustainability Interests</label>
-                <textarea name="interests" placeholder="Recycling, clean energy, reducing waste...">{{ interests }}</textarea>
+                <textarea name="interests"
+                    placeholder="Recycling, clean energy, reducing waste...">{{ interests }}</textarea>
             </div>
 
             <div class="submit-container">
