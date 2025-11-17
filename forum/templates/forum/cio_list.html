@@ -19,7 +19,15 @@
     <div class="forum-card">
       <div class="forum-card-body">
         <h3 class="form-card-title">{{ post.title }}</h3>
-        <h5 class="forum-card-user">{{ post.author.username }}</h5>
+        <h5 class="forum-card-user">
+          {% if request.user == post.author %}
+              {{ post.author.username }}
+          {% else %}
+              <a href="{% url 'users:profile' username=post.author.username %}">
+                  {{ post.author.username }}
+              </a>
+          {% endif %}
+        </h5>
         <a href="{% url 'forum:post_detail' post.id %}?next={{ request.path }}">View</a>
       </div>
       <div class="forum-image-container">

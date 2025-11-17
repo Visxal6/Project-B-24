@@ -15,12 +15,6 @@ def post_delete(request, pk):
         return redirect('forum:post_list')
     return render(request, 'forum/post_confirm_delete.html', {'post': post})
 
-
-def post_list(request):
-    posts = Post.objects.filter(tag='general').order_by('-created_at')
-    return render(request, 'forum/post_list.html', {'posts': posts})
-
-
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
     comments = post.comments.filter(parent__isnull=True)
@@ -56,6 +50,10 @@ def post_create(request):
     else:
         form = PostForm()
     return render(request, 'forum/post_create.html', {'form': form})
+
+def post_list(request):
+    posts = Post.objects.filter(tag='general').order_by('-created_at')
+    return render(request, 'forum/post_list.html', {'posts': posts})
 
 def food_list(request):
     posts = Post.objects.filter(tag='food').order_by('-created_at')

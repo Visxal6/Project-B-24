@@ -10,7 +10,14 @@
     {% if not comment.is_deleted %}
     
     <div class="comment-body">
-        <p><strong>{{ comment.author }}</strong></p>
+        <p><strong>
+            {% if request.user == comment.author %}
+                {{ comment.author }}
+            {% else %}
+                <a href="{% url 'users:profile' username=comment.author.username %}">
+                    {{ comment.author }}
+                </a>
+            {% endif %}</strong></p>
         <p class="comment-timestamp">{{ comment.created_at }}</p>
         <p>{{ comment.content }}</p>
     </div>
