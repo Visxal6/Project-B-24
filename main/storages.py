@@ -9,7 +9,6 @@ logger = logging.getLogger(__name__)
 class StaticStorage(S3Boto3Storage):
     """S3 storage for static files."""
     location = getattr(settings, 'AWS_LOCATION', 'static')
-    default_acl = None
     custom_domain = getattr(settings, 'AWS_S3_CUSTOM_DOMAIN', None)
 
 
@@ -17,7 +16,6 @@ class MediaStorage(S3Boto3Storage):
     """S3 storage for user uploaded media files."""
     location = getattr(settings, 'AWS_MEDIA_LOCATION', 'media')
     file_overwrite = False
-    default_acl = 'public-read'
     custom_domain = getattr(settings, 'AWS_S3_CUSTOM_DOMAIN', None)
     
     def __init__(self, *args, **kwargs):

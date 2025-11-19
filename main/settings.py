@@ -73,7 +73,6 @@ AWS_MEDIA_LOCATION = os.environ.get('AWS_MEDIA_LOCATION', 'media')
 
 # S3 settings
 AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME')
-AWS_DEFAULT_ACL = None
 AWS_QUERYSTRING_AUTH = False
 
 # Storage backends
@@ -224,7 +223,6 @@ AWS_S3_REGION_NAME = os.environ.get("AWS_S3_REGION_NAME", "us-east-1")
 
 # Disable query string auth for media files so they're publicly accessible
 AWS_QUERYSTRING_AUTH = False
-AWS_DEFAULT_ACL = 'public-read'
 AWS_S3_FILE_OVERWRITE = False
 AWS_S3_SIGNATURE_VERSION = "s3v4"
 AWS_QUERYSTRING_EXPIRE = 86400
