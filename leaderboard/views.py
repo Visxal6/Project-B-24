@@ -1,3 +1,88 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.conf import settings
+from django.utils import timezone
+import os, json
 
-# Create your views here.
+from .models import Task, Points
+
+
+@login_required
+def task_list(request):
+    """Show the daily task templates from `daily_tasks.json`. Users cannot create new templates.
+
+    Users can mark templates as completed; completed tasks for today are stored in Task objects.
+    """
+    user = request.user
+
+    # load templates from JSON file
+    tasks_file = os.path.join(settings.BASE_DIR, "leaderboard", "daily_tasks.json")
+    try:
+        with open(tasks_file, "r", encoding="utf-8") as f:
+            templates = json.load(f)
+    except Exception:
+        templates = []
+
+    today = timezone.localdate()
+
+    # tasks completed by the user today
+    completed_qs = Task.objects.filter(user=user, completed=True, created_at__date=today)
+    completed_titles = set(completed_qs.values_list("title", flat=True))
+
+    tasks_todo = []
+    tasks_done = []
+    for idx, tpl in enumerate(templates):
+        tpl_obj = dict(tpl)
+        tpl_obj["idx"] = idx
+        if tpl_obj.get("title") in completed_titles:
+            tasks_done.append(tpl_obj)
+        else:
+            tasks_todo.append(tpl_obj)
+
+    pts, _ = Points.objects.get_or_create(user=user)
+    return render(request, "leaderboard/task_list.html", {"tasks_todo": tasks_todo, "tasks_done": tasks_done, "points": pts})
+
+
+@login_required
+def task_toggle(request, idx):
+    """Toggle completion for the template at index `idx` for the current user for today.
+
+    If not completed yet, create a completed Task and add points. If already completed today, remove it and subtract points.
+    """
+    # only allow POST to change state
+    if request.method != "POST":
+        return redirect("leaderboard:task_list")
+
+    # load templates
+    tasks_file = os.path.join(settings.BASE_DIR, "leaderboard", "daily_tasks.json")
+    try:
+        with open(tasks_file, "r", encoding="utf-8") as f:
+            templates = json.load(f)
+    except Exception:
+        templates = []
+
+    try:
+        tpl = templates[int(idx)]
+    except Exception:
+        return redirect("leaderboard:task_list")
+
+    user = request.user
+    today = timezone.localdate()
+
+    # find existing completed task for today with same title
+    existing = Task.objects.filter(user=user, title=tpl.get("title"), created_at__date=today, completed=True).first()
+    pts_obj, _ = Points.objects.get_or_create(user=user)
+    if existing:
+        # unmark -> remove and subtract points
+        pts_obj.add(-existing.points)
+        existing.delete()
+    else:
+        # create as completed and award points
+        new = Task.objects.create(user=user, title=tpl.get("title"), content=tpl.get("content", ""), points=int(tpl.get("points", 0)), completed=True)
+        pts_obj.add(new.points)
+
+    return redirect("leaderboard:task_list")
+
+
+def events_list(request):
+    return render(request, "leaderboard/events_list.html")

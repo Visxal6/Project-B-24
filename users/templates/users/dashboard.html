@@ -21,24 +21,24 @@
   <br>
   <div id="dashboard-container">
     <div class="dashboard-widget-container">
-      <div class="dashboard-widget">
+      <a class="dashboard-widget" href="{% url 'leaderboard:task_list' %}">
         <div class="img-container">
           <img src="../../static/users/assets/icons/score.svg" alt="score-icon">
         </div>
-        <span>Score</span>
-      </div>
-      <div class="dashboard-widget">
+        <span style="color: lightgrey;">Score</span>
+      </a>
+      <a class="dashboard-widget" href="{% url 'leaderboard:task_list' %}">
         <div class="img-container">
           <img src="../../static/users/assets/icons/task.svg" alt="task-icon">
         </div>
-        <span>Task</span>
-      </div>
-      <div class="dashboard-widget">
+        <span style="color: lightgrey;">Daily Task</span>
+      </a>
+      <a class="dashboard-widget" href="{% url 'leaderboard:task_list' %}">
         <div class="img-container">
           <img src="../../static/users/assets/icons/events.svg" alt="events-icon">
         </div>
-        <span>Events</span>
-      </div>
+        <span style="color: lightgrey;">Events</span>
+      </a>
     </div>
 
     <div class="leaderboard-container">
