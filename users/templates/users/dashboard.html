@@ -21,7 +21,7 @@
   <br>
   <div id="dashboard-container">
     <div class="dashboard-widget-container">
-      <a class="dashboard-widget" href="{% url 'leaderboard:task_list' %}">
+      <a class="dashboard-widget" href="#">
         <div class="img-container">
           <img src="../../static/users/assets/icons/score.svg" alt="score-icon">
         </div>
@@ -33,7 +33,7 @@
         </div>
         <span style="color: lightgrey;">Daily Task</span>
       </a>
-      <a class="dashboard-widget" href="{% url 'leaderboard:task_list' %}">
+      <a class="dashboard-widget" href="#">
         <div class="img-container">
           <img src="../../static/users/assets/icons/events.svg" alt="events-icon">
         </div>
@@ -54,18 +54,22 @@
           <div class="points">Points</div>
           <div class="user">User</div>
         </div>
-      
-        <div class="row">
-          <div class="rank">1</div>
-          <div class="points">1520</div>
-          <div class="user">Jonathan</div>
-        </div>
-      
-        <div class="row">
-          <div class="rank">2</div>
-          <div class="points">1485</div>
-          <div class="user">Carlos</div>
-        </div>
+
+        {% if leaderboard %}
+          {% for entry in leaderboard %}
+            <div class="row">
+              <div class="rank">{{ entry.rank }}</div>
+              <div class="points">{{ entry.points }}</div>
+              <div class="user">{{ entry.user.username }}</div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="row">
+            <div class="rank">—</div>
+            <div class="points">0</div>
+            <div class="user">No scores yet</div>
+          </div>
+        {% endif %}
       </div>
       
 

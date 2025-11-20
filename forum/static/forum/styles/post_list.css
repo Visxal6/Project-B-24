@@ -40,3 +40,7 @@
 .forum-card-user {
     color: rgb(86, 86, 86);
 }
+
+.forum-image-container {
+    width: 100%;
+}

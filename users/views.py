@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .models import Profile, Interest
+from leaderboard.models import Points
 from .forms import UserRegisterForm, UserUpdateForm, ProfileForm
 
 
@@ -70,8 +71,20 @@ def profile(request):
 def dashboard(request):
     if request.user.is_authenticated:
         messages.success(request, f"Welcome back, {request.user.username}!")
+    # Build leaderboard: top 10 users by points
+    top = []
+    try:
+        qs = Points.objects.select_related('user').order_by('-score')[:10]
+        for idx, p in enumerate(qs, start=1):
+            top.append({
+                'rank': idx,
+                'points': p.score,
+                'user': p.user,
+            })
+    except Exception:
+        top = []
 
-    return render(request, 'users/dashboard.html')
+    return render(request, 'users/dashboard.html', {'leaderboard': top})
 
 
 @login_required
