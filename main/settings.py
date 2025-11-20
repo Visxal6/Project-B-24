@@ -24,6 +24,7 @@ load_dotenv(BASE_DIR / ".env")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
+# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = 'django-insecure-ik_eizr40wc^54lscaa^2zy75nsn2l^=)fbnbi*z=#k$vy6&&a'
@@ -31,6 +32,7 @@ load_dotenv(BASE_DIR / ".env")
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = os.getenv("DJANGO_DEBUG", "false").lower() == "true"
 DEBUG = os.getenv("DJANGO_DEBUG", "false").lower() == "true"
 
 ALLOWED_HOSTS = ['b-24-c9dae14a3216.herokuapp.com', '127.0.0.1', 'localhost']
@@ -59,9 +61,12 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'social',
     'app_test',
+    'leaderboard',
     'storages',  # Required for S3
 ]
 
+AWS_S3_CUSTOM_DOMAIN = f'{os.environ["AWS_STORAGE_BUCKET_NAME"]}.s3.amazonaws.com' if os.environ.get(
+    'AWS_STORAGE_BUCKET_NAME') else None
 AWS_S3_CUSTOM_DOMAIN = f'{os.environ["AWS_STORAGE_BUCKET_NAME"]}.s3.amazonaws.com' if os.environ.get(
     'AWS_STORAGE_BUCKET_NAME') else None
 AWS_S3_OBJECT_PARAMETERS = {
@@ -73,6 +78,7 @@ AWS_MEDIA_LOCATION = os.environ.get('AWS_MEDIA_LOCATION', 'media')
 
 # S3 settings
 AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME')
+AWS_DEFAULT_ACL = None
 AWS_QUERYSTRING_AUTH = False
 
 # Storage backends
@@ -127,21 +133,13 @@ WSGI_APPLICATION = 'main.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-if DEBUG:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
-else:
-    DATABASES = {
-        "default": dj_database_url.config(
-            env="DATABASE_URL",
-            conn_max_age=600,
-            ssl_require=True
-        )
-    }
+DATABASES = {
+    "default": dj_database_url.config(
+        env="DATABASE_URL",
+        conn_max_age=600,
+        ssl_require=True
+    )
+}
 
 
 # Password validation
@@ -183,19 +181,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # In DEBUG use WhiteNoise for static files; in production use S3-backed storage
 if DEBUG:
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-    # Even in DEBUG, media files come from S3 if configured
-    if os.environ.get('AWS_STORAGE_BUCKET_NAME'):
-        MEDIA_URL = f'https://{os.environ.get("AWS_STORAGE_BUCKET_NAME")}.s3.{os.environ.get("AWS_S3_REGION_NAME", "us-east-1")}.amazonaws.com/media/'
-    else:
-        MEDIA_URL = '/media/'
-        MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 else:
     STATICFILES_STORAGE = 'main.storages.StaticStorage'
-    # Media files served from S3 with custom domain
-    if os.environ.get('AWS_STORAGE_BUCKET_NAME'):
-        MEDIA_URL = f'https://{os.environ.get("AWS_STORAGE_BUCKET_NAME")}.s3.{os.environ.get("AWS_S3_REGION_NAME", "us-east-1")}.amazonaws.com/media/'
-    else:
-        MEDIA_URL = '/media/'
 
 
 # Default primary key field type
@@ -209,10 +196,12 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 LOGIN_REDIRECT_URL = 'post_login_redirect'
+LOGIN_REDIRECT_URL = 'post_login_redirect'
 LOGIN_URL = 'login'
 
 LOGOUT_REDIRECT_URL = 'logout'
 
+django_heroku.settings(locals())
 django_heroku.settings(locals())
 
 # AWS Settings
@@ -221,18 +210,18 @@ AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
 AWS_S3_REGION_NAME = os.environ.get("AWS_S3_REGION_NAME", "us-east-1")
 
-# Disable query string auth for media files so they're publicly accessible
-AWS_QUERYSTRING_AUTH = False
+AWS_QUERYSTRING_AUTH = True
+AWS_DEFAULT_ACL = None
 AWS_S3_FILE_OVERWRITE = False
 AWS_S3_SIGNATURE_VERSION = "s3v4"
 AWS_QUERYSTRING_EXPIRE = 86400
 
-# Use S3 for media storage with proper configuration
+# Use S3 for media storage
 STORAGES = {
     "default": {
-        "BACKEND": "main.storages.MediaStorage",
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
     },
     "staticfiles": {
-        "BACKEND": "main.storages.StaticStorage" if not DEBUG else "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
