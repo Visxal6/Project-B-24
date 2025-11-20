@@ -1,16 +1,17 @@
 {% extends 'social/base_chat.html' %}
 {% load static %}
+{% load display_name %}
 
 {% block chat_main %}
 <div class="chat-box">
-  <h3>Chat with {{ other.username }}</h3>
+  <h3>Chat with {{ other|get_display_name }}</h3>
 
   <!-- Messages -->
   <div class="chat-messages" id="chatMessages">
     {% for m in messages %}
     <div class="msg-wrap" data-id="{{ m.id }}">
       <span>
-        {{ m.sender.username }}
+        {{ m.sender|get_display_name }}
         <small>{{ m.created_at }}</small>
       </span>
       <div class="msg">

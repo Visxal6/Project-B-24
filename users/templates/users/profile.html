@@ -143,8 +143,18 @@
 
 <div class="content-wrapper">
     <div class="page-header">
-        <h1>{{ user.first_name }} {{ user.last_name }}</h1>
+        <h1>
+            {% if user.profile.display_name %}
+                {{ user.profile.display_name }}
+            {% elif user.get_full_name %}
+                {{ user.get_full_name }}
+            {% else %}
+                {{ user.username }}
+            {% endif %}
+        </h1>
+        {% if not user.profile.display_name %}
         <div class="page-sub">@{{ user.username }}</div>
+        {% endif %}
     </div>
     {% if messages %}
     <div class="messages">
@@ -171,6 +181,11 @@
                 {% endif %}
             </div>
             {% endfor %}
+
+            <div>
+                <label for="display_name">Display name (optional)</label>
+                <input type="text" name="display_name" id="display_name" value="{{ user.profile.display_name }}" maxlength="150">
+            </div>
 
             <!-- Bio -->
             <div class="full-width">

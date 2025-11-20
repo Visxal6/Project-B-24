@@ -31,6 +31,7 @@ def profile(request):
         form = UserUpdateForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
+            profile.display_name = request.POST.get('display_name', '').strip()
             profile.bio = request.POST.get('bio', '').strip()
             interests_raw = request.POST.get('interests', '')
             interest_names = [
@@ -71,7 +72,6 @@ def profile(request):
 def dashboard(request):
     if request.user.is_authenticated:
         messages.success(request, f"Welcome back, {request.user.username}!")
-    # Build leaderboard: top 10 users by points
     top = []
     try:
         qs = Points.objects.select_related('user').order_by('-score')[:10]
@@ -129,7 +129,6 @@ def post_login_redirect(request):
 
 @login_required
 def profile_view(request, username):
-    # Get the User and Profile being viewed
     user = get_object_or_404(User, username=username)
     profile = get_object_or_404(Profile, user=user)
 

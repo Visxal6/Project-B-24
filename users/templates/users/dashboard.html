@@ -1,5 +1,6 @@
 {% extends 'app/base.html' %}
 {% load static %}
+{% load display_name %}
 
 {% block title %}Dashboard | CS3240 Project{% endblock %}
 
@@ -9,13 +10,9 @@
 
 {% block content %}
 <section id="dashboard">
-  {% if messages %}
-  <div class="messages">
-    {% for message in messages %}
-    <div class="alert {{ message.tags }}">{{ message }}</div>
-    {% endfor %}
+  <div class="dashboard-greeting">
+    <h2>Welcome back, {{ request.user|get_display_name }}!</h2>
   </div>
-  {% endif %}
   
   <br>
   <br>
@@ -60,7 +57,7 @@
             <div class="row">
               <div class="rank">{{ entry.rank }}</div>
               <div class="points">{{ entry.points }}</div>
-              <div class="user">{{ entry.user.username }}</div>
+              <div class="user">{{ entry.user|get_display_name }}</div>
             </div>
           {% endfor %}
         {% else %}
