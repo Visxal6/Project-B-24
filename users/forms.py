@@ -30,7 +30,7 @@ class UserUpdateForm(forms.ModelForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ["role", "bio", "interests"]
+        fields = ["display_name", "role", "bio", "interests"]
         widgets = {
             "interests": forms.CheckboxSelectMultiple(),
         }

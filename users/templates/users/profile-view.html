@@ -8,12 +8,6 @@
 
 {% block content %}
 
-
-<!-- <div class="page-header">
-    <h1>{{ user.first_name }} {{ user.last_name }}</h1>
-    <div class="page-sub">@{{ user.username }}</div>
-</div> -->
-
 <div class="content-wrapper">
   {% if messages %}
   <div class="messages">
@@ -45,39 +39,40 @@
           <div class="page-sub">@{{ user.username }}</div>
         </div>
       </div>
-    
 
-    {% csrf_token %}
 
-    <div class="user-description">
+      {% csrf_token %}
+
+      <div class="user-description">
         <!-- Bio -->
-      <div class="full-width bio">
-        <h2>Bio</h2>
-        <p>{{ bio }}</p>
+        <div class="full-width bio">
+          <h2>Bio</h2>
+          <p>{{ bio }}</p>
+        </div>
+
+        <!-- Sustainability Interests -->
+        <div class="interest-boxes">
+          <h2>Interests</h2>
+          {% for item in interests %}
+          <span class="tag">{{ item.name }}</span>
+          {% empty %}
+          <span class="tag empty">No interests added yet</span>
+          {% endfor %}
+        </div>
       </div>
 
-      <!-- Sustainability Interests -->
-      <div class="interest-boxes">
-        <h2>Interests</h2>
-        {% for item in interests %}
-        <span class="tag">{{ item.name }}</span>
-        {% empty %}
-        <span class="tag empty">No interests added yet</span>
-        {% endfor %}
+      <div class="profile-button">
+        <div class="submit-container">
+          <button type="submit" class="submit-btn button">Save Changes</button>
+        </div>
       </div>
-    </div>
-
-    <div class="profile-button">
-      <div class="submit-container">
-        <button type="submit" class="submit-btn button">Save Changes</button>
-      </div>
-      <div class="edit-container">
-        <a href="{% url 'profile' %}">
-          <button class="edit-btn button">Edit</button>
-        </a>
-      </div>
-    </div>
     </form>
+    <div class="edit-container">
+      <a href="{% url 'profile' %}">
+        <button class="edit-btn button">Edit</button>
+      </a>
+    </div>
+
 
   </div>
 

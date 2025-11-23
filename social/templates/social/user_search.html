@@ -1,5 +1,6 @@
 {% extends 'app/base.html' %}
 {% load static %}
+{% load display_name %}
 
 {% block title %}
   Search Friend
@@ -21,7 +22,7 @@
   <ul class="user-list">
     {% for u in results %}
     <li>
-      <span>{{ u.username }}</span>
+      <span>{{ u|get_display_name }}</span>
       <!-- Request: /social/request/<int:user_id>/ -->
       <form method="post" action="{% url 'social:send_request' u.id %}">{% csrf_token %}
         <button class="button add-friend-button-search">Add Friend</button>

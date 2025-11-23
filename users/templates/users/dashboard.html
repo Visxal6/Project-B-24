@@ -1,5 +1,6 @@
 {% extends 'app/base.html' %}
 {% load static %}
+{% load display_name %}
 
 {% block title %}Dashboard | CS3240 Project{% endblock %}
 
@@ -9,36 +10,32 @@
 
 {% block content %}
 <section id="dashboard">
-  {% if messages %}
-  <div class="messages">
-    {% for message in messages %}
-    <div class="alert {{ message.tags }}">{{ message }}</div>
-    {% endfor %}
+  <div class="dashboard-greeting">
+    <h2>Welcome back, {{ request.user|get_display_name }}!</h2>
   </div>
-  {% endif %}
   
   <br>
   <br>
   <div id="dashboard-container">
     <div class="dashboard-widget-container">
-      <div class="dashboard-widget">
+      <a class="dashboard-widget" href="#">
         <div class="img-container">
           <img src="../../static/users/assets/icons/score.svg" alt="score-icon">
         </div>
-        <span>Score</span>
-      </div>
-      <div class="dashboard-widget">
+        <span style="color: lightgrey;">Score</span>
+      </a>
+      <a class="dashboard-widget" href="{% url 'leaderboard:task_list' %}">
         <div class="img-container">
           <img src="../../static/users/assets/icons/task.svg" alt="task-icon">
         </div>
-        <span>Task</span>
-      </div>
-      <div class="dashboard-widget">
+        <span style="color: lightgrey;">Daily Task</span>
+      </a>
+      <a class="dashboard-widget" href="#">
         <div class="img-container">
           <img src="../../static/users/assets/icons/events.svg" alt="events-icon">
         </div>
-        <span>Events</span>
-      </div>
+        <span style="color: lightgrey;">Events</span>
+      </a>
     </div>
 
     <div class="leaderboard-container">
@@ -54,18 +51,22 @@
           <div class="points">Points</div>
           <div class="user">User</div>
         </div>
-      
-        <div class="row">
-          <div class="rank">1</div>
-          <div class="points">1520</div>
-          <div class="user">Jonathan</div>
-        </div>
-      
-        <div class="row">
-          <div class="rank">2</div>
-          <div class="points">1485</div>
-          <div class="user">Carlos</div>
-        </div>
+
+        {% if leaderboard %}
+          {% for entry in leaderboard %}
+            <div class="row">
+              <div class="rank">{{ entry.rank }}</div>
+              <div class="points">{{ entry.points }}</div>
+              <div class="user">{{ entry.user|get_display_name }}</div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="row">
+            <div class="rank">—</div>
+            <div class="points">0</div>
+            <div class="user">No scores yet</div>
+          </div>
+        {% endif %}
       </div>
       
 

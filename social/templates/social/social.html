@@ -1,5 +1,6 @@
 {% extends 'social/base_chat.html' %}
 {% load static %}
+{% load display_name %}
 
 {% block title %}
   Social
@@ -28,7 +29,7 @@
     <ul>
       {% for f in friends %}
       <li class="friend">
-        <span class="friends-username">{{ f.username }}</span>
+        <span class="friends-username">{{ f|get_display_name }}</span>
         <div class="message-button">
           <a href="{% url 'social:start_chat' f.id %}">
             <img src="{% static 'social/icons/message.svg' %}" alt="message icon">

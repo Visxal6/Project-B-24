@@ -19,6 +19,7 @@ class Profile(models.Model):
     ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    display_name = models.CharField(max_length=150, blank=True, null=True)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, blank=True)
     bio = models.TextField(blank=True, null=True)
 
@@ -28,7 +29,13 @@ class Profile(models.Model):
 
     is_completed = models.BooleanField(default=False)
 
+    @property
+    def is_leader(self):
+        return self.role == "cio"
+
     def __str__(self):
+        if self.display_name:
+            return f"{self.display_name} ({self.user.username})"
         return f"{self.user.username} profile"
 
 

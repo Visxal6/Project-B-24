@@ -41,6 +41,7 @@ urlpatterns = [
     path('post-login/', user_views.post_login_redirect,
          name='post_login_redirect'),
 
+    path("leaderboard/", include("leaderboard.urls")),
 
     # Test
     path("", include("app_test.urls")),

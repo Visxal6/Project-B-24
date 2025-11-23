@@ -1,5 +1,6 @@
 {% extends 'app/base.html' %}
 {% load static %}
+{% load display_name %}
 
 {% block styles %}
   <link rel="stylesheet" href="{% static 'forum/styles/comment.css' %}">
@@ -10,7 +11,14 @@
     {% if not comment.is_deleted %}
     
     <div class="comment-body">
-        <p><strong>{{ comment.author }}</strong></p>
+        <p><strong>
+            {% if request.user == comment.author %}
+                {{ comment.author|get_display_name }}
+            {% else %}
+                <a href="{% url 'users:profile' username=comment.author.username %}">
+                    {{ comment.author|get_display_name }}
+                </a>
+            {% endif %}</strong></p>
         <p class="comment-timestamp">{{ comment.created_at }}</p>
         <p>{{ comment.content }}</p>
     </div>

@@ -24,6 +24,7 @@ load_dotenv(BASE_DIR / ".env")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
+# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = 'django-insecure-ik_eizr40wc^54lscaa^2zy75nsn2l^=)fbnbi*z=#k$vy6&&a'
@@ -59,8 +60,30 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'social',
     'app_test',
+    'leaderboard',
     'storages',  # Required for S3
 ]
+
+AWS_S3_CUSTOM_DOMAIN = f'{os.environ["AWS_STORAGE_BUCKET_NAME"]}.s3.amazonaws.com' if os.environ.get(
+    'AWS_STORAGE_BUCKET_NAME') else None
+AWS_S3_CUSTOM_DOMAIN = f'{os.environ["AWS_STORAGE_BUCKET_NAME"]}.s3.amazonaws.com' if os.environ.get(
+    'AWS_STORAGE_BUCKET_NAME') else None
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
+# Locations
+AWS_LOCATION = os.environ.get('AWS_LOCATION', 'static')
+AWS_MEDIA_LOCATION = os.environ.get('AWS_MEDIA_LOCATION', 'media')
+
+# S3 settings
+AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME')
+AWS_DEFAULT_ACL = None
+AWS_QUERYSTRING_AUTH = False
+
+# Storage backends
+# Use a dedicated MediaStorage class to keep media files under a 'media/' prefix
+# Static files use WhiteNoise in DEBUG for local dev and S3 in production.
+DEFAULT_FILE_STORAGE = 'main.storages.MediaStorage'
 
 
 SOCIALACCOUNT_LOGIN_ON_GET = True
@@ -99,6 +122,9 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'builtins': [
+                'users.templatetags.display_name',
+            ],
         },
     },
 ]
@@ -109,13 +135,21 @@ WSGI_APPLICATION = 'main.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    "default": dj_database_url.config(
-        env="DATABASE_URL",
-        conn_max_age=600,
-        ssl_require=True
-    )
-}
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+else:
+    DATABASES = {
+        "default": dj_database_url.config(
+            env="DATABASE_URL",
+            conn_max_age=600,
+            ssl_require=True
+        )
+    }
 
 
 # Password validation
@@ -171,6 +205,7 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
+LOGIN_REDIRECT_URL = 'post_login_redirect'
 LOGIN_REDIRECT_URL = 'post_login_redirect'
 LOGIN_URL = 'login'
 

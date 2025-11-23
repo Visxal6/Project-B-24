@@ -12,6 +12,13 @@
         padding: 0;
     }
 
+    main {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+    }
+
     .page-header {
         margin-top: 60px;
         width: 100%;
@@ -53,6 +60,7 @@
         margin-top: 0;
         font-size: 22px;
         color: #333;
+        padding-bottom: 10px;
     }
 
     form {
@@ -133,6 +141,12 @@
         color: #777;
         font-size: 14px;
     }
+
+    h3 {
+        color: #333;
+        padding-bottom: 5px;
+        padding-top: 5px;
+    }
 </style>
 
 
@@ -156,55 +170,25 @@
         <div class="page-sub">@{{ user.username }}</div>
         {% endif %}
     </div>
-    {% if messages %}
-    <div class="messages">
-        {% for message in messages %}
-        <div class="message-item">{{ message }}</div>
-        {% endfor %}
-    </div>
-    {% endif %}
 
     <!-- User Info Section -->
     <div class="section">
         <h2>Basic Information</h2>
 
-        <form method="POST">
-            {% csrf_token %}
-            {{ form.non_field_errors }}
+        <div class="full-width">
+            <h3>Bio</h3>
+            <p>{{ profile.bio }}</p>
+        </div>
 
-            {% for field in form %}
-            <div>
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {{ field }}
-                {% if field.errors %}
-                <div class="error-text">{{ field.errors|join:", " }}</div>
-                {% endif %}
-            </div>
+        <div class="full-width">
+            <h3>Sustainability Interests</h3>
+            {% for interest in profile.interests.all %}
+                {{ interest.name }}{% if not forloop.last %}, {% endif %}
+            {% empty %}
+                No interests listed.
             {% endfor %}
+        </div>
 
-            <div>
-                <label for="display_name">Display name (optional)</label>
-                <input type="text" name="display_name" id="display_name" value="{{ user.profile.display_name }}" maxlength="150">
-            </div>
-
-            <!-- Bio -->
-            <div class="full-width">
-                <label for="bio">Short Bio</label>
-                <textarea name="bio" placeholder="Tell us a little about yourself...">{{ bio }}</textarea>
-            </div>
-
-            <!-- Sustainability Interests -->
-            <div class="full-width">
-                <label for="interests">Sustainability Interests</label>
-                <textarea name="interests"
-                    placeholder="Recycling, clean energy, reducing waste...">{{ interests }}</textarea>
-            </div>
-
-            <div class="submit-container">
-                <button type="submit" class="submit-btn">Save Changes</button>
-            </div>
-
-        </form>
     </div>
 
     <div class="footer-note">

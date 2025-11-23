@@ -1,0 +1,22 @@
+[
+  {
+    "title": "Saving Electricity",
+    "content": "Turn off all the lights in your home before leaving. ",
+    "points": 5
+  },
+  {
+    "title": "Saving Water",
+    "content": "Turn off the water while brushing your teeth. ",
+    "points": 5
+  },
+  {
+    "title": "Recycling",
+    "content": "Recycle one item.",
+    "points": 10
+  },
+  {
+    "title": "Composting",
+    "content": "Compost one food item.",
+    "points": 15
+  }
+]

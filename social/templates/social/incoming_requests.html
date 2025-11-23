@@ -1,5 +1,6 @@
 {% extends 'social/base_chat.html' %}
 {% load static %}
+{% load display_name %}
 
 {% block extra_styles %}
 <link rel="stylesheet" href="{% static 'social/styles/request.css' %}">
@@ -24,7 +25,7 @@
       <ul class="request-list">
         {% for r in requests %}
         <li>
-          <span>{{ r.from_user.username }}</span>
+          <span>{{ r.from_user|get_display_name }}</span>
           <div class="request-button-container">
             <!--requests/<int:req_id>/accept/-->
             <form method="post" action="{% url 'social:accept_request' r.id %}">{% csrf_token %}<button

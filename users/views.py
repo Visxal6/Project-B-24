@@ -1,10 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .models import Profile, Interest
-from .forms import UserRegisterForm, UserUpdateForm
-from .models import Profile, ProfilePicture
+from leaderboard.models import Points
+from .forms import UserRegisterForm, UserUpdateForm, ProfileForm
 
 
 def register(request):
@@ -31,6 +31,7 @@ def profile(request):
         form = UserUpdateForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
+            profile.display_name = request.POST.get('display_name', '').strip()
             profile.bio = request.POST.get('bio', '').strip()
             interests_raw = request.POST.get('interests', '')
             interest_names = [
@@ -99,8 +100,19 @@ def profile_view(request):
 def dashboard(request):
     if request.user.is_authenticated:
         messages.success(request, f"Welcome back, {request.user.username}!")
+    top = []
+    try:
+        qs = Points.objects.select_related('user').order_by('-score')[:10]
+        for idx, p in enumerate(qs, start=1):
+            top.append({
+                'rank': idx,
+                'points': p.score,
+                'user': p.user,
+            })
+    except Exception:
+        top = []
 
-    return render(request, 'users/dashboard.html')
+    return render(request, 'users/dashboard.html', {'leaderboard': top})
 
 
 @login_required
@@ -142,3 +154,17 @@ def post_login_redirect(request):
         return redirect('complete_profile')
 
     return redirect('app-home')
+
+
+@login_required
+def profile_view(request, username):
+    user = get_object_or_404(User, username=username)
+    profile = get_object_or_404(Profile, user=user)
+
+    template_name = "users/profile_view.html"
+    context = {
+        "user": user,
+        "profile": profile,
+    }
+
+    return render(request, template_name, context)
