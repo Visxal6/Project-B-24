@@ -69,6 +69,34 @@ def profile(request):
     )
 
 
+@login_required
+def profile_view(request):
+    picture, _ = ProfilePicture.objects.get_or_create(user=request.user)
+
+    profile = Profile.objects.get(user=request.user)
+
+    if request.method == "POST":
+        if "image" in request.FILES:
+            picture.image = request.FILES["image"]
+            picture.save()
+            messages.success(request, "Profile picture updated!")
+            return redirect("profile-view")
+
+    form = UserUpdateForm(instance=request.user)
+    interest_list = profile.interests.all()
+
+    return render(
+        request,
+        "users/profile-view.html",
+        {
+            "form": form,
+            "picture": picture,
+            "bio": profile.bio,
+            "interests": interest_list,
+        },
+    )
+
+
 def dashboard(request):
     if request.user.is_authenticated:
         messages.success(request, f"Welcome back, {request.user.username}!")
@@ -127,6 +155,7 @@ def post_login_redirect(request):
 
     return redirect('app-home')
 
+
 @login_required
 def profile_view(request, username):
     user = get_object_or_404(User, username=username)
@@ -134,8 +163,8 @@ def profile_view(request, username):
 
     template_name = "users/profile_view.html"
     context = {
-            "user": user,
-            "profile": profile,
-        }
+        "user": user,
+        "profile": profile,
+    }
 
     return render(request, template_name, context)

@@ -1,0 +1,87 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}Profile{% endblock %}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'users/styles/profile-view.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="content-wrapper">
+  {% if messages %}
+  <div class="messages">
+    {% for message in messages %}
+    <div class="message-item">{{ message }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- User Info Section -->
+  <div class="section">
+
+    <form method="POST" enctype="multipart/form-data">
+      <div class="profile">
+        {% csrf_token %}
+        <div class="pfp-container">
+          {% if picture.image %}
+          <img id="pfpImage" src="{{ picture.image.url }}" class="pfp-image">
+          {% else %}
+          <img id="pfpImage" src="/static/default_pfp.png" class="pfp-image">
+          {% endif %}
+
+          <div class="edit-pfp">Edit</div>
+          <input type="file" name="image" id="pfpInput" accept="image/*" style="display:none;">
+        </div>
+
+        <div class="user-info">
+          <h1>{{ user.first_name }} {{ user.last_name }}</h1>
+          <div class="page-sub">@{{ user.username }}</div>
+        </div>
+      </div>
+
+
+      {% csrf_token %}
+
+      <div class="user-description">
+        <!-- Bio -->
+        <div class="full-width bio">
+          <h2>Bio</h2>
+          <p>{{ bio }}</p>
+        </div>
+
+        <!-- Sustainability Interests -->
+        <div class="interest-boxes">
+          <h2>Interests</h2>
+          {% for item in interests %}
+          <span class="tag">{{ item.name }}</span>
+          {% empty %}
+          <span class="tag empty">No interests added yet</span>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="profile-button">
+        <div class="submit-container">
+          <button type="submit" class="submit-btn button">Save Changes</button>
+        </div>
+      </div>
+    </form>
+    <div class="edit-container">
+      <a href="{% url 'profile' %}">
+        <button class="edit-btn button">Edit</button>
+      </a>
+    </div>
+
+
+  </div>
+
+  <div class="footer-note">
+    Member since {{ user.date_joined|date:"F j, Y" }}
+  </div>
+
+</div>
+
+<script src="{% static 'users/scripts/profile-view.js' %}"></script>
+
+{% endblock %}

@@ -37,3 +37,16 @@ class Profile(models.Model):
         if self.display_name:
             return f"{self.display_name} ({self.user.username})"
         return f"{self.user.username} profile"
+
+
+class ProfilePicture(models.Model):
+    user = models.OneToOneField(
+        "auth.User",
+        on_delete=models.CASCADE,
+        related_name="profile_picture"
+    )
+    image = models.ImageField(upload_to="profile_pictures/")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"ProfilePicture for {self.user.username}"

@@ -10,7 +10,7 @@
   <!-- Styles -->
   <link rel="stylesheet" href="{% static 'app/styles/base.css' %}">
   <link rel="stylesheet" href="{% static 'app/styles/general.css' %}">
-  
+
 
   <!-- Block for styles -->
   {% block styles %}
@@ -59,8 +59,23 @@
           <li>
             <a href="{% url 'profile' %}"
               class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+
+              <!--
+              {% if request.user.profile_picture and request.user.profile_picture.image and request.user.profile_picture.image.name %}
+              <img src="{{ request.user.profile_picture.image.url }}" alt="Profile picture" class="sidebar-pfp">
+              {% else %}
               <img src="{% static 'app/assets/icons/profile.svg' %}" alt="Profile icon">
-              <span>Profile</span>
+               {% endif %} 
+               -->
+              <img src="{% static 'app/assets/icons/profile.svg' %}" alt="Profile icon">
+
+              <span>
+                {% if request.user.first_name %}
+                {{ request.user.first_name }}
+                {% else %}
+                Profile
+                {% endif %}
+              </span>
             </a>
           </li>
         </ul>
@@ -142,7 +157,7 @@
             <li><a href="{% url 'forum:food_list' %}">Food</a></li>
             <li><a href="{% url 'forum:leaderboard_list' %}">Leaderboard</a></li>
             {% if user.profile.is_leader %}
-                <li><a href="{% url 'forum:cio_list' %}">CIO Leaders</a></li>
+            <li><a href="{% url 'forum:cio_list' %}">CIO Leaders</a></li>
             {% endif %}
           </div>
         </ul>
