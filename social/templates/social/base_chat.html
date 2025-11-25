@@ -24,6 +24,12 @@
         <span>Friends</span>
       </div>
     </a>
+    <a href="{% url 'social:find_cios' %}">
+      <div class="friends-link">
+        <img src="{% static 'social/icons/user.svg' %}" alt="find cios icon">
+        <span>Find CIOs</span>
+      </div>
+    </a>
     <a href="{% url 'social:incoming_requests' %}">
       <div class="friends-link">
         <img src="{% static 'social/icons/plus.svg' %}" alt="social icon">

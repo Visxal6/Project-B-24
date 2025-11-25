@@ -14,7 +14,9 @@ def post_delete(request, pk):
     if post.author != request.user:
         return HttpResponseForbidden("You are not allowed to delete this post.")
     if request.method == 'POST':
+        logger.info(f"Deleting post {pk} with image: {post.image.name if post.image else 'None'}")
         post.delete()
+        logger.info(f"Post {pk} successfully deleted")
         return redirect('forum:post_list')
     return render(request, 'forum/post_confirm_delete.html', {'post': post})
 

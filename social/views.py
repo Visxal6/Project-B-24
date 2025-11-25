@@ -10,6 +10,7 @@ from django.db.models import Max
 
 from django.conf import settings
 from .models import FriendRequest, Friendship, Conversation, Message
+from users.models import Profile
 User = settings.AUTH_USER_MODEL
 
 UserModel = get_user_model()
@@ -44,16 +45,31 @@ def user_search(request):
 def send_friend_request(request, user_id):
     # Find user
     to_user = get_object_or_404(UserModel, id=user_id)
+    
+    # Determine redirect URL (prefer referer, fallback to user_search)
+    redirect_url = request.META.get('HTTP_REFERER', None)
+    if not redirect_url:
+        redirect_url = "social:user_search"
+    else:
+        # If referer is from find_cios, keep it; otherwise use user_search
+        if 'cios' not in redirect_url:
+            redirect_url = "social:user_search"
 
     # Add yourself
     if to_user == request.user:
         messages.error(request, "You cannot add yourself.")
-        return redirect("social:user_search")
+        if isinstance(redirect_url, str):
+            return redirect(redirect_url)
+        else:
+            return redirect("social:user_search")
 
     # Already friends
     if Friendship.friends_of(request.user).filter(id=to_user.id).exists():
         messages.info(request, "Already friends.")
-        return redirect("social:user_search")
+        if isinstance(redirect_url, str):
+            return redirect(redirect_url)
+        else:
+            return redirect("social:user_search")
 
     # Pending request
     existing = FriendRequest.objects.filter(
@@ -64,12 +80,18 @@ def send_friend_request(request, user_id):
 
     if existing:
         messages.info(request, "Request already pending.")
-        return redirect("social:user_search")
+        if isinstance(redirect_url, str):
+            return redirect(redirect_url)
+        else:
+            return redirect("social:user_search")
 
     # Send request
     FriendRequest.objects.create(from_user=request.user, to_user=to_user)
     messages.success(request, "Friend request sent.")
-    return redirect("social:user_search")
+    if isinstance(redirect_url, str):
+        return redirect(redirect_url)
+    else:
+        return redirect("social:user_search")
 
 # Incoming Request
 
@@ -274,3 +296,35 @@ def send_message_api(request, convo_id):
             "sender": request.user.username,
         }
     }, status=201)
+
+
+@login_required
+def find_cios(request):
+    """Display a list of CIOs that the user can follow."""
+    # Get all CIO users, excluding the current user
+    cios = UserModel.objects.filter(
+        profile__role="cio"
+    ).exclude(id=request.user.id).select_related("profile").order_by("username")
+    
+    # Get the current user's friends to highlight them
+    current_friends = Friendship.friends_of(request.user).values_list("id", flat=True)
+    
+    # Get pending friend requests from the current user
+    pending_requests = FriendRequest.objects.filter(
+        from_user=request.user,
+        status="pending"
+    ).values_list("to_user_id", flat=True)
+    
+    # Prepare CIO data with relationship status
+    cios_data = []
+    for cio in cios:
+        cios_data.append({
+            "user": cio,
+            "profile": cio.profile,
+            "is_friend": cio.id in current_friends,
+            "request_pending": cio.id in pending_requests,
+        })
+    
+    return render(request, "social/find_cios.html", {
+        "cios": cios_data
+    })
