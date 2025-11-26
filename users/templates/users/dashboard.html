@@ -101,6 +101,40 @@
         {% endif %}
       </div>
 
+      {% if is_cio %}
+        <br>
+        <br>
+
+        <div class="leaderboard-title">
+          <img src="../../static/users/assets/icons/leaderboard.svg" alt="leaderboard-icons">
+          <span>Member Leaderboard</span>
+        </div>
+
+        <div class="leaderboard">
+          <div class="row header">
+            <div class="rank">Rank#</div>
+            <div class="points">Points</div>
+            <div class="user">Member</div>
+          </div>
+
+          {% if member_leaderboard %}
+            {% for entry in member_leaderboard %}
+              <div class="row">
+                <div class="rank">{{ entry.rank }}</div>
+                <div class="points">{{ entry.points }}</div>
+                <div class="user">{{ entry.user|get_display_name }}</div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="row">
+              <div class="rank">—</div>
+              <div class="points">0</div>
+              <div class="user">No team members yet</div>
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+
     </div>
   </div>
 

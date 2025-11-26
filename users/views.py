@@ -103,6 +103,8 @@ def dashboard(request):
     
     individual_leaderboard = []
     cio_leaderboard = []
+    member_leaderboard = []
+    is_cio = False
     
     try:
         # Individual Leaderboard: Users that are NOT CIOs
@@ -156,10 +158,39 @@ def dashboard(request):
             })
     except Exception:
         cio_leaderboard = []
+    
+    # Member Leaderboard: Only shown to CIOs, lists their top followers
+    try:
+        from social.models import Friendship
+        
+        # Check if current user is a CIO
+        if request.user.is_authenticated:
+            user_profile = Profile.objects.filter(user=request.user, role="cio").first()
+            if user_profile:
+                is_cio = True
+                
+                # Get all followers of this CIO
+                followers = Friendship.friends_of(request.user)
+                
+                # Get their points and sort
+                member_qs = Points.objects.filter(
+                    user__in=followers
+                ).select_related('user', 'user__profile').order_by('-score')[:10]
+                
+                for idx, p in enumerate(member_qs, start=1):
+                    member_leaderboard.append({
+                        'rank': idx,
+                        'points': p.score,
+                        'user': p.user,
+                    })
+    except Exception:
+        member_leaderboard = []
 
     return render(request, 'users/dashboard.html', {
         'individual_leaderboard': individual_leaderboard,
-        'cio_leaderboard': cio_leaderboard
+        'cio_leaderboard': cio_leaderboard,
+        'member_leaderboard': member_leaderboard,
+        'is_cio': is_cio,
     })
 
 
