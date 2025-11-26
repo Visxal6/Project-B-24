@@ -100,19 +100,67 @@ def profile_view(request):
 def dashboard(request):
     if request.user.is_authenticated:
         messages.success(request, f"Welcome back, {request.user.username}!")
-    top = []
+    
+    individual_leaderboard = []
+    cio_leaderboard = []
+    
     try:
-        qs = Points.objects.select_related('user').order_by('-score')[:10]
-        for idx, p in enumerate(qs, start=1):
-            top.append({
+        # Individual Leaderboard: Users that are NOT CIOs
+        individual_qs = Points.objects.select_related('user', 'user__profile').filter(
+            user__profile__role__in=["student", "other", ""]
+        ).order_by('-score')[:10]
+        
+        for idx, p in enumerate(individual_qs, start=1):
+            individual_leaderboard.append({
                 'rank': idx,
                 'points': p.score,
                 'user': p.user,
             })
     except Exception:
-        top = []
+        individual_leaderboard = []
+    
+    try:
+        # CIO Leaderboard: Sum points of all users following each CIO
+        from django.db.models import Sum, Q
+        from social.models import Friendship
+        
+        # Get all CIOs
+        cios = Profile.objects.filter(role="cio").select_related('user')
+        
+        cio_scores = []
+        for cio_profile in cios:
+            cio_user = cio_profile.user
+            
+            # Get all friends of this CIO (users following the CIO)
+            followers = Friendship.friends_of(cio_user)
+            
+            # Sum all points of the CIO's followers
+            total_points = Points.objects.filter(
+                user__in=followers
+            ).aggregate(total=Sum('score'))['total'] or 0
+            
+            cio_scores.append({
+                'user': cio_user,
+                'total_points': total_points,
+            })
+        
+        # Sort by total points descending and take top 10
+        cio_scores.sort(key=lambda x: x['total_points'], reverse=True)
+        cio_scores = cio_scores[:10]
+        
+        for idx, cio_data in enumerate(cio_scores, start=1):
+            cio_leaderboard.append({
+                'rank': idx,
+                'points': cio_data['total_points'],
+                'user': cio_data['user'],
+            })
+    except Exception:
+        cio_leaderboard = []
 
-    return render(request, 'users/dashboard.html', {'leaderboard': top})
+    return render(request, 'users/dashboard.html', {
+        'individual_leaderboard': individual_leaderboard,
+        'cio_leaderboard': cio_leaderboard
+    })
 
 
 @login_required
