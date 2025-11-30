@@ -23,6 +23,8 @@ class Task(models.Model):
     title = models.CharField(max_length=200)
     content = models.TextField(blank=True)
     points = models.IntegerField(default=0)
+    # optional photo proof for weekly challenges
+    image = models.ImageField(upload_to='task_proofs/', blank=True, null=True)
     completed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -46,3 +48,12 @@ class Task(models.Model):
             self.save(update_fields=["completed", "updated_at"])
             pts, _ = Points.objects.get_or_create(user=self.user)
             pts.add(-self.points)
+
+    def delete(self, *args, **kwargs):
+        # remove stored image file (if any) when deleting the Task
+        try:
+            if self.image:
+                self.image.delete(save=False)
+        except Exception:
+            pass
+        return super().delete(*args, **kwargs)

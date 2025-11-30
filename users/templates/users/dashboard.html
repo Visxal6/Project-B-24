@@ -28,8 +28,19 @@
         <div class="img-container">
           <img src="../../static/users/assets/icons/task.svg" alt="task-icon">
         </div>
-        <span style="color: lightgrey;">Daily Task</span>
+          <div style="display:flex; flex-direction:column; gap:2px;">
+            <span style="color: lightgrey;">Daily Task</span>
+          </div>
       </a>
+        <a class="dashboard-widget" href="{% url 'leaderboard:weekly_list' %}">
+          <div class="img-container">
+            <img src="../../static/users/assets/icons/task.svg" alt="task-icon">
+          </div>
+          <div style="display:flex; flex-direction:column; gap:2px;">
+            <span style="color: lightgrey;">Weekly Challenge</span>
+            <small style="color: #a2a2a2; font-size:0.8rem;">{{ weekly_completed|default:0 }} / {{ weekly_total|default:0 }} done</small>
+          </div>
+        </a>
       <a class="dashboard-widget" href="#">
         <div class="img-container">
           <img src="../../static/users/assets/icons/events.svg" alt="events-icon">

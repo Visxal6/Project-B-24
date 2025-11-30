@@ -4,6 +4,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .models import Profile, Interest
 from leaderboard.models import Points
+from leaderboard.models import Task as LeaderboardTask
+from django.utils import timezone
+from datetime import timedelta
+import os, json
 from .forms import UserRegisterForm, UserUpdateForm, ProfileForm
 
 
@@ -186,11 +190,39 @@ def dashboard(request):
     except Exception:
         member_leaderboard = []
 
+    # Weekly challenge progress for current user (for the dashboard widget)
+    weekly_total = 0
+    weekly_completed = 0
+    if request.user.is_authenticated:
+        tasks_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'leaderboard', 'weekly_tasks.json')
+        try:
+            with open(tasks_file, 'r', encoding='utf-8') as f:
+                templates = json.load(f)
+                weekly_total = len(templates)
+                titles = [t.get('title') for t in templates]
+        except Exception:
+            titles = []
+
+        today = timezone.localdate()
+        start_of_week = today - timedelta(days=today.weekday())
+        end_of_week = start_of_week + timedelta(days=7)
+
+        if titles:
+            weekly_completed = LeaderboardTask.objects.filter(
+                user=request.user,
+                completed=True,
+                title__in=titles,
+                created_at__date__gte=start_of_week,
+                created_at__date__lt=end_of_week,
+            ).count()
+
     return render(request, 'users/dashboard.html', {
         'individual_leaderboard': individual_leaderboard,
         'cio_leaderboard': cio_leaderboard,
         'member_leaderboard': member_leaderboard,
         'is_cio': is_cio,
+        'weekly_total': weekly_total,
+        'weekly_completed': weekly_completed,
     })
 
 
