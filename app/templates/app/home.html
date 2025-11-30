@@ -17,6 +17,158 @@
   </div>
   {% endif %}
 
+  {% if request.user.is_authenticated and tasks_remaining > 0 %}
+  <div class="tasks-reminder-banner">
+    <div class="reminder-content">
+      <div class="reminder-icon">📋</div>
+      <div class="reminder-text">
+        <h3>Daily Tasks Reminder</h3>
+        <p>You have <strong>{{ tasks_remaining }}</strong> task{{ tasks_remaining|pluralize }} remaining today!</p>
+        {% if time_until_reset %}
+          <p class="countdown">Due in: <span id="countdown">{{ time_until_reset }}</span></p>
+        {% endif %}
+      </div>
+      <a href="{% url 'leaderboard:task_list' %}" class="reminder-button">Go to Tasks</a>
+    </div>
+  </div>
+  
+  <style>
+    .tasks-reminder-banner {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 8px;
+      margin: 20px 0;
+      padding: 20px;
+      color: white;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .reminder-content {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      max-width: 100%;
+    }
+
+    .reminder-icon {
+      font-size: 32px;
+      min-width: 50px;
+      text-align: center;
+    }
+
+    .reminder-text {
+      flex: 1;
+    }
+
+    .reminder-text h3 {
+      margin: 0 0 8px 0;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .reminder-text p {
+      margin: 0 0 8px 0;
+      font-size: 14px;
+    }
+
+    .countdown {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .reminder-button {
+      background: white;
+      color: #667eea;
+      padding: 8px 16px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .reminder-button:hover {
+      background: #f0f0f0;
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+      .reminder-content {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .reminder-icon {
+        font-size: 24px;
+      }
+
+      .reminder-text h3 {
+        font-size: 16px;
+      }
+
+      .reminder-text p {
+        font-size: 13px;
+      }
+    }
+  </style>
+  {% endif %}
+
+  {% if request.user.is_authenticated and weekly_tasks_remaining > 0 %}
+  <div class="weekly-reminder-banner">
+    <div class="reminder-content">
+      <div class="reminder-icon">🌿</div>
+      <div class="reminder-text">
+        <h3>Weekly Tasks Reminder</h3>
+        <p>You have <strong>{{ weekly_tasks_remaining }}</strong> weekly task{{ weekly_tasks_remaining|pluralize }} remaining this week!</p>
+        {% if time_until_weekly_reset %}
+          <p class="countdown">Due in: <span id="weekly-countdown">{{ time_until_weekly_reset }}</span></p>
+        {% endif %}
+      </div>
+      <a href="{% url 'leaderboard:task_list' %}" class="reminder-button">Go to Tasks</a>
+    </div>
+  </div>
+  
+  <style>
+    .weekly-reminder-banner {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      border-radius: 8px;
+      margin: 20px 0;
+      padding: 20px;
+      color: white;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .weekly-reminder-banner .reminder-button {
+      background: white;
+      color: #f5576c;
+    }
+
+    .weekly-reminder-banner .reminder-button:hover {
+      background: #f0f0f0;
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+      .weekly-reminder-banner .reminder-content {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .weekly-reminder-banner .reminder-icon {
+        font-size: 24px;
+      }
+
+      .weekly-reminder-banner .reminder-text h3 {
+        font-size: 16px;
+      }
+
+      .weekly-reminder-banner .reminder-text p {
+        font-size: 13px;
+      }
+    }
+  </style>
+  {% endif %}
+
   <br>
   <br>
 
