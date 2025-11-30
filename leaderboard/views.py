@@ -125,8 +125,7 @@ def event_detail(request, pk):
 def weekly_list_view(request):
     """Show weekly templates and which ones the user completed this week.
 
-    This view intentionally does not require photo proof (the model currently
-    does not store images). It behaves like the daily view but counts tasks
+    It behaves like the daily view but counts tasks
     within the current Monday->next Monday range.
     """
     user = request.user

@@ -28,15 +28,16 @@
         <div class="img-container">
           <img src="../../static/users/assets/icons/task.svg" alt="task-icon">
         </div>
-          <div style="display:flex; flex-direction:column; gap:2px;">
+          <div style="display:flex; flex-direction:column; gap:6px; align-items:flex-start;">
             <span style="color: lightgrey;">Daily Task</span>
+            <small style="color: #a2a2a2; font-size:0.8rem;">{{ daily_completed|default:0 }} / {{ daily_total|default:0 }} done</small>
           </div>
       </a>
         <a class="dashboard-widget" href="{% url 'leaderboard:weekly_list' %}">
           <div class="img-container">
             <img src="../../static/users/assets/icons/task.svg" alt="task-icon">
           </div>
-          <div style="display:flex; flex-direction:column; gap:2px;">
+          <div style="display:flex; flex-direction:column; gap:6px; align-items:flex-start;">
             <span style="color: lightgrey;">Weekly Challenge</span>
             <small style="color: #a2a2a2; font-size:0.8rem;">{{ weekly_completed|default:0 }} / {{ weekly_total|default:0 }} done</small>
           </div>
@@ -154,3 +155,5 @@
 
 </section>
 {% endblock %}
+<script src="{% static 'leaderboard/scripts/task_list.js' %}" defer></script>
+<script src="{% static 'leaderboard/scripts/weekly_list.js' %}" defer></script>

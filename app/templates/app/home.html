@@ -25,7 +25,7 @@
         <h3>Daily Tasks Reminder</h3>
         <p>You have <strong>{{ tasks_remaining }}</strong> task{{ tasks_remaining|pluralize }} remaining today!</p>
         {% if time_until_reset %}
-          <p class="countdown">Due in: <span id="countdown">{{ time_until_reset }}</span></p>
+          <p class="countdown">Due in: <span id="daily-countdown">{{ time_until_reset }}</span></p>
         {% endif %}
       </div>
       <a href="{% url 'leaderboard:task_list' %}" class="reminder-button">Go to Tasks</a>
@@ -124,7 +124,7 @@
           <p class="countdown">Due in: <span id="weekly-countdown">{{ time_until_weekly_reset }}</span></p>
         {% endif %}
       </div>
-      <a href="{% url 'leaderboard:task_list' %}" class="reminder-button">Go to Tasks</a>
+      <a href="{% url 'leaderboard:weekly_list' %}" class="reminder-button">Go to Tasks</a>
     </div>
   </div>
   
@@ -271,4 +271,8 @@
   </div>
   -->
 </section>
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'leaderboard/scripts/task_list.js' %}" defer></script>
+<script src="{% static 'leaderboard/scripts/weekly_list.js' %}" defer></script>
 {% endblock %}

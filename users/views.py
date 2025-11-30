@@ -218,6 +218,30 @@ def dashboard(request):
                 created_at__date__lt=end_of_week,
             ).count()
 
+    # Daily challenge progress for current user (for the dashboard widget)
+    daily_total = 0
+    daily_completed = 0
+    if request.user.is_authenticated:
+        daily_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'leaderboard', 'daily_tasks.json')
+        try:
+            with open(daily_file, 'r', encoding='utf-8') as f:
+                daily_templates = json.load(f)
+                daily_total = len(daily_templates)
+                daily_titles = [t.get('title') for t in daily_templates]
+        except Exception:
+            daily_titles = []
+
+        if daily_titles:
+            today = timezone.localdate()
+            tomorrow = today + timedelta(days=1)
+            daily_completed = LeaderboardTask.objects.filter(
+                user=request.user,
+                completed=True,
+                title__in=daily_titles,
+                created_at__date__gte=today,
+                created_at__date__lt=tomorrow,
+            ).count()
+
     # Upcoming events count for dashboard
     upcoming_events = 0
     try:
@@ -233,6 +257,8 @@ def dashboard(request):
         'is_cio': is_cio,
         'weekly_total': weekly_total,
         'weekly_completed': weekly_completed,
+        'daily_total': daily_total,
+        'daily_completed': daily_completed,
         'upcoming_events': upcoming_events,
     })
 

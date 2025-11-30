@@ -176,6 +176,10 @@
     {% endblock %}
   </main>
 
+  {# Per-page scripts inserted here by child templates via {% block scripts %} #}
+  {% block scripts %}
+  {% endblock %}
+
 </body>
 
 </html>
