@@ -111,10 +111,12 @@ def dashboard(request):
     is_cio = False
     
     try:
-        # Individual Leaderboard: Users that are NOT CIOs
-        individual_qs = Points.objects.select_related('user', 'user__profile').filter(
-            user__profile__role__in=["student", "other", ""]
-        ).order_by('-score')[:10]
+        # Individual Leaderboard: Users that are NOT CIOs (explicitly exclude CIO role)
+        individual_qs = (
+            Points.objects.select_related('user', 'user__profile')
+            .exclude(user__profile__role='cio')
+            .order_by('-score')[:10]
+        )
         
         for idx, p in enumerate(individual_qs, start=1):
             individual_leaderboard.append({
