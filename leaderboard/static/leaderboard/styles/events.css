@@ -1,0 +1,21 @@
+/* Events feed — each event appears as a card and the list scrolls */
+.events-wrap{ width:60%; margin: 60px auto; padding:22px; background:var(--bg-2); border-radius:12px; color:var(--text); box-shadow:0 2px 10px rgba(0,0,0,0.12); position:relative; border: 2px solid var(--line); }
+.events-feed{ display:flex; flex-direction:column; gap:18px; max-height:78vh; overflow-y:auto; padding-right:6px; }
+.event-card{ background:var(--task-bg); border:1px solid var(--card-border); border-radius:12px; display:flex; gap:18px; padding:16px; align-items:flex-start; }
+.event-card .event-image{ width:220px; height:140px; border-radius:8px; background-size:cover; background-position:center; flex-shrink:0; }
+.event-card .event-body{ flex:1; display:flex; flex-direction:column; gap:8px; }
+.event-card .event-title{ font-size:1.03rem; font-weight:700; color:var(--accent); }
+.event-card .event-meta{ color:var(--text); font-size:0.92rem; }
+.event-card .event-desc{ color:var(--text); font-size:0.95rem; opacity:0.95; }
+
+/* Floating create button — bottom-left, like the forum */
+.new-event-btn{ position:fixed; left:32px; bottom:32px; z-index:1000; display:flex; align-items:center; gap:8px; background:#007bff; color:#fff; border:none; border-radius:50px; padding:12px 18px; font-size:1rem; font-weight:600; box-shadow:0 2px 10px rgba(0,0,0,0.18); cursor:pointer; }
+.new-event-btn:hover{ background:#0056b3; }
+.new-event-btn svg{ width:18px; height:18px; fill:#fff; }
+
+@media (max-width:720px){
+  .event-card{ flex-direction:column; }
+  .event-card .event-image{ width:100%; height:160px; }
+  .events-feed{ max-height:66vh; }
+  .new-event-btn{ left:18px; bottom:18px; padding:10px 14px; }
+}

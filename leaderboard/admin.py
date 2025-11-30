@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
-from .models import Task, Points
+from .models import Task, Points, Event
 
 
 @admin.register(Task)
@@ -21,3 +21,17 @@ class TaskAdmin(admin.ModelAdmin):
 class PointsAdmin(admin.ModelAdmin):
 	list_display = ("user", "score")
 	search_fields = ("user__username",)
+
+
+@admin.register(Event)
+class EventAdmin(admin.ModelAdmin):
+	list_display = ("title", "created_by", "start_at", "location", "image_preview_admin")
+	list_filter = ("start_at", "created_by")
+	search_fields = ("title", "location", "created_by__username")
+
+	def image_preview_admin(self, obj):
+		if obj.image:
+			return mark_safe(f"<img src='{obj.image.url}' style='max-width:160px; max-height:90px;' />")
+		return ""
+
+	image_preview_admin.short_description = "Image"

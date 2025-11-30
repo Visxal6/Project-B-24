@@ -1,0 +1,58 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}Upcoming Events{% endblock %}
+
+{% block styles %}
+  <link rel="stylesheet" href="{% static 'leaderboard/styles/events.css' %}">
+{% endblock %}
+
+{% block content %}
+  <div class="events-wrap">
+    <h1 class="task-header">Upcoming Events</h1>
+
+    <div class="task-summary">
+      <p style="padding-top: 10px">{{ events|length }} upcoming event{{ events|length|pluralize }}</p>
+    </div>
+
+    <div class="events-feed" role="list">
+      {% if events %}
+        {% for ev in events %}
+          <a href="{% url 'leaderboard:event_detail' ev.id %}" style="text-decoration:none;color:inherit;">
+            <article class="event-card" role="listitem">
+            {% if ev.image %}
+              <div class="event-image" style="background-image: url('{{ ev.image.url }}')" aria-hidden="true"></div>
+            {% else %}
+              <div class="event-image" aria-hidden="true"></div>
+            {% endif %}
+
+            <div class="event-body">
+              <h3 class="event-title">{{ ev.title }}</h3>
+              <div class="event-meta"><small>{{ ev.start_at|date:"M d, Y H:i" }}{% if ev.location %} • {{ ev.location }}{% endif %}</small></div>
+              <div class="event-desc">{{ ev.description|linebreaksbr }}</div>
+              <div class="event-meta"><small>Created by
+                {% if ev.created_by %}
+                  <a href="{% url 'users:profile' username=ev.created_by.username %}">{{ ev.created_by|get_display_name }}</a>
+                {% else %}
+                  Unknown
+                {% endif %}
+              </small></div>
+            </div>
+            </article>
+          </a>
+        {% endfor %}
+      {% else %}
+        <p>No upcoming events.</p>
+      {% endif %}
+    </div>
+
+    {# floating create button for CIOs (bottom-left) #}
+    {% if user.is_authenticated and user.profile.role == 'cio' %}
+      <a class="new-event-btn" href="{% url 'leaderboard:event_create' %}">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14m7-7H5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        Create Event
+      </a>
+    {% endif %}
+
+  </div>
+{% endblock %}

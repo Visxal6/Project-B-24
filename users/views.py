@@ -218,6 +218,14 @@ def dashboard(request):
                 created_at__date__lt=end_of_week,
             ).count()
 
+    # Upcoming events count for dashboard
+    upcoming_events = 0
+    try:
+        from leaderboard.models import Event
+        upcoming_events = Event.objects.filter(start_at__gte=timezone.now()).count()
+    except Exception:
+        upcoming_events = 0
+
     return render(request, 'users/dashboard.html', {
         'individual_leaderboard': individual_leaderboard,
         'cio_leaderboard': cio_leaderboard,
@@ -225,6 +233,7 @@ def dashboard(request):
         'is_cio': is_cio,
         'weekly_total': weekly_total,
         'weekly_completed': weekly_completed,
+        'upcoming_events': upcoming_events,
     })
 
 

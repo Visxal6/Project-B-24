@@ -7,6 +7,10 @@ from datetime import timedelta
 import os, json
 
 from .models import Task, Points
+from .models import Event
+from django.db import models
+from .forms import EventForm
+from users.models import Profile
 
 
 @login_required
@@ -72,7 +76,49 @@ def task_toggle(request, idx):
 
 
 def events_list(request):
-    return render(request, "leaderboard/events_list.html")
+    # show upcoming events (include events that started very recently so newly-created events
+    # with start_at equal to now still appear). Also include events that are currently running
+    # (end_at in the future).
+    window = timezone.now() - timedelta(minutes=1)
+    upcoming = Event.objects.filter(
+        # either the event hasn't ended yet, or it starts in the near future
+        models.Q(end_at__gte=timezone.now()) | models.Q(start_at__gte=window)
+    ).order_by('start_at')
+    return render(request, "leaderboard/events_list.html", {"events": upcoming})
+
+
+@login_required
+def event_create(request):
+    # only allow CIOs to create events
+    profile = Profile.objects.filter(user=request.user).first()
+    if not profile or profile.role != 'cio':
+        messages.error(request, "Only CIO users can create events.")
+        return redirect('leaderboard:events_list')
+
+    if request.method == 'POST':
+        form = EventForm(request.POST, request.FILES)
+        if form.is_valid():
+            ev = form.save(commit=False)
+            ev.created_by = request.user
+            ev.save()
+            messages.success(request, "Event created successfully.")
+            return redirect('leaderboard:events_list')
+    else:
+        form = EventForm()
+
+    return render(request, 'leaderboard/event_form.html', {'form': form})
+
+
+def event_detail(request, pk):
+    """Show a single event detail page."""
+    ev = None
+    try:
+        ev = Event.objects.get(pk=pk)
+    except Event.DoesNotExist:
+        from django.shortcuts import get_object_or_404
+        ev = get_object_or_404(Event, pk=pk)
+
+    return render(request, 'leaderboard/event_detail.html', { 'event': ev })
 
 
 @login_required

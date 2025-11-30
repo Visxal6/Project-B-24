@@ -57,3 +57,21 @@ class Task(models.Model):
         except Exception:
             pass
         return super().delete(*args, **kwargs)
+
+
+class Event(models.Model):
+    """An event created by CIO users — members can view upcoming events."""
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True)
+    start_at = models.DateTimeField()
+    end_at = models.DateTimeField(blank=True, null=True)
+    location = models.CharField(max_length=250, blank=True)
+    image = models.ImageField(upload_to='event_images/', blank=True, null=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['start_at']
+
+    def __str__(self):
+        return f"{self.title} @ {self.start_at:%Y-%m-%d %H:%M}"
