@@ -18,11 +18,14 @@
   <br>
   <div id="dashboard-container">
     <div class="dashboard-widget-container">
-      <a class="dashboard-widget" href="#">
+      <a class="dashboard-widget">
         <div class="img-container">
           <img src="../../static/users/assets/icons/score.svg" alt="score-icon">
         </div>
-        <span style="color: lightgrey;">Score</span>
+        <div style="display:flex; flex-direction:column; gap:4px; align-items:flex-start;">
+          <span style="color: lightgrey;">Score</span>
+          <strong style="font-size:1.05rem;">{{ my_score|default:0 }}</strong>
+        </div>
       </a>
       <a class="dashboard-widget" href="{% url 'leaderboard:task_list' %}">
         <div class="img-container">

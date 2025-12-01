@@ -128,7 +128,7 @@ def dashboard(request):
         individual_leaderboard = []
     
     try:
-        # CIO Leaderboard: Sum points of all users following each CIO
+        # CIO Leaderboard: show each CIO's own points (so CIOs appear with their score)
         from django.db.models import Sum, Q
         from social.models import Friendship
         
@@ -139,13 +139,9 @@ def dashboard(request):
         for cio_profile in cios:
             cio_user = cio_profile.user
             
-            # Get all friends of this CIO (users following the CIO)
-            followers = Friendship.friends_of(cio_user)
-            
-            # Sum all points of the CIO's followers
-            total_points = Points.objects.filter(
-                user__in=followers
-            ).aggregate(total=Sum('score'))['total'] or 0
+            # get the CIO's own points (Points is one row per user)
+            pts = Points.objects.filter(user=cio_user).first()
+            total_points = (pts.score if pts and pts.score is not None else 0)
             
             cio_scores.append({
                 'user': cio_user,
@@ -250,6 +246,15 @@ def dashboard(request):
     except Exception:
         upcoming_events = 0
 
+    # current user's personal score
+    my_score = 0
+    if request.user.is_authenticated:
+        try:
+            pts = Points.objects.filter(user=request.user).first()
+            my_score = pts.score if pts and pts.score is not None else 0
+        except Exception:
+            my_score = 0
+
     return render(request, 'users/dashboard.html', {
         'individual_leaderboard': individual_leaderboard,
         'cio_leaderboard': cio_leaderboard,
@@ -260,6 +265,7 @@ def dashboard(request):
         'daily_total': daily_total,
         'daily_completed': daily_completed,
         'upcoming_events': upcoming_events,
+        'my_score': my_score,
     })
 
 
@@ -310,9 +316,42 @@ def profile_view(request, username):
     profile = get_object_or_404(Profile, user=user)
 
     template_name = "users/profile_view.html"
+    cio_members = []
+    # If the profile belongs to a CIO, include their followers as a member leaderboard
+    try:
+        if profile.role == 'cio':
+            from social.models import Friendship
+            from leaderboard.models import Points
+
+            followers = Friendship.friends_of(user)
+            member_qs = (
+                Points.objects.filter(user__in=followers)
+                .select_related('user', 'user__profile')
+                .order_by('-score')[:10]
+            )
+
+            for idx, p in enumerate(member_qs, start=1):
+                cio_members.append({'rank': idx, 'points': p.score, 'user': p.user})
+    except Exception:
+        cio_members = []
+    # relationship status for the current viewer
+    is_friend = False
+    request_pending = False
+    if request.user.is_authenticated:
+        try:
+            from social.models import Friendship, FriendRequest
+            is_friend = Friendship.friends_of(request.user).filter(id=user.id).exists()
+            request_pending = FriendRequest.objects.filter(from_user=request.user, to_user=user, status='pending').exists()
+        except Exception:
+            is_friend = False
+            request_pending = False
+
     context = {
         "user": user,
         "profile": profile,
+        "is_friend": is_friend,
+        "request_pending": request_pending,
+        "cio_members": cio_members,
     }
 
     return render(request, template_name, context)

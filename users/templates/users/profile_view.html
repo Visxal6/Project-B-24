@@ -166,9 +166,22 @@
                 {{ user.username }}
             {% endif %}
         </h1>
-        {% if not user.profile.display_name %}
-        <div class="page-sub">@{{ user.username }}</div>
-        {% endif %}
+                {% if not user.profile.display_name %}
+                <div class="page-sub">@{{ user.username }}</div>
+                {% endif %}
+
+                {% if request.user.is_authenticated and request.user.id != user.id and profile.role == 'cio' %}
+                <div style="margin-top:8px;">
+                        {% if is_friend %}
+                            <a href="{% url 'social:start_chat' user.id %}"><button class="button button-secondary">Message</button></a>
+                        {% elif request_pending %}
+                            <span class="status-badge status-pending">⏱ Request Pending</span>
+                        {% else %}
+                            <a href="{% url 'social:send_request' user.id %}"><button class="button button-primary">Follow</button></a>
+                        {% endif %}
+                        <a href="{% url 'social:incoming_requests' %}" style="margin-left:12px;">Requests</a>
+                </div>
+                {% endif %}
     </div>
 
     <!-- User Info Section -->
@@ -190,6 +203,20 @@
         </div>
 
     </div>
+
+    {% if cio_members %}
+    <div class="section">
+        <h2>Members</h2>
+        <p>Top followers for this CIO</p>
+        <div>
+            <ol>
+            {% for m in cio_members %}
+                <li style="margin-bottom:8px;">{{ m.user|get_display_name }} — <strong>{{ m.points }}</strong> pts</li>
+            {% endfor %}
+            </ol>
+        </div>
+    </div>
+    {% endif %}
 
     <div class="footer-note">
         Member since {{ user.date_joined|date:"F j, Y" }}
