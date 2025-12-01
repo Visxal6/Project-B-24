@@ -128,7 +128,7 @@ def dashboard(request):
         individual_leaderboard = []
     
     try:
-        # CIO Leaderboard: show each CIO's own points (so CIOs appear with their score)
+        # CIO Leaderboard: total member points — sum all follower points for each CIO
         from django.db.models import Sum, Q
         from social.models import Friendship
         
@@ -139,9 +139,12 @@ def dashboard(request):
         for cio_profile in cios:
             cio_user = cio_profile.user
             
-            # get the CIO's own points (Points is one row per user)
-            pts = Points.objects.filter(user=cio_user).first()
-            total_points = (pts.score if pts and pts.score is not None else 0)
+            # Sum points of all followers (members) of this CIO
+            followers = Friendship.friends_of(cio_user)
+            total_points = (
+                Points.objects.filter(user__in=followers)
+                .aggregate(total=Sum('score'))['total'] or 0
+            )
             
             cio_scores.append({
                 'user': cio_user,
