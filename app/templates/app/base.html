@@ -48,14 +48,12 @@
         </div>
 
        <!-- Notifications -->
-        <div id="notifications-button"
-             style="display:inline-flex; align-items:center; gap:6px; margin-left:24px;">
-          <a href="{% url 'users:notifications' %}"
-             style="display:inline-flex; align-items:center; gap:6px; color:#fff; text-decoration:none;">
+        <div class="top-nav-item" id="notifications-button">
+          <a class="top-nav-link" href="{% url 'users:notifications' %}">
             <img src="{% static 'app/assets/icons/notification.png' %}"
                  alt="Notifications icon"
-                 style="width:20px; height:20px; filter: invert(1);">
-            <span id="notifications-text">Notifications</span>
+                 class="top-nav-icon">
+            <span>Notifications</span>
           </a>
         </div>
 

@@ -185,6 +185,7 @@
 }
 
 #inbox-button:hover,
+#notifications-button:hover,
 #menu-icon:hover,
 #navbar ul li a:hover {
   background: var(--hover);
@@ -192,6 +193,7 @@
   border-radius: 5px;
   cursor: pointer;
 }
+
 
 .right-content-container,
 .right-content {
@@ -230,6 +232,31 @@
   color: var(--text);
   transform: scale(1.1);
 }
+
+/* Notifications button – match inbox styling */
+.right-content #notifications-button a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: .85em;
+  gap: 0.5rem;
+  color: var(--text);          /* gray text */
+  text-decoration: none;       /* remove blue underline */
+}
+
+/* Bell icon sizing + make it white */
+#notifications-button img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  filter: invert(1);           /* turns black icon to white */
+}
+
+/* Notifications label color */
+#notifications-text {
+  color: var(--text);          /* gray label text */
+}
+
 
 #login-button a {
   all: unset;
