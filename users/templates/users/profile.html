@@ -95,8 +95,10 @@
 
     .submit-container {
         grid-column: 1 / span 2;
-        text-align: right;
         margin-top: 10px;
+        display: flex;
+        justify-content: space-between;  /* left + right */
+        align-items: center;
     }
 
     .submit-btn {
@@ -109,6 +111,26 @@
         cursor: pointer;
         transition: 0.2s ease;
     }
+
+    .submit-btn:hover {
+        background: #43a047;
+    }
+
+    .delete-btn {
+        background: #e53935;
+        color: white;
+        padding: 10px 18px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: 0.2s ease;
+    }
+
+    .delete-btn:hover {
+        background: #c62828;
+    }
+
 
     .submit-btn:hover {
         background: #43a047;
@@ -200,9 +222,19 @@
                     placeholder="Recycling, clean energy, reducing waste...">{{ interests }}</textarea>
             </div>
 
-            <div class="submit-container">
-                <button type="submit" class="submit-btn">Save Changes</button>
-            </div>
+                <div class="submit-container">
+                    <!-- Left: Delete account -->
+                    <button
+                        type="submit"
+                        class="delete-btn"
+                        formaction="{% url 'delete_account' %}"
+                        formmethod="post"
+                        onclick="return confirm('Are you sure you want to delete your account? This cannot be undone.');">
+                        Delete Account
+                    </button>
+                    <!-- Right: Save changes -->
+                    <button type="submit" class="submit-btn">Save Changes</button>
+                </div>
 
         </form>
     </div>

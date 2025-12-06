@@ -358,3 +358,14 @@ def profile_view(request, username):
     }
 
     return render(request, template_name, context)
+
+
+@login_required
+def delete_account(request):
+    if request.method == "POST":
+        user = request.user
+        user.delete()
+        messages.success(request, "Your account has been deleted successfully.")
+        return redirect("app-login")
+
+    return render(request, "users/delete_account.html")
