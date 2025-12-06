@@ -1,0 +1,32 @@
+{% extends "app/base.html" %}
+
+{% block title %}Notifications | CS3240 Project{% endblock %}
+
+{% block content %}
+<section id="notifications" style="max-width: 900px; margin: 80px auto;">
+  <h2>Notifications</h2>
+
+  {% if notifications %}
+    <ul style="list-style:none; padding:0; margin-top:20px;">
+      {% for n in notifications %}
+        <li style="padding:10px 0; border-bottom:1px solid #eee;">
+          {% if n.url %}
+            <a href="{{ n.url }}" style="font-weight:{% if not n.is_read %}bold{% else %}normal{% endif %};">
+              {{ n.text }}
+            </a>
+          {% else %}
+            <span style="font-weight:{% if not n.is_read %}bold{% else %}normal{% endif %};">
+              {{ n.text }}
+            </span>
+          {% endif %}
+          <div style="font-size:0.8rem; color:#999;">
+            {{ n.created_at|date:"M j, g:i a" }}
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No notifications yet.</p>
+  {% endif %}
+</section>
+{% endblock %}

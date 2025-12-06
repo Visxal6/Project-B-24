@@ -37,6 +37,7 @@ urlpatterns = [
     path('dashboard/', user_views.dashboard, name='dashboard'),
     path('forum/', include('forum.urls', namespace='forum')),
     path('delete-account/', user_views.delete_account, name='delete_account'),
+    path("notifications/", user_views.notifications_list, name="notifications"),
 
     path('complete-profile/', user_views.complete_profile, name='complete_profile'),
     path('post-login/', user_views.post_login_redirect,

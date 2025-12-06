@@ -9,6 +9,7 @@ from django.utils import timezone
 from datetime import timedelta
 import os, json
 from .forms import UserRegisterForm, UserUpdateForm, ProfileForm
+from .models import Notification
 
 
 def register(request):
@@ -111,7 +112,7 @@ def dashboard(request):
     is_cio = False
     
     try:
-        # Individual Leaderboard: Users that are NOT CIOs (explicitly exclude CIO role)
+        # Individual Leaderboard: Users that are NOT CIOs
         individual_qs = (
             Points.objects.select_related('user', 'user__profile')
             .exclude(user__profile__role='cio')
@@ -129,17 +130,15 @@ def dashboard(request):
     
     try:
         # CIO Leaderboard: total member points — sum all follower points for each CIO
-        from django.db.models import Sum, Q
+        from django.db.models import Sum
         from social.models import Friendship
         
-        # Get all CIOs
         cios = Profile.objects.filter(role="cio").select_related('user')
         
         cio_scores = []
         for cio_profile in cios:
             cio_user = cio_profile.user
             
-            # Sum points of all followers (members) of this CIO
             followers = Friendship.friends_of(cio_user)
             total_points = (
                 Points.objects.filter(user__in=followers)
@@ -151,7 +150,6 @@ def dashboard(request):
                 'total_points': total_points,
             })
         
-        # Sort by total points descending and take top 10
         cio_scores.sort(key=lambda x: x['total_points'], reverse=True)
         cio_scores = cio_scores[:10]
         
@@ -168,16 +166,13 @@ def dashboard(request):
     try:
         from social.models import Friendship
         
-        # Check if current user is a CIO
         if request.user.is_authenticated:
             user_profile = Profile.objects.filter(user=request.user, role="cio").first()
             if user_profile:
                 is_cio = True
                 
-                # Get all followers of this CIO
                 followers = Friendship.friends_of(request.user)
                 
-                # Get their points and sort
                 member_qs = Points.objects.filter(
                     user__in=followers
                 ).select_related('user', 'user__profile').order_by('-score')[:10]
@@ -258,6 +253,17 @@ def dashboard(request):
         except Exception:
             my_score = 0
 
+    # unread notifications for dashboard widget
+    unread_notifications = 0
+    if request.user.is_authenticated:
+        try:
+            unread_notifications = Notification.objects.filter(
+                user=request.user,
+                is_read=False,
+            ).count()
+        except Exception:
+            unread_notifications = 0
+
     return render(request, 'users/dashboard.html', {
         'individual_leaderboard': individual_leaderboard,
         'cio_leaderboard': cio_leaderboard,
@@ -269,6 +275,7 @@ def dashboard(request):
         'daily_completed': daily_completed,
         'upcoming_events': upcoming_events,
         'my_score': my_score,
+        'unread_notifications': unread_notifications,
     })
 
 
@@ -370,3 +377,8 @@ def delete_account(request):
 
 
     return render(request, "users/delete_account.html")
+
+@login_required
+def notifications_list(request):
+    notifications = Notification.objects.filter(user=request.user).order_by("-created_at")
+    return render(request, "users/notifications.html", {"notifications": notifications})

@@ -7,6 +7,8 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Q
 from django.db.models import Max
+from django.urls import reverse
+from users.models import Notification
 
 from django.conf import settings
 from .models import FriendRequest, Friendship, Conversation, Message
@@ -88,10 +90,20 @@ def send_friend_request(request, user_id):
     # Send request
     FriendRequest.objects.create(from_user=request.user, to_user=to_user)
     messages.success(request, "Friend request sent.")
+
+    # Notify the recipient about the friend request
+    Notification.objects.create(
+        user=to_user,
+        notif_type="friend_request",
+        text=f"{request.user.username} sent you a friend request",
+        url=reverse("social:incoming_requests"),
+    )
+
     if isinstance(redirect_url, str):
         return redirect(redirect_url)
     else:
         return redirect("social:user_search")
+
 
 # Incoming Request
 
@@ -146,7 +158,6 @@ def start_chat_with_friend(request, user_id):
     return redirect("social:chat_detail", convo_id=convo.id)
 
 
-# Send a message
 @login_required
 def send_message(request, convo_id):
     # Get conversation
@@ -161,11 +172,23 @@ def send_message(request, convo_id):
 
     # Create message
     if body:
-        Message.objects.create(
+        msg = Message.objects.create(
             conversation=convo,
             sender=request.user,
             body=body
         )
+
+        # 🔔 create notifications for everyone else in the convo
+        recipients = convo.participants.exclude(id=request.user.id)
+        url = reverse("social:chat_detail", kwargs={"convo_id": convo.id})
+
+        for user in recipients:
+            Notification.objects.create(
+                user=user,
+                notif_type="message",
+                text=f"New message from {request.user.username}",
+                url=url,
+            )
 
     return redirect("social:chat_detail", convo_id=convo.id)
 
@@ -235,6 +258,16 @@ def chat_detail(request, convo_id):
     msgs = convo.messages.select_related("sender").all()
     other = convo.participants.exclude(id=request.user.id).first()
     convos = _sidebar_convos(request)
+
+    # 🔔 mark message notifications for this convo as read
+    url = reverse("social:chat_detail", kwargs={"convo_id": convo.id})
+    Notification.objects.filter(
+        user=request.user,
+        notif_type="message",
+        url=url,
+        is_read=False,
+    ).update(is_read=True)
+
     return render(
         request,
         "social/chat_detail.html",
@@ -287,6 +320,19 @@ def send_message_api(request, convo_id):
 
     msg = Message.objects.create(
         conversation=convo, sender=request.user, body=body)
+
+    # 🔔 notifications for API-based send (same recipients logic)
+    recipients = convo.participants.exclude(id=request.user.id)
+    url = reverse("social:chat_detail", kwargs={"convo_id": convo.id})
+
+    for user in recipients:
+        Notification.objects.create(
+            user=user,
+            notif_type="message",
+            text=f"New message from {request.user.username}",
+            url=url,
+        )
+
     return JsonResponse({
         "ok": True,
         "message": {
@@ -296,6 +342,7 @@ def send_message_api(request, convo_id):
             "sender": request.user.username,
         }
     }, status=201)
+
 
 
 @login_required

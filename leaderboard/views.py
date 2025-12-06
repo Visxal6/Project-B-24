@@ -6,12 +6,17 @@ from django.utils import timezone
 from datetime import timedelta
 import os, json
 
+from django.db import models
+from django.contrib.auth import get_user_model
+from django.urls import reverse
+
 from .models import Task, Points
 from .models import Event
-from django.db import models
 from .forms import EventForm
-from users.models import Profile
+from users.models import Profile, Notification
 
+
+UserModel = get_user_model()
 
 @login_required
 def task_list(request):
@@ -101,7 +106,19 @@ def event_create(request):
             ev = form.save(commit=False)
             ev.created_by = request.user
             ev.save()
+
             messages.success(request, "Event created successfully.")
+
+            # 🔔 Notify other users about the new event
+            detail_url = reverse("leaderboard:event_detail", kwargs={"pk": ev.pk})
+            for user in UserModel.objects.exclude(id=request.user.id):
+                Notification.objects.create(
+                    user=user,
+                    notif_type="event",
+                    text=f"New event: {ev.title}",
+                    url=detail_url,
+                )
+
             return redirect('leaderboard:events_list')
     else:
         form = EventForm()
@@ -118,7 +135,18 @@ def event_detail(request, pk):
         from django.shortcuts import get_object_or_404
         ev = get_object_or_404(Event, pk=pk)
 
+    # 🔔 Mark event notifications for this specific event as read
+    if request.user.is_authenticated:
+        detail_url = reverse("leaderboard:event_detail", kwargs={"pk": ev.pk})
+        Notification.objects.filter(
+            user=request.user,
+            notif_type="event",
+            url=detail_url,
+            is_read=False,
+        ).update(is_read=True)
+
     return render(request, 'leaderboard/event_detail.html', { 'event': ev })
+
 
 
 @login_required
