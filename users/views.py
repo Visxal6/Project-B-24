@@ -366,6 +366,7 @@ def delete_account(request):
         user = request.user
         user.delete()
         messages.success(request, "Your account has been deleted successfully.")
-        return redirect("app-login")
+        return redirect("login")
+
 
     return render(request, "users/delete_account.html")
