@@ -11,6 +11,23 @@ import os, json
 from .forms import UserRegisterForm, UserUpdateForm, ProfileForm
 from .models import Notification
 
+@login_required
+def notifications_list(request):
+    # fetch newest first
+    notifications = Notification.objects.filter(
+        user=request.user
+    ).order_by("-created_at")
+
+    # optional: mark them all as read once the page is opened
+    notifications.filter(is_read=False).update(is_read=True)
+
+    return render(
+        request,
+        "users/notifications.html",
+        {"notifications": notifications},
+    )
+
+
 
 def register(request):
     if request.method == 'POST':

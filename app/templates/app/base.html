@@ -47,6 +47,14 @@
           </a>
         </div>
 
+        <!-- Notifications -->
+        <div id="notifications-button">
+          <a href="{% url 'users:notifications' %}">
+            <img src="{% static 'app/assets/icons/notification.png' %}" alt="Notifications icon">
+            <span id="notifications-text">Notifications</span>
+          </a>
+        </div>
+
         <!-- Profile button (image only) -->
         <div id="profile-button">
           <img class="profile-image" src="{% static 'app/assets/icons/profile.svg' %}" alt="Profile icon">
