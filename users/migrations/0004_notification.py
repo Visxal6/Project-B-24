@@ -6,7 +6,7 @@ class Migration(migrations.Migration):
 
 
     dependencies = [
-        ('users', '0003_merge_0002_profile_display_name_0002_profilepicture.py'),
+        ('users', '0003_merge_0002_profile_display_name_0002_profilepicture'),
     ]
 
     operations = [
