@@ -4,43 +4,33 @@ from django.conf import settings
 
 class Migration(migrations.Migration):
 
+    # IMPORTANT: change '0003_profile' if your previous users migration
+    # has a different filename (e.g. '0002_profile' etc.)
     dependencies = [
-        ("users", "0004_notification"),
+        ('users', '0003_profile'),
     ]
 
     operations = [
         migrations.CreateModel(
-            name="Notification",
+            name='Notification',
             fields=[
+                ('id', models.BigAutoField(
+                    auto_created=True,
+                    primary_key=True,
+                    serialize=False,
+                    verbose_name='ID'
+                )),
+                ('notif_type', models.CharField(max_length=50)),
+                ('text', models.CharField(max_length=255)),
+                ('is_read', models.BooleanField(default=False)),
+                ('url', models.CharField(max_length=255, blank=True)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
                 (
-                    "id",
-                    models.BigAutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
-                ),
-                (
-                    "notif_type",
-                    models.CharField(
-                        max_length=50,
-                        choices=[
-                            ("friend_request", "Friend request"),
-                            ("friend_accepted", "Friend request accepted"),
-                        ],
-                    ),
-                ),
-                ("text", models.CharField(max_length=255)),
-                ("url", models.CharField(max_length=255, blank=True)),
-                ("is_read", models.BooleanField(default=False)),
-                ("created_at", models.DateTimeField(auto_now_add=True)),
-                (
-                    "user",
+                    'user',
                     models.ForeignKey(
-                        on_delete=models.CASCADE,
-                        related_name="notifications",
                         to=settings.AUTH_USER_MODEL,
+                        on_delete=models.CASCADE,
+                        related_name='notifications',
                     ),
                 ),
             ],
