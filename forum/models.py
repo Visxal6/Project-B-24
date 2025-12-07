@@ -21,6 +21,12 @@ class Post(models.Model):
         ('leaderboard', 'Leaderboard'),
         ('cio_leaders', 'CIO Leaders'),
     ]
+    
+    PRIVACY_CHOICES = [
+        ('public', 'Public'),
+        ('cio_wide', 'CIO-Wide'),
+        ('friends_only', 'Friends Only'),
+    ]
 
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='forum_posts')
     image = models.ImageField(upload_to=forum_image_upload_to, blank=False, null=False)
@@ -28,6 +34,7 @@ class Post(models.Model):
     caption = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     tag = models.CharField(max_length=50, choices=TAG_CHOICES, default='general')
+    privacy = models.CharField(max_length=20, choices=PRIVACY_CHOICES, default='public')
 
     class Meta:
         ordering = ['-created_at']
