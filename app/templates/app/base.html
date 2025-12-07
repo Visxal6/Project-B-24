@@ -51,7 +51,11 @@
         <div id="notifications-button">
           <a href="{% url 'users:notifications' %}">
             <span class="notification-icon-wrapper">
-              <img src="{% static 'app/assets/icons/notification.svg' %}" alt="Notifications icon">
+              <img
+                src="{% static 'users/assets/icons/notification.png' %}"
+                alt="Notifications icon"
+                class="notification-icon"
+              >
               {% if has_unread_notifications %}
                 <span class="notification-dot"></span>
               {% endif %}
@@ -59,6 +63,7 @@
             <span id="notifications-text">Notifications</span>
           </a>
         </div>
+
 
         <!-- Profile button (image only) -->
         <div id="profile-button">

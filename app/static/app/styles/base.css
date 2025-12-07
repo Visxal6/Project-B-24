@@ -233,25 +233,40 @@
   transform: scale(1.1);
 }
 
-/* Make Notifications a bit farther from Inbox */
-#notifications-button {
-  margin-left: 24px;   /* pushes it slightly to the right of Inbox */
+/* Notifications button styling (match Inbox) */
+#notifications-button a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: .85em;
+  color: var(--text);
+  gap: 0.5rem;
+  text-decoration: none;
 }
 
-/* keep bell icon same size as Inbox icon */
-#notifications-button img {
+#notifications-button a:visited {
+  color: var(--text);
+}
+
+/* Put a bit of space between Inbox and Notifications */
+#notifications-button {
+  margin-left: 24px;
+}
+
+/* Keep bell icon small like inbox icon */
+.notification-icon {
   width: 18px;
   height: 18px;
 }
 
-/* wrapper for the red dot */
+/* Wrap for tiny red dot */
 .notification-icon-wrapper {
   position: relative;
   display: inline-flex;
   align-items: center;
 }
 
-/* small red dot when there is any unread notification */
+/* Red dot when there are unread notifications */
 .notification-dot {
   position: absolute;
   top: -1px;
