@@ -8,12 +8,13 @@ logger = logging.getLogger(__name__)
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['title', 'caption', 'image', 'tag']
+        fields = ['title', 'caption', 'image', 'tag', 'privacy']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter title'}),
             'caption': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Enter caption'}),
             'image': forms.FileInput(attrs={'class': 'form-control', 'accept': 'image/*'}),
             'tag': forms.Select(attrs={'class': 'form-control'}),
+            'privacy': forms.Select(attrs={'class': 'form-control'}),
         }
     
     def clean_image(self):
