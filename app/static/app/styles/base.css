@@ -233,28 +233,53 @@
   transform: scale(1.1);
 }
 
-/* Notifications button – match inbox styling */
+/* ===== Notifications button ===== */
+
+#notifications-button {
+  margin-left: 24px;      
+}
+
 .right-content #notifications-button a {
   display: flex;
   justify-content: center;
   align-items: center;
   padding: .85em;
+  color: var(--text);
   gap: 0.5rem;
-  color: var(--text);          /* gray text */
-  text-decoration: none;       /* remove blue underline */
 }
 
-/* Bell icon sizing + make it white */
-#notifications-button img {
-  width: 20px;
-  height: 20px;
-  object-fit: contain;
-  filter: invert(1);           /* turns black icon to white */
+#notifications-button:hover {
+  background: var(--hover);
+  border-radius: 5px;
+  cursor: pointer;
 }
 
-/* Notifications label color */
-#notifications-text {
-  color: var(--text);          /* gray label text */
+
+.notification-icon-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.notification-icon-wrapper img {
+  display: block;
+}
+
+.notification-dot {
+  position: absolute;
+  top: 2px;
+  right: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ff4d4f;       
+}
+
+
+@media (max-width: 768px) {
+  #notifications-text {
+    display: none;
+  }
 }
 
 
