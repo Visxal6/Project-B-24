@@ -233,46 +233,33 @@
   transform: scale(1.1);
 }
 
-/* ===== Notifications button ===== */
-
+/* Make Notifications a bit farther from Inbox */
 #notifications-button {
-  margin-left: 24px;      
+  margin-left: 24px;   /* pushes it slightly to the right of Inbox */
 }
 
-.right-content #notifications-button a {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: .85em;
-  color: var(--text);
-  gap: 0.5rem;
+/* keep bell icon same size as Inbox icon */
+#notifications-button img {
+  width: 18px;
+  height: 18px;
 }
 
-#notifications-button:hover {
-  background: var(--hover);
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-
+/* wrapper for the red dot */
 .notification-icon-wrapper {
   position: relative;
   display: inline-flex;
   align-items: center;
 }
 
-.notification-icon-wrapper img {
-  display: block;
-}
-
+/* small red dot when there is any unread notification */
 .notification-dot {
   position: absolute;
-  top: 2px;
-  right: 0;
+  top: -1px;
+  right: -2px;
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #ff4d4f;       
+  background: #ff4d4f;
 }
 
 

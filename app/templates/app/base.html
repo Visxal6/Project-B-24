@@ -47,13 +47,16 @@
           </a>
         </div>
 
-       <!-- Notifications -->
-        <div class="top-nav-item" id="notifications-button">
-          <a class="top-nav-link" href="{% url 'users:notifications' %}">
-            <img src="{% static 'app/assets/icons/notification.png' %}"
-                 alt="Notifications icon"
-                 class="top-nav-icon">
-            <span>Notifications</span>
+        <!-- Notifications -->
+        <div id="notifications-button">
+          <a href="{% url 'users:notifications' %}">
+            <span class="notification-icon-wrapper">
+              <img src="{% static 'app/assets/icons/notification.svg' %}" alt="Notifications icon">
+              {% if has_unread_notifications %}
+                <span class="notification-dot"></span>
+              {% endif %}
+            </span>
+            <span id="notifications-text">Notifications</span>
           </a>
         </div>
 
