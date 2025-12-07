@@ -4,10 +4,9 @@ from django.conf import settings
 
 class Migration(migrations.Migration):
 
-    # IMPORTANT: change '0003_profile' if your previous users migration
-    # has a different filename (e.g. '0002_profile' etc.)
+
     dependencies = [
-        ('users', '0003_profile'),
+        ('users', '0003_merge_0002_profile_display_name_0002_profilepicture.py'),
     ]
 
     operations = [
