@@ -5,7 +5,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
-from django.db.models import Q
+from django.db.models import Q, Value
+from django.db.models.functions import Concat
 from django.db.models import Max
 from django.urls import reverse
 from users.models import Notification
@@ -22,25 +23,46 @@ UserModel = get_user_model()
 
 @login_required
 def user_search(request):
-    # Get user name from query
     q = request.GET.get("q", "").strip()
     results = []
-
-    # Find users
     if q:
-        results = UserModel.objects.filter(
+        terms = q.split()
+        # Base query (first name only OR last name only OR username OR email)
+        base = (
             Q(username__icontains=q) |
             Q(first_name__icontains=q) |
             Q(last_name__icontains=q) |
             Q(email__icontains=q)
-        ).exclude(id=request.user.id)[:20]
+        )
 
-    # Return users results
-    return render(request, "social/user_search.html",
-                  {"q": q,
-                   "results": results
-                   })
+        # If searching "First Last"
+        if len(terms) >= 2:
+            first = terms[0]
+            last = " ".join(terms[1:])
 
+            # Combine first_name + ' ' + last_name
+            full_name_expr = Concat(
+                'first_name',
+                Value(' '),
+                'last_name'
+            )
+            base |= Q(**{f"{full_name_expr.name}__icontains": q})
+            
+            # OR just match both terms separately
+            base |= (Q(first_name__icontains=first) &
+                     Q(last_name__icontains=last))
+        results = (
+            UserModel.objects
+            .annotate(full_name=Concat('first_name', Value(' '), 'last_name'))
+            .filter(base)
+            .exclude(id=request.user.id)
+            .distinct()[:20]
+        )
+    return render(
+        request,
+        "social/user_search.html",
+        {"q": q, "results": results}
+    )
 
 # Send friend request
 @login_required
