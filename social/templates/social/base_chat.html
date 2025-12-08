@@ -55,7 +55,11 @@
         {% for c in convos %}
         <li class="{% if convo and c.id == convo.id %}active{% endif %}">
           <a href="{% url 'social:chat_detail' c.id %}">
-            {{ c.display }}
+            {% if c.is_group %}
+              <span class="chat-name group">{{ c.display }}</span>
+            {% else %}
+              <span class="chat-name">{{ c.display }}</span>
+            {% endif %}
           </a>
         </li>
         {% empty %}
