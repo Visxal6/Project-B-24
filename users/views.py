@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .models import Profile, Interest
+from .models import Profile, Interest, ProfilePicture
 from leaderboard.models import Points
 from leaderboard.models import Task as LeaderboardTask
 from django.utils import timezone
@@ -47,7 +47,25 @@ def register(request):
 
 @login_required
 def profile(request):
+    """Display profile page - view only with Edit button"""
     profile, _ = Profile.objects.get_or_create(user=request.user)
+    profile_picture, _ = ProfilePicture.objects.get_or_create(user=request.user)
+    
+    return render(
+        request,
+        'users/profile_display.html',
+        {
+            'profile': profile,
+            'profile_picture': profile_picture,
+        },
+    )
+
+
+@login_required
+def profile_edit(request):
+    """Edit profile page with form and Save button"""
+    profile, _ = Profile.objects.get_or_create(user=request.user)
+    profile_picture, _ = ProfilePicture.objects.get_or_create(user=request.user)
 
     if request.method == 'POST':
         form = UserUpdateForm(request.POST, instance=request.user)
@@ -55,17 +73,30 @@ def profile(request):
             form.save()
             profile.display_name = request.POST.get('display_name', '').strip()
             profile.bio = request.POST.get('bio', '').strip()
-            interests_raw = request.POST.get('interests', '')
-            interest_names = [
-                name.strip() for name in interests_raw.split(',')
-                if name.strip()
-            ]
+            
+            # Handle profile picture upload
+            if 'profile_image' in request.FILES:
+                profile_picture.image = request.FILES['profile_image']
+                profile_picture.save()
+                messages.success(request, 'Profile picture updated!')
+            
+            # Handle checkbox interests
+            interests_values = request.POST.getlist('interests')
+            custom_interest = request.POST.get('custom_interest', '').strip()
+            
             profile.interests.clear()
-
-            for name in interest_names:
-                interest_obj, _ = Interest.objects.get_or_create(name=name)
-                profile.interests.add(interest_obj)
-
+            interest_objs = []
+            
+            for value in interests_values:
+                obj, _ = Interest.objects.get_or_create(name=value.capitalize())
+                interest_objs.append(obj)
+            
+            # Add custom interest if provided
+            if custom_interest:
+                obj, _ = Interest.objects.get_or_create(name=custom_interest.capitalize())
+                interest_objs.append(obj)
+            
+            profile.interests.set(interest_objs)
             profile.is_completed = True
             profile.save()
 
@@ -78,7 +109,8 @@ def profile(request):
     else:
         form = UserUpdateForm(instance=request.user)
 
-    interests_string = ", ".join(i.name for i in profile.interests.all())
+    # Get lowercase interest names for checkbox matching
+    user_interests = [i.name.lower() for i in profile.interests.all()]
 
     return render(
         request,
@@ -86,7 +118,8 @@ def profile(request):
         {
             'form': form,
             'bio': profile.bio,
-            'interests': interests_string,
+            'user_interests': user_interests,
+            'profile_picture': profile_picture,
         },
     )
 
@@ -304,6 +337,7 @@ def complete_profile(request):
         role = request.POST.get("role")
         interests_values = request.POST.getlist(
             "interests")
+        custom_interest = request.POST.get("custom_interest", "").strip()
 
         if not role:
             messages.error(
@@ -317,6 +351,11 @@ def complete_profile(request):
         interest_objs = []
         for value in interests_values:
             obj, _ = Interest.objects.get_or_create(name=value.capitalize())
+            interest_objs.append(obj)
+        
+        # Add custom interest if provided
+        if custom_interest:
+            obj, _ = Interest.objects.get_or_create(name=custom_interest.capitalize())
             interest_objs.append(obj)
 
         profile.interests.set(interest_objs)
@@ -341,6 +380,7 @@ def post_login_redirect(request):
 def profile_view(request, username):
     user = get_object_or_404(User, username=username)
     profile = get_object_or_404(Profile, user=user)
+    profile_picture, _ = ProfilePicture.objects.get_or_create(user=user)
 
     template_name = "users/profile_view.html"
     cio_members = []
@@ -376,6 +416,7 @@ def profile_view(request, username):
     context = {
         "user": user,
         "profile": profile,
+        "profile_picture": profile_picture,
         "is_friend": is_friend,
         "request_pending": request_pending,
         "cio_members": cio_members,

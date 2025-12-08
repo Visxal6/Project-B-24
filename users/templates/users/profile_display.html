@@ -1,0 +1,237 @@
+{% extends 'app/base.html' %}
+
+{% block title %}Profile | CS3240 Project{% endblock %}
+
+{% block content %}
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #242424;
+        margin: 0;
+        padding: 0;
+    }
+
+    main {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+    }
+
+    .page-header {
+        margin-top: 60px;
+        width: 100%;
+        padding: 20px 0;
+        background: linear-gradient(to right, #4caf50, #66bb6a);
+        color: white;
+        text-align: center;
+    }
+
+    .page-header h1 {
+        margin: 0;
+        font-size: 32px;
+        font-weight: bold;
+    }
+
+    .page-sub {
+        font-size: 16px;
+        opacity: 0.9;
+        margin-top: 5px;
+    }
+
+    .content-wrapper {
+        clear: both;
+        width: 90%;
+        max-width: 1100px;
+        margin: 40px auto;
+    }
+
+    .section {
+        background: white;
+        padding: 30px;
+        margin-bottom: 30px;
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+    }
+
+    .section h2 {
+        margin-top: 0;
+        font-size: 22px;
+        color: #333;
+        padding-bottom: 10px;
+    }
+
+    .profile-info {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .info-row {
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .info-row:last-child {
+        border-bottom: none;
+    }
+
+    .info-label {
+        font-weight: bold;
+        color: #555;
+        margin-bottom: 5px;
+    }
+
+    .info-value {
+        color: #333;
+        font-size: 16px;
+    }
+
+    .edit-btn {
+        background: #4CAF50;
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: 0.2s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .edit-btn:hover {
+        background: #43a047;
+    }
+
+    .button-container {
+        text-align: right;
+        margin-top: 20px;
+    }
+
+    .messages {
+        margin-bottom: 20px;
+    }
+
+    .message-item {
+        padding: 12px 15px;
+        background: #e8f5e9;
+        border-left: 4px solid #4caf50;
+        margin-bottom: 10px;
+        border-radius: 4px;
+        color: #2e7d32;
+    }
+
+    h3 {
+        color: #333;
+        padding-bottom: 5px;
+        padding-top: 5px;
+    }
+
+    .profile-picture-display {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .profile-picture-display img {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 5px solid #4CAF50;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .default-profile-display {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 80px;
+        color: #999;
+        margin: 0 auto;
+        border: 5px solid #e0e0e0;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+</style>
+
+<div class="content-wrapper">
+    <div class="page-header">
+        <h1>My Profile</h1>
+        <div class="page-sub">View your profile information</div>
+    </div>
+
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="message-item">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="section">
+        <div class="profile-picture-display">
+            {% if profile_picture.image %}
+                <img src="{{ profile_picture.image.url }}" alt="Profile Picture">
+            {% else %}
+                <div class="default-profile-display">👤</div>
+            {% endif %}
+        </div>
+        
+        <h2>Profile Information</h2>
+        <div class="profile-info">
+            <div class="info-row">
+                <div class="info-label">Username</div>
+                <div class="info-value">{{ request.user.username }}</div>
+            </div>
+            
+            <div class="info-row">
+                <div class="info-label">Display Name</div>
+                <div class="info-value">{{ profile.display_name|default:"Not set" }}</div>
+            </div>
+            
+            <div class="info-row">
+                <div class="info-label">Email</div>
+                <div class="info-value">{{ request.user.email|default:"Not set" }}</div>
+            </div>
+            
+            <div class="info-row">
+                <div class="info-label">First Name</div>
+                <div class="info-value">{{ request.user.first_name|default:"Not set" }}</div>
+            </div>
+            
+            <div class="info-row">
+                <div class="info-label">Last Name</div>
+                <div class="info-value">{{ request.user.last_name|default:"Not set" }}</div>
+            </div>
+        </div>
+        
+        <div class="button-container">
+            <a href="{% url 'profile_edit' %}" class="edit-btn">Edit Profile</a>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Bio</h2>
+        <p>{{ profile.bio|default:"No bio added yet." }}</p>
+    </div>
+
+    <div class="section">
+        <h2>Sustainability Interests</h2>
+        {% if profile.interests.all %}
+            <p>
+                {% for interest in profile.interests.all %}
+                    {{ interest.name }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </p>
+        {% else %}
+            <p>No interests added yet.</p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

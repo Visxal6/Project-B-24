@@ -101,6 +101,61 @@
         align-items: center;
     }
 
+    .profile-picture-section {
+        grid-column: 1 / span 2;
+        text-align: center;
+        padding: 20px;
+        background: #f9f9f9;
+        border-radius: 8px;
+        margin-bottom: 10px;
+    }
+
+    .current-profile-image {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 15px;
+        border: 4px solid #4CAF50;
+    }
+
+    .default-profile-icon {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        background: #e0e0e0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 60px;
+        color: #999;
+        margin: 0 auto 15px;
+    }
+
+    .image-upload-label {
+        display: inline-block;
+        background: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: 0.2s ease;
+    }
+
+    .image-upload-label:hover {
+        background: #43a047;
+    }
+
+    #profile_image {
+        display: none;
+    }
+
+    .image-filename {
+        margin-top: 10px;
+        font-size: 14px;
+        color: #666;
+    }
+
     .submit-btn {
         background: #4CAF50;
         color: white;
@@ -190,9 +245,26 @@
     <div class="section">
         <h2>Basic Information</h2>
 
-        <form method="POST">
+        <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.non_field_errors }}
+
+            <!-- Profile Picture Upload Section -->
+            <div class="profile-picture-section">
+                <h3 style="margin-top: 0;">Profile Picture</h3>
+                {% if profile_picture.image %}
+                    <img src="{{ profile_picture.image.url }}" alt="Profile Picture" class="current-profile-image">
+                {% else %}
+                    <div class="default-profile-icon">👤</div>
+                {% endif %}
+                <div>
+                    <label for="profile_image" class="image-upload-label">
+                        📷 Choose New Picture
+                    </label>
+                    <input type="file" id="profile_image" name="profile_image" accept="image/*" onchange="displayFileName(this)">
+                    <div id="filename-display" class="image-filename"></div>
+                </div>
+            </div>
 
             {% for field in form %}
             <div>
@@ -217,9 +289,54 @@
 
             <!-- Sustainability Interests -->
             <div class="full-width">
-                <label for="interests">Sustainability Interests</label>
-                <textarea name="interests"
-                    placeholder="Recycling, clean energy, reducing waste...">{{ interests }}</textarea>
+                <label>Sustainability Interests</label>
+                <p style="color: #666; font-size: 14px; margin-top: 5px; margin-bottom: 15px;">Select all that apply:</p>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px;">
+                    <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
+                        <input type="checkbox" name="interests" value="recycling" {% if 'recycling' in user_interests %}checked{% endif %} style="width: auto; margin-right: 8px;">
+                        Recycling
+                    </label>
+                    <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
+                        <input type="checkbox" name="interests" value="clean energy" {% if 'clean energy' in user_interests %}checked{% endif %} style="width: auto; margin-right: 8px;">
+                        Clean Energy
+                    </label>
+                    <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
+                        <input type="checkbox" name="interests" value="composting" {% if 'composting' in user_interests %}checked{% endif %} style="width: auto; margin-right: 8px;">
+                        Composting
+                    </label>
+                    <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
+                        <input type="checkbox" name="interests" value="water conservation" {% if 'water conservation' in user_interests %}checked{% endif %} style="width: auto; margin-right: 8px;">
+                        Water Conservation
+                    </label>
+                    <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
+                        <input type="checkbox" name="interests" value="waste reduction" {% if 'waste reduction' in user_interests %}checked{% endif %} style="width: auto; margin-right: 8px;">
+                        Waste Reduction
+                    </label>
+                    <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
+                        <input type="checkbox" name="interests" value="sustainable food" {% if 'sustainable food' in user_interests %}checked{% endif %} style="width: auto; margin-right: 8px;">
+                        Sustainable Food
+                    </label>
+                    <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
+                        <input type="checkbox" name="interests" value="climate action" {% if 'climate action' in user_interests %}checked{% endif %} style="width: auto; margin-right: 8px;">
+                        Climate Action
+                    </label>
+                    <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
+                        <input type="checkbox" name="interests" value="biodiversity" {% if 'biodiversity' in user_interests %}checked{% endif %} style="width: auto; margin-right: 8px;">
+                        Biodiversity
+                    </label>
+                    <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
+                        <input type="checkbox" name="interests" value="green transport" {% if 'green transport' in user_interests %}checked{% endif %} style="width: auto; margin-right: 8px;">
+                        Green Transport
+                    </label>
+                    <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
+                        <input type="checkbox" name="interests" value="eco-friendly products" {% if 'eco-friendly products' in user_interests %}checked{% endif %} style="width: auto; margin-right: 8px;">
+                        Eco-Friendly Products
+                    </label>
+                </div>
+                <div style="margin-top: 15px;">
+                    <label for="custom-interest" style="font-weight: 500; display: block; margin-bottom: 8px;">Add your own interest:</label>
+                    <input type="text" id="custom-interest" name="custom_interest" placeholder="e.g., Urban Gardening" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                </div>
             </div>
 
                 <div class="submit-container">
@@ -245,4 +362,17 @@
 
 </div>
 
+{% endblock %}
+
+{% block scripts %}
+<script>
+function displayFileName(input) {
+    const filenameDisplay = document.getElementById('filename-display');
+    if (input.files && input.files[0]) {
+        filenameDisplay.textContent = '📁 Selected: ' + input.files[0].name;
+    } else {
+        filenameDisplay.textContent = '';
+    }
+}
+</script>
 {% endblock %}

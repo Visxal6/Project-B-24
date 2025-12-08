@@ -45,11 +45,27 @@ class ProfilePicture(models.Model):
         on_delete=models.CASCADE,
         related_name="profile_picture"
     )
-    image = models.ImageField(upload_to="profile_pictures/")
+    image = models.ImageField(upload_to="profile_pictures/", blank=True, null=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"ProfilePicture for {self.user.username}"
+    
+    def delete(self, *args, **kwargs):
+        # Delete the image file from S3 when the model instance is deleted
+        if self.image:
+            self.image.delete(save=False)
+        super().delete(*args, **kwargs)
+    
+    def save(self, *args, **kwargs):
+        # Delete old image when replacing with a new one
+        try:
+            old_instance = ProfilePicture.objects.get(pk=self.pk)
+            if old_instance.image and old_instance.image != self.image:
+                old_instance.image.delete(save=False)
+        except ProfilePicture.DoesNotExist:
+            pass
+        super().save(*args, **kwargs)
 
 class Notification(models.Model):
     NOTIFICATION_TYPES = [

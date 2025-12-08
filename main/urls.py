@@ -33,6 +33,7 @@ urlpatterns = [
 
     path('register/', user_views.register, name='register'),
     path('profile/', user_views.profile, name='profile'),
+    path('profile/edit/', user_views.profile_edit, name='profile_edit'),
     path('profile-view/', user_views.profile_view, name='profile-view'),
     path('dashboard/', user_views.dashboard, name='dashboard'),
     path('forum/', include('forum.urls', namespace='forum')),
