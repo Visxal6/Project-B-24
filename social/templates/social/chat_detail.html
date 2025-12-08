@@ -4,7 +4,11 @@
 
 {% block chat_main %}
 <div class="chat-box">
-  <h3>Chat with {{ other|get_display_name }}</h3>
+  {% if participants|length > 2 %}
+    <h3>Group Chat with ({{ participants|length }} members)</h3>
+  {% else %}
+      <h3>Chat with {{ other|get_display_name }}</h3>
+  {% endif %}
 
   <!-- Messages -->
   <div class="chat-messages" id="chatMessages">
