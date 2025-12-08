@@ -45,7 +45,9 @@
               <span class="status-badge status-pending">⏱ Request Pending</span>
             {% else %}
               <a href="{% url 'social:send_request' cio_data.user.id %}">
-                <button class="button button-primary">Follow</button>
+                <button class="button" onclick="return confirm('Follow {{ cio.user|get_display_name }}?');">
+                    Follow
+                </button>
               </a>
             {% endif %}
           </div>
