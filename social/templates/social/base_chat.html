@@ -41,6 +41,10 @@
     <div class="message-header">
       <img src="{% static 'social/icons/message.svg' %}" alt="message icon">
       <span>Messages</span>
+      <a href="{% url 'social:create_group_chat' %}">
+       <button class="button">+ New Group Chat</button>
+      </a>
+
     </div>
 
     <!--Chats-->
