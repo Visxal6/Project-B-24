@@ -250,12 +250,25 @@ def _sidebar_convos(request):
 
     convos = []
     for c in qs:
-        other = c.participants.exclude(id=request.user.id).first()
-        if other:
-            display = other.username
+        participants = list(c.participants.all())
+
+        # Group chat if more than 2 members
+        if len(participants) > 2:
+            # Auto name: comma-separated first names
+            group_name = ", ".join([p.first_name or p.username for p in participants[:3]])
+            if len(participants) > 3:
+                group_name += " + others"
+            display = f"👥 {group_name}"
         else:
-            display = f"Conversation {c.id}"
-        convos.append({"id": c.id, "display": display})
+            # 1-on-1 chat
+            other = c.participants.exclude(id=request.user.id).first()
+            display = other.username if other else f"Conversation {c.id}"
+
+        convos.append({
+            "id": c.id,
+            "display": display,
+            "is_group": len(participants) > 2
+        })
     return convos
 
 
