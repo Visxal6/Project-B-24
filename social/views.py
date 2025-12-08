@@ -19,49 +19,37 @@ User = settings.AUTH_USER_MODEL
 UserModel = get_user_model()
 
 # Search and return user that match the input
-
-
-@login_required
-from django.db.models import Q, Value
-from django.db.models.functions import Concat
-
 @login_required
 def user_search(request):
     q = request.GET.get("q", "").strip()
     results = []
 
     if q:
-        users = UserModel.objects.annotate(
-            full_name=Concat('first_name', Value(' '), 'last_name')
-        )
-
         terms = q.split()
 
-        # Base search: username, first, last, email, or full_name
-        base_query = (
+        # Start with single-field matching
+        query = (
             Q(username__icontains=q) |
             Q(first_name__icontains=q) |
             Q(last_name__icontains=q) |
-            Q(email__icontains=q) |
-            Q(full_name__icontains=q)
+            Q(email__icontains=q)
         )
-        
-        # If searching multiple words: require each word to appear in full_name
+
         for term in terms:
-            base_query |= Q(full_name__icontains=term)
-            
+            query |= Q(first_name__icontains=term) | Q(last_name__icontains=term)
+
         results = (
-            users.filter(base_query)
-                 .exclude(id=request.user.id)
-                 .distinct()[:20]
+            UserModel.objects
+            .filter(query)
+            .exclude(id=request.user.id)
+            .distinct()[:20]
         )
-        
+
     return render(
         request,
         "social/user_search.html",
         {"q": q, "results": results}
     )
-
 
 # Send friend request
 @login_required
