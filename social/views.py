@@ -265,7 +265,8 @@ def chat_detail(request, convo_id):
     convo = get_object_or_404(
         Conversation, id=convo_id, participants=request.user)
     msgs = convo.messages.select_related("sender").all()
-    other = convo.participants.exclude(id=request.user.id).first()
+    participants = convo.participants.all()
+    other = participants.exclude(id=request.user.id).first()
     convos = _sidebar_convos(request)
 
     # 🔔 mark message notifications for this convo as read
@@ -284,6 +285,7 @@ def chat_detail(request, convo_id):
             "convo": convo,
             "messages": msgs,
             "other": other,
+            "participants": participants, 
             "convos": convos,
         },
     )
