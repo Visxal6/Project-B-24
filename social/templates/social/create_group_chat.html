@@ -1,0 +1,25 @@
+{% extends "social/base_chat.html" %}
+{% load static %}
+
+{% block content %}
+<h2>Create Group Chat</h2>
+
+<form method="post">
+    {% csrf_token %}
+
+    <label>Group Name:</label>
+    <input name="name" type="text" required>
+
+    <h3>Select Members</h3>
+    <div>
+        {% for f in friends %}
+            <label>
+                <input type="checkbox" name="members" value="{{ f.id }}">
+                {{ f|get_display_name }}
+            </label><br>
+        {% endfor %}
+    </div>
+
+    <button type="submit">Create Group</button>
+</form>
+{% endblock %}
