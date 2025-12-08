@@ -384,3 +384,34 @@ def find_cios(request):
     return render(request, "social/find_cios.html", {
         "cios": cios_data
     })
+
+@login_required
+def create_group_chat(request):
+    friends = Friendship.friends_of(request.user)
+
+    if request.method == "POST":
+        name = request.POST.get("name", "").strip()
+        member_ids = request.POST.getlist("members")
+
+        if not name:
+            messages.error(request, "Group name is required.")
+            return redirect("social:create_group_chat")
+
+        if len(member_ids) < 2:
+            messages.error(request, "Select at least 2 people to form a group.")
+            return redirect("social:create_group_chat")
+
+        convo = Conversation.objects.create()
+        ConversationParticipant.objects.create(conversation=convo, user=request.user)
+
+        # Add selected members
+        for uid in member_ids:
+            ConversationParticipant.objects.create(conversation=convo, user_id=uid)
+
+        messages.success(request, f"Group '{name}' created.")
+        return redirect("social:chat_detail", convo_id=convo.id)
+
+    return render(request, "social/create_group_chat.html", {
+        "friends": friends
+    })
+
