@@ -25,7 +25,10 @@
       <span>{{ u|get_display_name }}</span>
       <!-- Request: /social/request/<int:user_id>/ -->
       <form method="post" action="{% url 'social:send_request' u.id %}">{% csrf_token %}
-        <button class="button add-friend-button-search">Add Friend</button>
+        <button class="button add-friend-button-search"
+        onclick="return confirm('Send friend request to {{ u|get_display_name }}?');">
+          Add Friend
+        </button>
       </form>
     </li>
     {% empty %}
