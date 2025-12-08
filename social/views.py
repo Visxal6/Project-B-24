@@ -12,7 +12,7 @@ from django.urls import reverse
 from users.models import Notification
 
 from django.conf import settings
-from .models import FriendRequest, Friendship, Conversation, Message
+from .models import FriendRequest, Friendship, Conversation, Message, ConversationParticipant
 from users.models import Profile
 User = settings.AUTH_USER_MODEL
 
