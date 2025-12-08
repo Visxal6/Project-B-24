@@ -33,6 +33,8 @@
         <div class="message-button">
           <a href="{% url 'social:start_chat' f.id %}">
             <img src="{% static 'social/icons/message.svg' %}" alt="message icon">
+          </a>
+          <a href="{% url 'users:profile' f.username %}" >
             <img src="{% static 'social/icons/user.svg' %}" alt="user icon">
           </a>
         </div>
