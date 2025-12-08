@@ -22,47 +22,46 @@ UserModel = get_user_model()
 
 
 @login_required
+from django.db.models import Q, Value
+from django.db.models.functions import Concat
+
+@login_required
 def user_search(request):
     q = request.GET.get("q", "").strip()
     results = []
+
     if q:
+        users = UserModel.objects.annotate(
+            full_name=Concat('first_name', Value(' '), 'last_name')
+        )
+
         terms = q.split()
-        # Base query (first name only OR last name only OR username OR email)
-        base = (
+
+        # Base search: username, first, last, email, or full_name
+        base_query = (
             Q(username__icontains=q) |
             Q(first_name__icontains=q) |
             Q(last_name__icontains=q) |
-            Q(email__icontains=q)
+            Q(email__icontains=q) |
+            Q(full_name__icontains=q)
         )
-
-        # If searching "First Last"
-        if len(terms) >= 2:
-            first = terms[0]
-            last = " ".join(terms[1:])
-
-            # Combine first_name + ' ' + last_name
-            full_name_expr = Concat(
-                'first_name',
-                Value(' '),
-                'last_name'
-            )
-            base |= Q(**{f"{full_name_expr.name}__icontains": q})
+        
+        # If searching multiple words: require each word to appear in full_name
+        for term in terms:
+            base_query |= Q(full_name__icontains=term)
             
-            # OR just match both terms separately
-            base |= (Q(first_name__icontains=first) &
-                     Q(last_name__icontains=last))
         results = (
-            UserModel.objects
-            .annotate(full_name=Concat('first_name', Value(' '), 'last_name'))
-            .filter(base)
-            .exclude(id=request.user.id)
-            .distinct()[:20]
+            users.filter(base_query)
+                 .exclude(id=request.user.id)
+                 .distinct()[:20]
         )
+        
     return render(
         request,
         "social/user_search.html",
         {"q": q, "results": results}
     )
+
 
 # Send friend request
 @login_required
