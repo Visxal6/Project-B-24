@@ -1,4 +1,5 @@
 {% load static %}
+{% load display_name %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -89,10 +90,10 @@
               <img src="{% static 'app/assets/icons/profile.svg' %}" alt="Profile icon">
 
               <span>
-                {% if request.user.first_name %}
-                {{ request.user.first_name }}
+                {% if request.user.is_authenticated %}
+                  {{ request.user|get_display_name }}
                 {% else %}
-                Profile
+                  Profile
                 {% endif %}
               </span>
             </a>
