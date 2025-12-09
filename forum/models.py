@@ -39,7 +39,8 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     tag = models.CharField(
         max_length=50, choices=TAG_CHOICES, default='general')
-    privacy = models.CharField(max_length=20, choices=PRIVACY_CHOICES, default='public')
+    privacy = models.CharField(
+        max_length=20, choices=PRIVACY_CHOICES, default='public')
     is_flagged_inappropriate = models.BooleanField(default=False)
     moderation_note = models.TextField(blank=True, null=True)
 
@@ -83,4 +84,5 @@ def delete_post_image_from_s3(sender, instance, **kwargs):
             instance.image.delete(save=False)
             logger.info(f"Successfully deleted image: {instance.image.name}")
         except Exception as e:
-            logger.error(f"Error deleting image from S3: {str(e)}", exc_info=True)
+            logger.error(
+                f"Error deleting image from S3: {str(e)}", exc_info=True)
