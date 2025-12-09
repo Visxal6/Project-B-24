@@ -425,6 +425,121 @@ def profile_view(request, username):
     return render(request, template_name, context)
 
 
+<<<<<<< HEAD
+def is_moderator(user):
+    """Check if user is a moderator"""
+    if not user.is_authenticated:
+        return False
+    try:
+        return user.profile.is_moderator
+    except:
+        return False
+
+
+@login_required
+def suspend_user(request, username):
+    """Allow moderators to suspend users"""
+    if not is_moderator(request.user):
+        return redirect('app-home')
+
+    user = get_object_or_404(User, username=username)
+    profile = get_object_or_404(Profile, user=user)
+
+    if profile.is_suspended:
+        messages.warning(request, f"{user.username} is already suspended.")
+        return redirect('users:profile_view', username=username)
+
+    if request.method == 'POST':
+        reason = request.POST.get('suspension_reason', '')
+        if not reason:
+            messages.error(request, 'Please provide a reason for suspension.')
+            return render(request, 'users/suspend_user.html', {'target_user': user, 'profile': profile})
+
+        profile.suspend(request.user, reason)
+        messages.success(
+            request, f"{user.username} has been suspended for: {reason}")
+        return redirect('users:profile_view', username=username)
+
+    return render(request, 'users/suspend_user.html', {'target_user': user, 'profile': profile})
+
+
+@login_required
+def reinstate_user(request, username):
+    """Allow moderators to reinstate suspended users"""
+    if not is_moderator(request.user):
+        return redirect('app-home')
+
+    user = get_object_or_404(User, username=username)
+    profile = get_object_or_404(Profile, user=user)
+
+    if not profile.is_suspended:
+        messages.warning(request, f"{user.username} is not suspended.")
+        return redirect('users:profile_view', username=username)
+
+    if request.method == 'POST':
+        profile.reinstate()
+        messages.success(request, f"{user.username} has been reinstated.")
+        return redirect('users:profile_view', username=username)
+
+    return render(request, 'users/reinstate_user.html', {'target_user': user, 'profile': profile})
+
+
+@login_required
+def suspended_users_list(request):
+    """Show list of suspended users (moderators only)"""
+    if not is_moderator(request.user):
+        return redirect('app-home')
+
+    suspended_profiles = Profile.objects.filter(
+        is_suspended=True).select_related('user', 'suspended_by')
+
+    return render(request, 'users/suspended_users_list.html', {'suspended_profiles': suspended_profiles})
+
+
+@login_required
+def search_users(request):
+    """Search for users (moderators only)"""
+    if not is_moderator(request.user):
+        return redirect('app-home')
+
+    query = request.GET.get('q', '').strip()
+    results = []
+
+    if query:
+        # Search by username or display name
+        results = User.objects.filter(
+            username__icontains=query
+        ) | User.objects.filter(
+            profile__display_name__icontains=query
+        )
+        results = results.select_related('profile').distinct()
+
+    return render(request, 'users/search_users.html', {
+        'query': query,
+        'results': results,
+        'is_moderator': is_moderator(request.user)
+    })
+
+
+@login_required
+def flagged_content(request):
+    """View flagged posts and comments (moderators only)"""
+    if not is_moderator(request.user):
+        return redirect('app-home')
+
+    from forum.models import Post, Comment
+
+    flagged_posts = Post.objects.filter(
+        is_flagged_inappropriate=True).select_related('author')
+    flagged_comments = Comment.objects.filter(
+        is_flagged_inappropriate=True).select_related('author', 'post')
+
+    return render(request, 'users/flagged_content.html', {
+        'flagged_posts': flagged_posts,
+        'flagged_comments': flagged_comments,
+        'is_moderator': is_moderator(request.user)
+    })
+=======
 @login_required
 def delete_account(request):
     if request.method == "POST":
@@ -440,3 +555,4 @@ def delete_account(request):
 def notifications_list(request):
     notifications = Notification.objects.filter(user=request.user).order_by("-created_at")
     return render(request, "users/notifications.html", {"notifications": notifications})
+>>>>>>> 0d89449ca40b8a6a691be2496f6d17c11e7ed708

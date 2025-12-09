@@ -1,0 +1,99 @@
+{% extends "app/base.html" %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'users/styles/suspend-user.css' %}">
+<link rel="stylesheet" href="{% static 'users/styles/flagged-content.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2>Flagged Content Review</h2>
+
+  {% if flagged_posts %}
+  <div class="mt-4">
+    <h4>Flagged Posts</h4>
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead class="table-warning">
+          <tr>
+            <th>Author</th>
+            <th>Flagged At</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for post in flagged_posts %}
+          <tr>
+            <td>
+              <a href="{% url 'users:profile_view' post.author.username %}">
+                {{ post.author.username }}
+              </a>
+            </td>
+            <td>
+              <small>{{ post.created_at|date:"M d, Y H:i" }}</small>
+            </td>
+            <td>
+              <a href="{% url 'forum:post_detail' post.pk %}" class="btn btn-sm btn-info" target="_blank">View</a>
+              <a href="{% url 'forum:post_edit_moderation' post.pk %}" class="btn btn-sm btn-warning">Edit</a>
+              <a href="{% url 'forum:flagged_post_notes' post.pk %}" class="btn btn-sm btn-secondary">View Notes</a>
+              <a href="{% url 'forum:post_remove_moderation' post.pk %}" class="btn btn-sm btn-danger">Remove</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if flagged_comments %}
+  <div class="mt-5">
+    <h4 class="flag-comments">Flagged Comments</h4>
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead class="table-warning">
+          <tr>
+            <th>Author</th>
+            <th>Posted At</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for comment in flagged_comments %}
+          <tr>
+            <td>
+              <a href="{% url 'users:profile_view' comment.author.username %}">
+                {{ comment.author.username }}
+              </a>
+            </td>
+            <td>
+              <small>{{ comment.created_at|date:"M d, Y H:i" }}</small>
+            </td>
+            <td>
+              <a href="{% url 'forum:post_detail' comment.post.pk %}" class="btn btn-sm btn-info" target="_blank">View
+                Post</a>
+              <a href="{% url 'forum:comment_edit_moderation' comment.pk %}" class="btn btn-sm btn-warning">Edit</a>
+              <a href="{% url 'forum:flagged_comment_notes' comment.pk %}" class="btn btn-sm btn-secondary">View
+                Notes</a>
+              <a href="{% url 'forum:comment_remove_moderation' comment.pk %}" class="btn btn-sm btn-danger">Remove</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if not flagged_posts and not flagged_comments %}
+  <div class="alert alert-success mt-4" role="alert">
+    No flagged content! Community is clean.
+  </div>
+  {% endif %}
+
+  <div class="back-home-link">
+    <a href="{% url 'app-home' %}">Back Home</a>
+  </div>
+</div>
+{% endblock %}

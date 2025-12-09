@@ -47,6 +47,17 @@
     visibility 0s;
 }
 
+#sidebar.close {
+  transform: translateX(-100%);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    transform 280ms cubic-bezier(.22, .61, .36, 1),
+    opacity 220ms ease,
+    visibility 0s linear 280ms;
+}
+
 #sidebar ul {
   list-style: none;
 }

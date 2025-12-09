@@ -80,6 +80,24 @@
         <input id="password1" name="password1" type="password" required>
         <div class="error">{{ form.password1.errors|striptags }}</div>
 
+        <!-- Password Requirements -->
+        <div class="password-requirements mt-3">
+          <small><strong>Password Requirements:</strong></small>
+          <ul class="requirements-list">
+            <li id="min-length" class="requirement">
+              <span class="requirement-icon">○</span> At least 8 characters
+            </li>
+            <li id="no-all-numeric" class="requirement">
+              <span class="requirement-icon">○</span> Cannot be entirely numeric
+            </li>
+            <li id="no-common" class="requirement">
+              <span class="requirement-icon">○</span> Cannot be a common password
+            </li>
+            <li id="no-similar" class="requirement">
+              <span class="requirement-icon">○</span> Cannot be too similar to your username
+            </li>
+          </ul>
+        </div>
       </div>
 
       <!-- Confirm Password -->
@@ -107,4 +125,63 @@
     </div>
   </div>
 </section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const passwordInput = document.getElementById('password1');
+    const usernameInput = document.getElementById('username');
+    const requirementsBox = document.querySelector('.password-requirements');
+
+    if (!passwordInput || !requirementsBox) return;
+
+    const requirements = {
+      'min-length': {
+        test: (pwd) => pwd.length >= 8,
+        name: 'min-length'
+      },
+      'no-all-numeric': {
+        test: (pwd) => !/^\d+$/.test(pwd),
+        name: 'no-all-numeric'
+      },
+      'no-common': {
+        test: (pwd) => {
+          const commonPasswords = ['password', '123456', 'password123', 'admin', 'letmein', 'welcome', 'monkey', 'dragon'];
+          return !commonPasswords.includes(pwd.toLowerCase());
+        },
+        name: 'no-common'
+      },
+      'no-similar': {
+        test: (pwd) => {
+          const username = usernameInput.value.toLowerCase();
+          return !pwd.toLowerCase().includes(username) && username.length > 0 ? true : pwd.length > 0;
+        },
+        name: 'no-similar'
+      }
+    };
+
+    function validatePassword() {
+      // Show requirements box when user starts typing
+      if (passwordInput.value.length > 0) {
+        requirementsBox.classList.add('show');
+      } else {
+        requirementsBox.classList.remove('show');
+      }
+
+      Object.keys(requirements).forEach(key => {
+        const element = document.getElementById(key);
+        if (!element) return;
+
+        const isMet = requirements[key].test(passwordInput.value);
+        if (isMet) {
+          element.classList.add('met');
+        } else {
+          element.classList.remove('met');
+        }
+      });
+    }
+
+    passwordInput.addEventListener('input', validatePassword);
+    usernameInput.addEventListener('input', validatePassword);
+  });
+</script>
 {% endblock %}

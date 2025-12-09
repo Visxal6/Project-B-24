@@ -1,0 +1,23 @@
+h2 {
+  margin-bottom: 2rem;
+}
+
+th {
+  padding-right: 16px;
+  text-align: left;
+}
+
+.btn {
+  padding: 4px 8px;
+  font-size: 11px;
+}
+
+a {
+  text-decoration: underline;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.back-home-link {
+  margin-top: 2rem;
+}
