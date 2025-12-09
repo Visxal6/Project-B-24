@@ -26,4 +26,10 @@ urlpatterns = [
          views.comment_edit_moderation, name='comment_edit_moderation'),
     path('comment/<int:pk>/remove-moderation/',
          views.comment_remove_moderation, name='comment_remove_moderation'),
+
+    # Moderation notes endpoints
+    path('post/<int:post_id>/notes/',
+         views.flagged_post_notes, name='flagged_post_notes'),
+    path('comment/<int:comment_id>/notes/',
+         views.flagged_comment_notes, name='flagged_comment_notes'),
 ]

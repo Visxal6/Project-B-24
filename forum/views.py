@@ -244,3 +244,39 @@ def comment_delete(request, pk):
         comment.delete()
 
     return redirect('forum:post_detail', pk=comment.post.pk)
+
+
+@login_required
+def flagged_post_notes(request, post_id):
+    """View and edit moderation notes for a flagged post"""
+    if not is_moderator(request.user):
+        return redirect('app-home')
+
+    post = get_object_or_404(Post, pk=post_id)
+
+    if request.method == 'POST':
+        post.moderation_note = request.POST.get('moderation_note', '')
+        post.save()
+        from django.contrib import messages
+        messages.success(request, 'Moderation note updated successfully.')
+        return redirect('users:flagged_content')
+
+    return render(request, 'forum/flagged_post_notes.html', {'post': post})
+
+
+@login_required
+def flagged_comment_notes(request, comment_id):
+    """View and edit moderation notes for a flagged comment"""
+    if not is_moderator(request.user):
+        return redirect('app-home')
+
+    comment = get_object_or_404(Comment, pk=comment_id)
+
+    if request.method == 'POST':
+        comment.moderation_note = request.POST.get('moderation_note', '')
+        comment.save()
+        from django.contrib import messages
+        messages.success(request, 'Moderation note updated successfully.')
+        return redirect('users:flagged_content')
+
+    return render(request, 'forum/flagged_comment_notes.html', {'comment': comment})

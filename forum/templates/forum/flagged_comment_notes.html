@@ -1,0 +1,68 @@
+{% extends "app/base.html" %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'users/styles/suspend-user.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card border-info">
+        <div class="card-header bg-info text-white">
+          <h3 class="mb-0">Moderation Notes - Comment</h3>
+        </div>
+        <div class="card-body">
+
+          <!-- Comment Information -->
+          <div class="card bg-light mb-4">
+            <div class="card-body">
+              <p class="card-text mb-2">
+                <strong>Author:</strong>
+                <a href="{% url 'users:profile_view' comment.author.username %}">
+                  {{ comment.author.username }}
+                </a>
+              </p>
+              <p class="card-text mb-2">
+                <strong>Posted:</strong> {{ comment.created_at|date:"M d, Y H:i" }}
+              </p>
+              <p class="card-text mb-3">
+                <strong>Content:</strong><br>
+                <em>{{ comment.content }}</em>
+              </p>
+              <p class="card-text mb-2">
+                <strong>On Post:</strong>
+                <a href="{% url 'forum:post_detail' comment.post.pk %}" target="_blank">
+                  {{ comment.post.title }}
+                </a>
+              </p>
+              <a href="{% url 'forum:post_detail' comment.post.pk %}" class="btn btn-sm btn-info" target="_blank">
+                View Post
+              </a>
+            </div>
+          </div>
+
+          <!-- Moderation Notes Form -->
+          <form method="POST">
+            {% csrf_token %}
+            <div class="form-group mb-3">
+              <label for="moderation_note" class="form-label"><strong>Moderation Notes</strong></label>
+              <textarea class="form-control" id="moderation_note" name="moderation_note" rows="6"
+                placeholder="Add or edit moderation notes here...">{{ comment.moderation_note }}</textarea>
+              <small class="form-text text-muted">
+                Use these notes to document why this comment was flagged and any moderation actions taken.
+              </small>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary">Save Notes</button>
+              <a href="{% url 'users:flagged_content' %}" class="btn btn-secondary">Back to Flagged Content</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

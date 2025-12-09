@@ -1,4 +1,9 @@
 {% extends "app/base.html" %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'users/styles/suspend-user.css' %}">
+{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
@@ -34,9 +39,11 @@
             <small>{{ profile.suspended_at|date:"M d, Y H:i" }}</small>
           </td>
           <td>
-            <a href="{% url 'users:reinstate_user' profile.user.username %}" class="btn btn-sm btn-success">
-              Reinstate
-            </a>
+            <form method="POST" action="{% url 'users:reinstate_user' profile.user.username %}"
+              style="display: inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-success button">Reinstate</button>
+            </form>
           </td>
         </tr>
         {% endfor %}
@@ -48,7 +55,8 @@
     No suspended users at the moment. Good community standards!
   </div>
   {% endif %}
-
-  <a href="{% url 'app-home' %}" class="btn btn-secondary mt-3">Back Home</a>
+  <div class="back-home-link">
+    <a href="{% url 'app-home' %}" class="back-home-link">Back Home</a>
+  </div>
 </div>
 {% endblock %}

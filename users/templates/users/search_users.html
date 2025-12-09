@@ -1,4 +1,9 @@
 {% extends "app/base.html" %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'users/styles/search-user.css' %}">
+{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
@@ -10,7 +15,7 @@
         <div class="form-group" style="width: 100%;">
           <input type="text" name="q" class="form-control" placeholder="Search by username or display name..."
             value="{{ query }}" style="width: 100%; margin-bottom: 10px;">
-          <button type="submit" class="btn btn-primary">Search</button>
+          <button type="submit" class="btn btn-primary button">Search</button>
         </div>
       </form>
     </div>
