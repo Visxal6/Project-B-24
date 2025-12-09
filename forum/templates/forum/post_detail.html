@@ -28,7 +28,7 @@ Channels | Post Details
         </a>
         {% endif %}
       </h5>
-      <p class="card-timestamp">Posted {{ post.created_at }}</p>
+      <p class="card-timestamp">Posted <span data-utc-timestamp="{{ post.created_at|date:'c' }}">{{ post.created_at }}</span></p>
       <p class="card-text">{{ post.caption }}</p>
     </div>
     {% if post.image %}
@@ -37,7 +37,10 @@ Channels | Post Details
       {% if post.images.all %}
         <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem;">
           {% for img in post.images.all %}
-            <img src="{{ img.image.url }}" class="post-detail-img" alt="Post image" style="max-width: 300px; height: auto;">
+            <div style="position: relative;">
+              <img src="{{ img.image.url }}" class="post-detail-img" alt="Post image" style="max-width: 300px; height: auto;">
+              <p style="font-size: 0.85rem; color: #666; margin-top: 0.5rem; text-align: center;"><span data-utc-timestamp="{{ img.uploaded_at|date:'c' }}">{{ img.uploaded_at }}</span></p>
+            </div>
           {% endfor %}
         </div>
       {% endif %}
@@ -94,4 +97,5 @@ Channels | Post Details
     }
   }
 </script>
+<script src="{% static 'forum/scripts/timestamp_converter.js' %}" defer></script>
 {% endblock %}
