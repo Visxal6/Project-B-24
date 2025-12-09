@@ -1,0 +1,70 @@
+{% extends "app/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h3 class="mb-0">Edit Post (Moderation)</h3>
+        </div>
+        <div class="card-body">
+          <div class="alert alert-info" role="alert">
+            <strong>Note:</strong> You are editing this post due to a content violation. Clear the inappropriate content
+            and add a moderation note.
+          </div>
+
+          <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="form-group">
+              <label for="{{ form.title.id_for_label }}"><strong>Title:</strong></label>
+              {{ form.title }}
+              {% if form.title.errors %}
+              <div class="text-danger small">{{ form.title.errors }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group">
+              <label for="{{ form.caption.id_for_label }}"><strong>Caption:</strong></label>
+              {{ form.caption }}
+              <small class="form-text text-muted">Remove any inappropriate content.</small>
+              {% if form.caption.errors %}
+              <div class="text-danger small">{{ form.caption.errors }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group">
+              <label for="{{ form.tag.id_for_label }}"><strong>Category:</strong></label>
+              {{ form.tag }}
+              {% if form.tag.errors %}
+              <div class="text-danger small">{{ form.tag.errors }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group">
+              <label for="{{ form.image.id_for_label }}"><strong>Image:</strong></label>
+              {{ form.image }}
+              <small class="form-text text-muted">Leave blank to keep current image, or upload a new one.</small>
+              {% if form.image.errors %}
+              <div class="text-danger small">{{ form.image.errors }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group">
+              <label for="moderation_note"><strong>Moderation Note:</strong></label>
+              <textarea class="form-control" id="moderation_note" name="moderation_note" rows="3"
+                placeholder="Document what was changed and why..."></textarea>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary">Save Changes</button>
+              <a href="{% url 'forum:post_detail' post.pk %}" class="btn btn-secondary">Cancel</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

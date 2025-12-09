@@ -6,8 +6,10 @@ def forum_image_upload_to(instance, filename):
     # store uploads under forum/<user_id>/<filename> optionally with date
     return f'forum/{instance.author.id}/{filename}'
 
+
 class Tag(models.Model):
     name = models.CharField(max_length=50, unique=True)
+
 
 class Post(models.Model):
     TAG_CHOICES = [
@@ -17,12 +19,17 @@ class Post(models.Model):
         ('cio_leaders', 'CIO Leaders'),
     ]
 
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='forum_posts')
-    image = models.ImageField(upload_to=forum_image_upload_to, blank=False, null=False)
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='forum_posts')
+    image = models.ImageField(
+        upload_to=forum_image_upload_to, blank=False, null=False)
     title = models.CharField(max_length=200, default="Title")
     caption = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    tag = models.CharField(max_length=50, choices=TAG_CHOICES, default='general')
+    tag = models.CharField(
+        max_length=50, choices=TAG_CHOICES, default='general')
+    is_flagged_inappropriate = models.BooleanField(default=False)
+    moderation_note = models.TextField(blank=True, null=True)
 
     class Meta:
         ordering = ['-created_at']
@@ -30,17 +37,23 @@ class Post(models.Model):
     def __str__(self):
         return f'Post by {self.author} at {self.created_at:%Y-%m-%d %H:%M}'
 
+
 class Comment(models.Model):
-    post = models.ForeignKey(Post, related_name='comments', on_delete=models.CASCADE)
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    parent = models.ForeignKey('self', null=True, blank=True, related_name='replies', on_delete=models.CASCADE)
+    post = models.ForeignKey(
+        Post, related_name='comments', on_delete=models.CASCADE)
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    parent = models.ForeignKey(
+        'self', null=True, blank=True, related_name='replies', on_delete=models.CASCADE)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     is_deleted = models.BooleanField(default=False)
+    is_flagged_inappropriate = models.BooleanField(default=False)
+    moderation_note = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f'{self.author} - {self.content[:20]}'
-    
+
     @property
     def level(self):
         if not self.parent:

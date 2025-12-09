@@ -162,6 +162,23 @@
           </div>
         </ul>
       </li>
+
+      {% if user.is_authenticated and user.profile.is_moderator %}
+      <li>
+        <button class="dropdown-btn">
+          <img src="{% static 'app/assets/icons/settings.svg' %}" alt="Moderator icon">
+          <span>Mod Tools</span>
+          <img class="arrow-down" src="{% static 'app/assets/icons/keyboard_arrow.svg' %}" alt="Arrow Down">
+        </button>
+        <ul class="sub-menu">
+          <div>
+            <li><a href="{% url 'users:search_users' %}">Search Users</a></li>
+            <li><a href="{% url 'users:flagged_content' %}">Flagged Content</a></li>
+            <li><a href="{% url 'users:suspended_users_list' %}">Suspended Users</a></li>
+          </div>
+        </ul>
+      </li>
+      {% endif %}
     </ul>
 
     <ul>

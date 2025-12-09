@@ -1,0 +1,54 @@
+{% extends "app/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2>Suspended Users Management</h2>
+
+  {% if suspended_profiles %}
+  <div class="table-responsive mt-4">
+    <table class="table table-hover">
+      <thead class="table-danger">
+        <tr>
+          <th>Username</th>
+          <th>Display Name</th>
+          <th>Suspension Reason</th>
+          <th>Suspended By</th>
+          <th>Suspended At</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for profile in suspended_profiles %}
+        <tr>
+          <td>
+            <a href="{% url 'users:profile_view' profile.user.username %}">
+              {{ profile.user.username }}
+            </a>
+          </td>
+          <td>{{ profile.display_name }}</td>
+          <td>
+            <small>{{ profile.suspension_reason }}</small>
+          </td>
+          <td>{{ profile.suspended_by.username }}</td>
+          <td>
+            <small>{{ profile.suspended_at|date:"M d, Y H:i" }}</small>
+          </td>
+          <td>
+            <a href="{% url 'users:reinstate_user' profile.user.username %}" class="btn btn-sm btn-success">
+              Reinstate
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="alert alert-info mt-4" role="alert">
+    No suspended users at the moment. Good community standards!
+  </div>
+  {% endif %}
+
+  <a href="{% url 'app-home' %}" class="btn btn-secondary mt-3">Back Home</a>
+</div>
+{% endblock %}

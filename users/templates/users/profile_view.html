@@ -159,17 +159,44 @@
     <div class="page-header">
         <h1>
             {% if user.profile.display_name %}
-                {{ user.profile.display_name }}
+            {{ user.profile.display_name }}
             {% elif user.get_full_name %}
-                {{ user.get_full_name }}
+            {{ user.get_full_name }}
             {% else %}
-                {{ user.username }}
+            {{ user.username }}
             {% endif %}
         </h1>
         {% if not user.profile.display_name %}
         <div class="page-sub">@{{ user.username }}</div>
         {% endif %}
+        {% if profile.is_suspended %}
+        <div class="page-sub" style="color: #ff6b6b; font-weight: bold;">
+            Account Suspended
+        </div>
+        {% endif %}
     </div>
+
+    <!-- Moderator Actions -->
+    {% if request.user.is_authenticated and request.user.profile.is_moderator and request.user != user %}
+    <div style="margin: 20px 0; padding: 15px; background: #fff3cd; border-radius: 6px;">
+        {% if not profile.is_suspended %}
+        <a href="{% url 'users:suspend_user' user.username %}" class="btn btn-danger"
+            style="padding: 8px 16px; text-decoration: none; color: white; background: #dc3545; border-radius: 4px; display: inline-block;">
+            Suspend User
+        </a>
+        {% else %}
+        <a href="{% url 'users:reinstate_user' user.username %}" class="btn btn-success"
+            style="padding: 8px 16px; text-decoration: none; color: white; background: #28a745; border-radius: 4px; display: inline-block;">
+            Reinstate User
+        </a>
+        <p style="margin: 10px 0; font-size: 14px;">
+            <strong>Suspension Reason:</strong> {{ profile.suspension_reason }}<br>
+            <strong>Suspended By:</strong> {{ profile.suspended_by.username }}<br>
+            <strong>Suspended At:</strong> {{ profile.suspended_at|date:"M d, Y H:i" }}
+        </p>
+        {% endif %}
+    </div>
+    {% endif %}
 
     <!-- User Info Section -->
     <div class="section">
@@ -183,9 +210,9 @@
         <div class="full-width">
             <h3>Sustainability Interests</h3>
             {% for interest in profile.interests.all %}
-                {{ interest.name }}{% if not forloop.last %}, {% endif %}
+            {{ interest.name }}{% if not forloop.last %}, {% endif %}
             {% empty %}
-                No interests listed.
+            No interests listed.
             {% endfor %}
         </div>
 

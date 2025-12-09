@@ -1,0 +1,104 @@
+{% extends "app/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2>Flagged Content Review</h2>
+
+  {% if flagged_posts or flagged_comments %}
+  <div class="row">
+    <!-- Flagged Posts Section -->
+    {% if flagged_posts %}
+    <div class="col-md-6 mb-4">
+      <div class="card border-warning">
+        <div class="card-header bg-warning text-dark">
+          <h5 class="mb-0">Flagged Posts ({{ flagged_posts.count }})</h5>
+        </div>
+        <div class="card-body">
+          <div style="max-height: 500px; overflow-y: auto;">
+            {% for post in flagged_posts %}
+            <div class="card mb-3" style="border-left: 4px solid #ffc107;">
+              <div class="card-body">
+                <h6 class="card-title">{{ post.title }}</h6>
+                <p class="card-text small">
+                  <strong>Author:</strong> {{ post.author.username }}<br>
+                  <strong>Reason:</strong> {{ post.moderation_note|truncatewords:10 }}<br>
+                  <strong>Flagged:</strong> {{ post.created_at|date:"M d, Y H:i" }}
+                </p>
+                <div class="btn-group btn-group-sm" role="group">
+                  <a href="{% url 'forum:post_detail' post.pk %}" class="btn btn-info" target="_blank">
+                    View Post
+                  </a>
+                  <a href="{% url 'forum:post_edit_moderation' post.pk %}" class="btn btn-warning">
+                    Edit
+                  </a>
+                  <a href="{% url 'forum:post_remove_moderation' post.pk %}" class="btn btn-danger">
+                    Remove
+                  </a>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Flagged Comments Section -->
+    {% if flagged_comments %}
+    <div class="col-md-6 mb-4">
+      <div class="card border-warning">
+        <div class="card-header bg-warning text-dark">
+          <h5 class="mb-0">Flagged Comments ({{ flagged_comments.count }})</h5>
+        </div>
+        <div class="card-body">
+          <div style="max-height: 500px; overflow-y: auto;">
+            {% for comment in flagged_comments %}
+            <div class="card mb-3" style="border-left: 4px solid #ffc107;">
+              <div class="card-body">
+                <p class="card-text small">
+                  <strong>Author:</strong> {{ comment.author.username }}<br>
+                  <strong>Content:</strong> <em>{{ comment.content|truncatewords:15 }}</em><br>
+                  <strong>Reason:</strong> {{ comment.moderation_note|truncatewords:10 }}<br>
+                  <strong>Posted:</strong> {{ comment.created_at|date:"M d, Y H:i" }}
+                </p>
+                <div class="btn-group btn-group-sm" role="group">
+                  <a href="{% url 'forum:post_detail' comment.post.pk %}" class="btn btn-info" target="_blank">
+                    View Post
+                  </a>
+                  <a href="{% url 'forum:comment_edit_moderation' comment.pk %}" class="btn btn-warning">
+                    Edit
+                  </a>
+                  <a href="{% url 'forum:comment_remove_moderation' comment.pk %}" class="btn btn-danger">
+                    Remove
+                  </a>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+  {% else %}
+  <div class="alert alert-success" role="alert">
+    ✓ No flagged content! Community is clean.
+  </div>
+  {% endif %}
+
+  <div class="mt-4">
+    <a href="{% url 'app-home' %}" class="btn btn-secondary">Back Home</a>
+    <a href="{% url 'users:suspended_users_list' %}" class="btn btn-info">View Suspended Users</a>
+  </div>
+</div>
+
+<style>
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+</style>
+{% endblock %}

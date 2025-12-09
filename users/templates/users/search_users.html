@@ -1,0 +1,98 @@
+{% extends "app/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2>Search Users</h2>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <form method="GET" class="form-inline">
+        <div class="form-group" style="width: 100%;">
+          <input type="text" name="q" class="form-control" placeholder="Search by username or display name..."
+            value="{{ query }}" style="width: 100%; margin-bottom: 10px;">
+          <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  {% if query %}
+  {% if results %}
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead class="table-light">
+        <tr>
+          <th>Username</th>
+          <th>Display Name</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in results %}
+        <tr>
+          <td>
+            <strong>{{ user.username }}</strong>
+          </td>
+          <td>{{ user.profile.display_name|default:"N/A" }}</td>
+          <td>
+            {% if user.profile.is_moderator %}
+            <span class="badge bg-warning">Moderator</span>
+            {% endif %}
+            {% if user.profile.is_leader %}
+            <span class="badge bg-info">CIO Leader</span>
+            {% endif %}
+            {% if user.profile.role %}
+            <span class="badge bg-secondary">{{ user.profile.get_role_display }}</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if user.profile.is_suspended %}
+            <span class="badge bg-danger">Suspended</span>
+            {% else %}
+            <span class="badge bg-success">Active</span>
+            {% endif %}
+          </td>
+          <td>
+            <a href="{% url 'users:profile_view' user.username %}" class="btn btn-sm btn-info">
+              View Profile
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="alert alert-info" role="alert">
+    No users found matching "{{ query }}". Try a different search term.
+  </div>
+  {% endif %}
+  {% else %}
+  <div class="alert alert-light" role="alert">
+    Enter a username or display name to search for users.
+  </div>
+  {% endif %}
+
+  <a href="{% url 'app-home' %}" class="btn btn-secondary mt-3">Back Home</a>
+</div>
+
+<style>
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .form-inline {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+  }
+
+  .form-group {
+    margin-bottom: 0;
+  }
+</style>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "app/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h3 class="mb-0">Edit Comment (Moderation)</h3>
+        </div>
+        <div class="card-body">
+          <div class="alert alert-info" role="alert">
+            <strong>Note:</strong> You are editing this comment due to a content violation. Remove the inappropriate
+            content and add a moderation note.
+          </div>
+
+          <div class="card bg-light mb-3">
+            <div class="card-body">
+              <p class="card-text"><strong>Author:</strong> {{ comment.author }}</p>
+              <p class="card-text"><strong>Created:</strong> {{ comment.created_at }}</p>
+            </div>
+          </div>
+
+          <form method="POST">
+            {% csrf_token %}
+
+            <div class="form-group">
+              <label for="{{ form.content.id_for_label }}"><strong>Comment Content:</strong></label>
+              {{ form.content }}
+              <small class="form-text text-muted">Remove any inappropriate content.</small>
+              {% if form.content.errors %}
+              <div class="text-danger small">{{ form.content.errors }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group">
+              <label for="moderation_note"><strong>Moderation Note:</strong></label>
+              <textarea class="form-control" id="moderation_note" name="moderation_note" rows="3"
+                placeholder="Document what was changed and why..."></textarea>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary">Save Changes</button>
+              <a href="{% url 'forum:post_detail' comment.post.pk %}" class="btn btn-secondary">Cancel</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
