@@ -5,6 +5,7 @@
 venv/
 env/
 *.egg-info/
+b24env/
 
 # Environment variables
 .env
