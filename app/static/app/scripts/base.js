@@ -1,33 +1,50 @@
 const toggleButton = document.getElementById('toggle-btn');
 const sidebar = document.getElementById('sidebar');
-const dropdownButtons = sidebar.querySelectorAll('.dropdown-btn');
+const dropdownButtons = sidebar ? sidebar.querySelectorAll('.dropdown-btn') : [];
 const menuIcon = document.querySelector('#menu-icon');
-const profileButton = document.querySelector('#profile-button')
+const profileButton = document.querySelector('#profile-button');
 const navbar = document.querySelector('#navbar');
 const aside = document.querySelector('aside');
 const body = document.querySelector('body');
 
-toggleButton.addEventListener('click', toggleSidebar);
+if (toggleButton) {
+  toggleButton.addEventListener('click', toggleSidebar);
+}
 
 dropdownButtons.forEach(btn => {
   btn.addEventListener('click', () => toggleSubMenu(btn));
 });
 
-menuIcon.addEventListener('click', toggleSidebar);
+if (menuIcon) {
+  menuIcon.addEventListener('click', toggleSidebar);
+}
 
-profileButton.addEventListener('click', () => {
-  navbar.classList.toggle('active');
-})
+if (profileButton) {
+  profileButton.addEventListener('click', () => {
+    if (navbar) {
+      navbar.classList.toggle('active');
+    }
+  });
+}
+
+const homeContentLeft = document.querySelector('.home-content-left');
+const homeContentRight = document.querySelector('.home-content-rigth');
 
 function toggleSidebar() {
   if (aside.classList.contains('active')) {
     aside.classList.remove('active');
     aside.classList.add('close');
+
     body.classList.remove('active');
+    homeContentLeft.classList.remove('.active');
+    homeContentRight.classList.remove('.active');
   } else {
     aside.classList.add('active');
     aside.classList.remove('close');
+
     body.classList.add('active');
+    homeContentLeft.classList.add('.active');
+    homeContentRight.classList.add('.active');
   }
   closeAllSubMenus();
 }
@@ -44,13 +61,16 @@ function toggleSubMenu(button) {
   submenu.classList.toggle('show');
   button.classList.toggle('rotate');
 
-  if (sidebar.classList.contains('close')) {
+  if (sidebar && sidebar.classList.contains('close')) {
     sidebar.classList.remove('close');
-    toggleButton.classList.remove('rotate');
+    if (toggleButton) {
+      toggleButton.classList.remove('rotate');
+    }
   }
 }
 
 function closeAllSubMenus() {
+  if (!sidebar) return;
   sidebar.querySelectorAll('.sub-menu.show').forEach(submenu => {
     submenu.classList.remove('show');
     const button = submenu.previousElementSibling;

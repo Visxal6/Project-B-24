@@ -7,9 +7,11 @@ from leaderboard.models import Points
 from leaderboard.models import Task as LeaderboardTask
 from django.utils import timezone
 from datetime import timedelta
-import os, json
+import os
+import json
 from .forms import UserRegisterForm, UserUpdateForm, ProfileForm
 from .models import Notification
+
 
 @login_required
 def notifications_list(request):
@@ -26,7 +28,6 @@ def notifications_list(request):
         "users/notifications.html",
         {"notifications": notifications},
     )
-
 
 
 def register(request):
@@ -49,8 +50,9 @@ def register(request):
 def profile(request):
     """Display profile page - view only with Edit button"""
     profile, _ = Profile.objects.get_or_create(user=request.user)
-    profile_picture, _ = ProfilePicture.objects.get_or_create(user=request.user)
-    
+    profile_picture, _ = ProfilePicture.objects.get_or_create(
+        user=request.user)
+
     return render(
         request,
         'users/profile_display.html',
@@ -65,7 +67,8 @@ def profile(request):
 def profile_edit(request):
     """Edit profile page with form and Save button"""
     profile, _ = Profile.objects.get_or_create(user=request.user)
-    profile_picture, _ = ProfilePicture.objects.get_or_create(user=request.user)
+    profile_picture, _ = ProfilePicture.objects.get_or_create(
+        user=request.user)
 
     if request.method == 'POST':
         form = UserUpdateForm(request.POST, instance=request.user)
@@ -73,29 +76,31 @@ def profile_edit(request):
             form.save()
             profile.display_name = request.POST.get('display_name', '').strip()
             profile.bio = request.POST.get('bio', '').strip()
-            
+
             # Handle profile picture upload
             if 'profile_image' in request.FILES:
                 profile_picture.image = request.FILES['profile_image']
                 profile_picture.save()
                 messages.success(request, 'Profile picture updated!')
-            
+
             # Handle checkbox interests
             interests_values = request.POST.getlist('interests')
             custom_interest = request.POST.get('custom_interest', '').strip()
-            
+
             profile.interests.clear()
             interest_objs = []
-            
+
             for value in interests_values:
-                obj, _ = Interest.objects.get_or_create(name=value.capitalize())
+                obj, _ = Interest.objects.get_or_create(
+                    name=value.capitalize())
                 interest_objs.append(obj)
-            
+
             # Add custom interest if provided
             if custom_interest:
-                obj, _ = Interest.objects.get_or_create(name=custom_interest.capitalize())
+                obj, _ = Interest.objects.get_or_create(
+                    name=custom_interest.capitalize())
                 interest_objs.append(obj)
-            
+
             profile.interests.set(interest_objs)
             profile.is_completed = True
             profile.save()
@@ -155,12 +160,12 @@ def profile_view(request):
 def dashboard(request):
     if request.user.is_authenticated:
         messages.success(request, f"Welcome back, {request.user.username}!")
-    
+
     individual_leaderboard = []
     cio_leaderboard = []
     member_leaderboard = []
     is_cio = False
-    
+
     try:
         # Individual Leaderboard: Users that are NOT CIOs
         individual_qs = (
@@ -168,7 +173,7 @@ def dashboard(request):
             .exclude(user__profile__role='cio')
             .order_by('-score')[:10]
         )
-        
+
         for idx, p in enumerate(individual_qs, start=1):
             individual_leaderboard.append({
                 'rank': idx,
@@ -177,32 +182,32 @@ def dashboard(request):
             })
     except Exception:
         individual_leaderboard = []
-    
+
     try:
         # CIO Leaderboard: total member points — sum all follower points for each CIO
         from django.db.models import Sum
         from social.models import Friendship
-        
+
         cios = Profile.objects.filter(role="cio").select_related('user')
-        
+
         cio_scores = []
         for cio_profile in cios:
             cio_user = cio_profile.user
-            
+
             followers = Friendship.friends_of(cio_user)
             total_points = (
                 Points.objects.filter(user__in=followers)
                 .aggregate(total=Sum('score'))['total'] or 0
             )
-            
+
             cio_scores.append({
                 'user': cio_user,
                 'total_points': total_points,
             })
-        
+
         cio_scores.sort(key=lambda x: x['total_points'], reverse=True)
         cio_scores = cio_scores[:10]
-        
+
         for idx, cio_data in enumerate(cio_scores, start=1):
             cio_leaderboard.append({
                 'rank': idx,
@@ -211,22 +216,23 @@ def dashboard(request):
             })
     except Exception:
         cio_leaderboard = []
-    
+
     # Member Leaderboard: Only shown to CIOs, lists their top followers
     try:
         from social.models import Friendship
-        
+
         if request.user.is_authenticated:
-            user_profile = Profile.objects.filter(user=request.user, role="cio").first()
+            user_profile = Profile.objects.filter(
+                user=request.user, role="cio").first()
             if user_profile:
                 is_cio = True
-                
+
                 followers = Friendship.friends_of(request.user)
-                
+
                 member_qs = Points.objects.filter(
                     user__in=followers
                 ).select_related('user', 'user__profile').order_by('-score')[:10]
-                
+
                 for idx, p in enumerate(member_qs, start=1):
                     member_leaderboard.append({
                         'rank': idx,
@@ -240,7 +246,8 @@ def dashboard(request):
     weekly_total = 0
     weekly_completed = 0
     if request.user.is_authenticated:
-        tasks_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'leaderboard', 'weekly_tasks.json')
+        tasks_file = os.path.join(os.path.dirname(
+            os.path.dirname(__file__)), 'leaderboard', 'weekly_tasks.json')
         try:
             with open(tasks_file, 'r', encoding='utf-8') as f:
                 templates = json.load(f)
@@ -266,7 +273,8 @@ def dashboard(request):
     daily_total = 0
     daily_completed = 0
     if request.user.is_authenticated:
-        daily_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'leaderboard', 'daily_tasks.json')
+        daily_file = os.path.join(os.path.dirname(
+            os.path.dirname(__file__)), 'leaderboard', 'daily_tasks.json')
         try:
             with open(daily_file, 'r', encoding='utf-8') as f:
                 daily_templates = json.load(f)
@@ -290,7 +298,8 @@ def dashboard(request):
     upcoming_events = 0
     try:
         from leaderboard.models import Event
-        upcoming_events = Event.objects.filter(start_at__gte=timezone.now()).count()
+        upcoming_events = Event.objects.filter(
+            start_at__gte=timezone.now()).count()
     except Exception:
         upcoming_events = 0
 
@@ -352,10 +361,11 @@ def complete_profile(request):
         for value in interests_values:
             obj, _ = Interest.objects.get_or_create(name=value.capitalize())
             interest_objs.append(obj)
-        
+
         # Add custom interest if provided
         if custom_interest:
-            obj, _ = Interest.objects.get_or_create(name=custom_interest.capitalize())
+            obj, _ = Interest.objects.get_or_create(
+                name=custom_interest.capitalize())
             interest_objs.append(obj)
 
         profile.interests.set(interest_objs)
@@ -398,7 +408,8 @@ def profile_view(request, username):
             )
 
             for idx, p in enumerate(member_qs, start=1):
-                cio_members.append({'rank': idx, 'points': p.score, 'user': p.user})
+                cio_members.append(
+                    {'rank': idx, 'points': p.score, 'user': p.user})
     except Exception:
         cio_members = []
     # relationship status for the current viewer
@@ -407,8 +418,10 @@ def profile_view(request, username):
     if request.user.is_authenticated:
         try:
             from social.models import Friendship, FriendRequest
-            is_friend = Friendship.friends_of(request.user).filter(id=user.id).exists()
-            request_pending = FriendRequest.objects.filter(from_user=request.user, to_user=user, status='pending').exists()
+            is_friend = Friendship.friends_of(
+                request.user).filter(id=user.id).exists()
+            request_pending = FriendRequest.objects.filter(
+                from_user=request.user, to_user=user, status='pending').exists()
         except Exception:
             is_friend = False
             request_pending = False
@@ -425,18 +438,128 @@ def profile_view(request, username):
     return render(request, template_name, context)
 
 
+def is_moderator(user):
+    """Check if user is a moderator"""
+    if not user.is_authenticated:
+        return False
+    try:
+        return user.profile.is_moderator
+    except:
+        return False
+
+
+@login_required
+def suspend_user(request, username):
+    """Allow moderators to suspend users"""
+    if not is_moderator(request.user):
+        return redirect('app-home')
+
+    user = get_object_or_404(User, username=username)
+    profile = get_object_or_404(Profile, user=user)
+
+    if profile.is_suspended:
+        messages.warning(request, f"{user.username} is already suspended.")
+        return redirect('users:profile_view', username=username)
+
+    if request.method == 'POST':
+        reason = request.POST.get('suspension_reason', '')
+        if not reason:
+            messages.error(request, 'Please provide a reason for suspension.')
+            return render(request, 'users/suspend_user.html', {'target_user': user, 'profile': profile})
+
+        profile.suspend(request.user, reason)
+        messages.success(
+            request, f"{user.username} has been suspended for: {reason}")
+        return redirect('users:profile_view', username=username)
+
+    return render(request, 'users/suspend_user.html', {'target_user': user, 'profile': profile})
+
+
+@login_required
+def reinstate_user(request, username):
+    """Allow moderators to reinstate suspended users"""
+    if not is_moderator(request.user):
+        return redirect('app-home')
+
+    user = get_object_or_404(User, username=username)
+    profile = get_object_or_404(Profile, user=user)
+
+    if not profile.is_suspended:
+        messages.warning(request, f"{user.username} is not suspended.")
+        return redirect('users:profile_view', username=username)
+
+    if request.method == 'POST':
+        profile.reinstate()
+        messages.success(request, f"{user.username} has been reinstated.")
+        return redirect('users:profile_view', username=username)
+
+    return render(request, 'users/reinstate_user.html', {'target_user': user, 'profile': profile})
+
+
+@login_required
+def suspended_users_list(request):
+    """Show list of suspended users (moderators only)"""
+    if not is_moderator(request.user):
+        return redirect('app-home')
+
+    suspended_profiles = Profile.objects.filter(
+        is_suspended=True).select_related('user', 'suspended_by')
+
+    return render(request, 'users/suspended_users_list.html', {'suspended_profiles': suspended_profiles})
+
+
+@login_required
+def search_users(request):
+    """Search for users (moderators only)"""
+    if not is_moderator(request.user):
+        return redirect('app-home')
+
+    query = request.GET.get('q', '').strip()
+    results = []
+
+    if query:
+        # Search by username or display name
+        results = User.objects.filter(
+            username__icontains=query
+        ) | User.objects.filter(
+            profile__display_name__icontains=query
+        )
+        results = results.select_related('profile').distinct()
+
+    return render(request, 'users/search_users.html', {
+        'query': query,
+        'results': results,
+        'is_moderator': is_moderator(request.user)
+    })
+
+
+@login_required
+def flagged_content(request):
+    """View flagged posts and comments (moderators only)"""
+    if not is_moderator(request.user):
+        return redirect('app-home')
+
+    from forum.models import Post, Comment
+
+    flagged_posts = Post.objects.filter(
+        is_flagged_inappropriate=True).select_related('author')
+    flagged_comments = Comment.objects.filter(
+        is_flagged_inappropriate=True).select_related('author', 'post')
+
+    return render(request, 'users/flagged_content.html', {
+        'flagged_posts': flagged_posts,
+        'flagged_comments': flagged_comments,
+        'is_moderator': is_moderator(request.user)
+    })
+
+
 @login_required
 def delete_account(request):
     if request.method == "POST":
         user = request.user
         user.delete()
-        messages.success(request, "Your account has been deleted successfully.")
+        messages.success(
+            request, "Your account has been deleted successfully.")
         return redirect("login")
 
-
     return render(request, "users/delete_account.html")
-
-@login_required
-def notifications_list(request):
-    notifications = Notification.objects.filter(user=request.user).order_by("-created_at")
-    return render(request, "users/notifications.html", {"notifications": notifications})

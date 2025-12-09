@@ -3,53 +3,66 @@
 {% load display_name %}
 
 {% block styles %}
-  <link rel="stylesheet" href="{% static 'forum/styles/comment.css' %}">
+<link rel="stylesheet" href="{% static 'forum/styles/comment.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="comment-container" style="container: {{ comment.level }}em; margin-bottom: 1em; border-left: 1px solid #ccc; padding-left: 2em;">
+<div class="comment-container"
+    style="container: {{ comment.level }}em; margin-bottom: 1em; border-left: 1px solid #ccc; padding-left: 2em;">
     {% if not comment.is_deleted %}
-    
+
     <div class="comment-body">
         <p><strong>
-            {% if request.user == comment.author %}
+                {% if request.user == comment.author %}
                 {{ comment.author|get_display_name }}
-            {% else %}
+                {% else %}
                 <a href="{% url 'users:profile' username=comment.author.username %}">
                     {{ comment.author|get_display_name }}
                 </a>
-            {% endif %}</strong></p>
+                {% endif %}</strong></p>
         <p class="comment-timestamp">{{ comment.created_at }}</p>
         <p>{{ comment.content }}</p>
     </div>
 
     {% if user.is_authenticated and user == comment.author %}
-        <form action="{% url 'forum:comment_delete' comment.pk %}" method="post" style="display:inline;">
-            {% csrf_token %}
-            <button class="btn btn-delete" type="submit" onclick="return confirm('Are you sure you want to delete this comment?');">Delete</button>
-        </form>
+    <form action="{% url 'forum:comment_delete' comment.pk %}" method="post" style="display:inline;">
+        {% csrf_token %}
+        <button class="btn btn-delete" type="submit"
+            onclick="return confirm('Are you sure you want to delete this comment?');">Delete</button>
+    </form>
+    {% endif %}
+
+    {% if is_moderator %}
+    <div style="display: inline-block; margin-left: 10px;">
+        <a href="{% url 'forum:comment_flag_inappropriate' comment.pk %}" class="btn btn-warning"
+            style="padding: 4px 8px; font-size: 0.85em;">Flag</a>
+        <a href="{% url 'forum:comment_edit_moderation' comment.pk %}" class="btn btn-info"
+            style="padding: 4px 8px; font-size: 0.85em;">Edit</a>
+        <a href="{% url 'forum:comment_remove_moderation' comment.pk %}" class="btn btn-danger"
+            style="padding: 4px 8px; font-size: 0.85em;">Remove</a>
+    </div>
     {% endif %}
 
     {% if user.is_authenticated %}
-        <button class="btn btn-reply-toggle" type="button" onclick="toggleReplyForm({{ comment.id }})">Reply</button>
+    <button class="btn btn-reply-toggle" type="button" onclick="toggleReplyForm({{ comment.id }})">Reply</button>
 
-        <div id="reply-form-{{ comment.id }}" style="display:none;">
-            <form class="reply-form" method="post" style="margin-top: 0.5em;">
-                {% csrf_token %}
-                {{ form.content }}
-                <input type="hidden" name="parent_id" value="{{ comment.id }}">
-                   
-                <div class="btn-container">
-                    <button class="btn" type="submit" style="margin-left: 10px;">Submit Reply</button>
-                    <button class="btn" type="button" onclick="toggleReplyForm({{ comment.id }})">Cancel</button>
-                </div>
-    
-            </form>
-        </div>
+    <div id="reply-form-{{ comment.id }}" style="display:none;">
+        <form class="reply-form" method="post" style="margin-top: 0.5em;">
+            {% csrf_token %}
+            {{ form.content }}
+            <input type="hidden" name="parent_id" value="{{ comment.id }}">
+
+            <div class="btn-container">
+                <button class="btn" type="submit" style="margin-left: 10px;">Submit Reply</button>
+                <button class="btn" type="button" onclick="toggleReplyForm({{ comment.id }})">Cancel</button>
+            </div>
+
+        </form>
+    </div>
     {% endif %}
 
     {% for reply in comment.replies.all %}
-        {% include 'forum/comment.html' with comment=reply %}
+    {% include 'forum/comment.html' with comment=reply %}
     {% endfor %}
     {% endif %}
 </div>

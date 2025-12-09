@@ -20,6 +20,7 @@ def forum_image_upload_to(instance, filename):
 class Tag(models.Model):
     name = models.CharField(max_length=50, unique=True)
 
+
 class Post(models.Model):
     TAG_CHOICES = [
         ('general', 'General'),
@@ -27,7 +28,7 @@ class Post(models.Model):
         ('leaderboard', 'Leaderboard'),
         ('cio_leaders', 'CIO Leaders'),
     ]
-    
+
     PRIVACY_CHOICES = [
         ('public', 'Public'),
         ('cio_wide', 'CIO-Wide'),
@@ -39,8 +40,12 @@ class Post(models.Model):
     title = models.CharField(max_length=200, default="Title")
     caption = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    tag = models.CharField(max_length=50, choices=TAG_CHOICES, default='general')
-    privacy = models.CharField(max_length=20, choices=PRIVACY_CHOICES, default='public')
+    tag = models.CharField(
+        max_length=50, choices=TAG_CHOICES, default='general')
+    privacy = models.CharField(
+        max_length=20, choices=PRIVACY_CHOICES, default='public')
+    is_flagged_inappropriate = models.BooleanField(default=False)
+    moderation_note = models.TextField(blank=True, null=True)
 
     class Meta:
         ordering = ['-created_at']
@@ -61,16 +66,21 @@ class PostImage(models.Model):
         return f'Image for {self.post.title}'
 
 class Comment(models.Model):
-    post = models.ForeignKey(Post, related_name='comments', on_delete=models.CASCADE)
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    parent = models.ForeignKey('self', null=True, blank=True, related_name='replies', on_delete=models.CASCADE)
+    post = models.ForeignKey(
+        Post, related_name='comments', on_delete=models.CASCADE)
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    parent = models.ForeignKey(
+        'self', null=True, blank=True, related_name='replies', on_delete=models.CASCADE)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     is_deleted = models.BooleanField(default=False)
+    is_flagged_inappropriate = models.BooleanField(default=False)
+    moderation_note = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f'{self.author} - {self.content[:20]}'
-    
+
     @property
     def level(self):
         if not self.parent:
@@ -84,7 +94,6 @@ def delete_post_image_from_s3(sender, instance, **kwargs):
     """Delete the associated image from S3 when a Post is deleted."""
     if instance.image:
         try:
-            # Delete the image file from storage
             logger.info(f"Deleting image from S3: {instance.image.name}")
             instance.image.delete(save=False)
             logger.info(f"Successfully deleted image: {instance.image.name}")
