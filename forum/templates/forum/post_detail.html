@@ -34,6 +34,13 @@
       {% if post.image %}
         <img src="{{ post.image.url }}" class="post-detail-img" alt="Post image">
       {% endif %}
+      {% if post.images.all %}
+        <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem;">
+          {% for img in post.images.all %}
+            <img src="{{ img.image.url }}" class="post-detail-img" alt="Post image" style="max-width: 300px; height: auto;">
+          {% endfor %}
+        </div>
+      {% endif %}
 
       <div style="display: flex; gap: 12px; margin-bottom: 1rem; align-items: center;">
         <a href="{{ request.GET.next|default:default_url }}" class="btn btn-secondary post-action-btn">Back</a>

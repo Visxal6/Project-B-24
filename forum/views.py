@@ -192,11 +192,16 @@ def post_create(request):
             
             post = form.save(commit=False)
             post.author = request.user
-            logger.debug(f"Image field before save: {post.image}")
-            
             post.save()
             logger.info(f"Post saved successfully with ID {post.pk}")
-            logger.info(f"Image path in database: {post.image}")
+            
+            # Handle multiple images
+            images = request.FILES.getlist('images')
+            if images:
+                from .models import PostImage
+                for image in images:
+                    PostImage.objects.create(post=post, image=image)
+                logger.info(f"Saved {len(images)} images for post {post.pk}")
             
             return redirect('forum:post_detail', pk=post.pk)
         else:

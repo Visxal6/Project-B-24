@@ -17,6 +17,24 @@
     .file-error.show {
       display: block;
     }
+    .image-preview-container {
+      margin-top: 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .image-preview {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .image-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
   </style>
 {% endblock %}
 
@@ -39,12 +57,11 @@
       </div>
 
       <div class="form-group">
-        <label for="{{ form.image.id_for_label }}">Upload Image <span style="color: red;">*</span></label>
-        {{ form.image }}
+        <label for="id_images">Upload Images <span style="color: red;">*</span></label>
+        <input type="file" id="id_images" name="images" class="form-control" accept="image/*" multiple>
         <div id="file-error" class="file-error"></div>
-        {% if form.image.errors %}
-          <div class="alert alert-danger">{{ form.image.errors }}</div>
-        {% endif %}
+        <div id="image-preview-container" class="image-preview-container"></div>
+        <small class="form-text text-muted">Accepted formats: JPEG, PNG, GIF, WebP, BMP (Max 5MB each)</small>
       </div>
 
       <div class="form-group">
@@ -63,34 +80,55 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      const imageInput = document.getElementById('{{ form.image.id_for_label }}');
+      const imageInput = document.getElementById('id_images');
       const fileErrorDiv = document.getElementById('file-error');
+      const previewContainer = document.getElementById('image-preview-container');
       const postForm = document.getElementById('post-form');
       
       const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/bmp'];
+      const maxSize = 5 * 1024 * 1024; // 5MB per image
       
       imageInput.addEventListener('change', function() {
         fileErrorDiv.classList.remove('show');
         fileErrorDiv.textContent = '';
+        previewContainer.innerHTML = '';
         
         if (this.files && this.files.length > 0) {
-          const file = this.files[0];
+          let hasError = false;
           
-          // Check if file is an image
-          if (!validImageTypes.includes(file.type)) {
-            fileErrorDiv.textContent = 'Please upload a valid image file (JPEG, PNG, GIF, WebP, or BMP).';
-            fileErrorDiv.classList.add('show');
-            this.value = ''; // Clear the input
-            return;
+          for (let i = 0; i < this.files.length; i++) {
+            const file = this.files[i];
+            
+            // Check if file is an image
+            if (!validImageTypes.includes(file.type)) {
+              fileErrorDiv.textContent = `File "${file.name}" is not a valid image (JPEG, PNG, GIF, WebP, or BMP).`;
+              fileErrorDiv.classList.add('show');
+              hasError = true;
+              break;
+            }
+            
+            // Check file size
+            if (file.size > maxSize) {
+              fileErrorDiv.textContent = `File "${file.name}" is too large (max 5MB per image).`;
+              fileErrorDiv.classList.add('show');
+              hasError = true;
+              break;
+            }
+            
+            // Create preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+              const preview = document.createElement('div');
+              preview.className = 'image-preview';
+              preview.innerHTML = `<img src="${e.target.result}" alt="Preview of ${file.name}">`;
+              previewContainer.appendChild(preview);
+            };
+            reader.readAsDataURL(file);
           }
           
-          // Check file size (5MB limit)
-          const maxSize = 5 * 1024 * 1024; // 5MB
-          if (file.size > maxSize) {
-            fileErrorDiv.textContent = 'Image file is too large (max 5MB).';
-            fileErrorDiv.classList.add('show');
+          if (hasError) {
             this.value = ''; // Clear the input
-            return;
+            previewContainer.innerHTML = '';
           }
         }
       });
