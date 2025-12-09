@@ -15,7 +15,7 @@
     font-weight: 500;
     box-shadow: 0 2px 8px rgba(0,0,0,0.12);
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background 0.2s, left 280ms cubic-bezier(.22, .61, .36, 1);
 }
 
 .new-post-btn:hover {
@@ -27,3 +27,6 @@
     height: 22px;
     fill: #fff;
 }
+
+
+

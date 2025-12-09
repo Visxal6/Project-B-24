@@ -1,0 +1,22 @@
+.form-control {
+  padding: 4px 16px;
+  border: 1px solid gray;
+  border-radius: 20px;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+}
+
+.btn-primary {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.btn-secondary {
+  text-decoration: underline;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.alert {
+  margin-bottom: 2rem;
+}

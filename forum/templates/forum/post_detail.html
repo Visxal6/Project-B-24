@@ -4,79 +4,98 @@
 
 
 {% block styles %}
-  <link rel="stylesheet" href="{% static 'forum/styles/post_detail.css' %}">
-  <link rel="stylesheet" href="{% static 'forum/styles/post_detail_actions.css' %}">
+<link rel="stylesheet" href="{% static 'forum/styles/post_detail.css' %}">
+<link rel="stylesheet" href="{% static 'forum/styles/post_detail_actions.css' %}">
 {% endblock %}
 
 {% block title %}
-  Channels | Post Details
+Channels | Post Details
 {% endblock %}
 
 {% block content %}
-  {% url 'forum:post_list' as default_url %}
+{% url 'forum:post_list' as default_url %}
 
-  <div class="container">
-    <div class="card">
-        <div class="card-body">
-        <h3 class="card-title">{{ post.title }}</h3>
-        <h5 class="card-user">
-            {% if request.user == post.author %}
-              {{ post.author|get_display_name }}
-            {% else %}
-              <a href="{% url 'users:profile' username=post.author.username %}">
-                {{ post.author|get_display_name }}
-              </a>
-            {% endif %}
-        </h5>
-        <p class="card-timestamp">Posted {{ post.created_at }}</p>
-        <p class="card-text">{{ post.caption }}</p>
-      </div>
-      {% if post.image %}
-        <img src="{{ post.image.url }}" class="post-detail-img" alt="Post image">
+<div class="container">
+  <div class="card">
+    <div class="card-body">
+      <h3 class="card-title">{{ post.title }}</h3>
+      <h5 class="card-user">
+        {% if request.user == post.author %}
+        {{ post.author|get_display_name }}
+        {% else %}
+        <a href="{% url 'users:profile' username=post.author.username %}">
+          {{ post.author|get_display_name }}
+        </a>
+        {% endif %}
+      </h5>
+      <p class="card-timestamp">Posted <span data-utc-timestamp="{{ post.created_at|date:'c' }}">{{ post.created_at }}</span></p>
+      <p class="card-text">{{ post.caption }}</p>
+    </div>
+    {% if post.image %}
+    <img src="{{ post.image.url }}" class="post-detail-img" alt="Post image">
+    {% endif %}
+      {% if post.images.all %}
+        <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem;">
+          {% for img in post.images.all %}
+            <div style="position: relative;">
+              <img src="{{ img.image.url }}" class="post-detail-img" alt="Post image" style="max-width: 300px; height: auto;">
+              <p style="font-size: 0.85rem; color: #666; margin-top: 0.5rem; text-align: center;"><span data-utc-timestamp="{{ img.uploaded_at|date:'c' }}">{{ img.uploaded_at }}</span></p>
+            </div>
+          {% endfor %}
+        </div>
       {% endif %}
 
-      <div style="display: flex; gap: 12px; margin-bottom: 1rem; align-items: center;">
-        <a href="{{ request.GET.next|default:default_url }}" class="btn btn-secondary post-action-btn">Back</a>
-          {% if user.is_authenticated and user == post.author %}
-            <form action="{% url 'forum:post_delete' post.pk %}" method="post" style="display:inline; margin: 0;">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-danger post-action-btn" onclick="return confirm('Are you sure you want to delete this post?');">Delete Post</button>
-            </form>
-          {% endif %}
-      </div>
-    
-    </div>
-
-    <div class="comment-container">
-      <h2>Comments</h2>
-
-      {% if user.is_authenticated %}
-        <form class="comment-input" method="post">
-            {% csrf_token %}
-            {{ form.content }}
-            <input type="hidden" name="parent_id" value="">
-            <button class="btn-add-comment" type="submit">Add Comment</button>
-        </form>
-      {% else %}
-          <p><a href="{% url 'login' %}">Log in</a> to add a comment.</p>
+    <div style="display: flex; gap: 12px; margin-bottom: 1rem; align-items: center;">
+      <a href="{{ request.GET.next|default:default_url }}" class="btn btn-secondary post-action-btn">Back</a>
+      {% if user.is_authenticated and user == post.author %}
+      <form action="{% url 'forum:post_delete' post.pk %}" method="post" style="display:inline; margin: 0;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger post-action-btn"
+          onclick="return confirm('Are you sure you want to delete this post?');">Delete Post</button>
+      </form>
       {% endif %}
-
-      {% for comment in comments %}
-        {% include 'forum/comment.html' with comment=comment %}
-      {% empty %}
-        <p class="text-no-comments">No comments yet. Be the first to comment!</p>
-      {% endfor %}
+      {% if is_moderator %}
+      <div class="btn-group" role="group">
+        <a href="{% url 'forum:post_flag_inappropriate' post.pk %}" class="btn btn-warning post-action-btn">Flag</a>
+        <a href="{% url 'forum:post_edit_moderation' post.pk %}" class="btn btn-info post-action-btn">Edit</a>
+        <a href="{% url 'forum:post_remove_moderation' post.pk %}" class="btn btn-danger post-action-btn">Remove</a>
+      </div>
+      {% endif %}
     </div>
+
   </div>
 
-  <script>
-    function toggleReplyForm(commentId) {
-      const formDiv = document.getElementById('reply-form-' + commentId);
-      if (formDiv.style.display === 'none') {
-        formDiv.style.display = 'block';
-      } else {
-        formDiv.style.display = 'none';
-      }
+  <div class="comment-container">
+    <h2>Comments</h2>
+
+    {% if user.is_authenticated %}
+    <form class="comment-input" method="post">
+      {% csrf_token %}
+      {{ form.content }}
+      <input type="hidden" name="parent_id" value="">
+      <button class="btn-add-comment" type="submit">Add Comment</button>
+    </form>
+    {% else %}
+    <p><a href="{% url 'login' %}">Log in</a> to add a comment.</p>
+    {% endif %}
+
+    {% for comment in comments %}
+    {% include 'forum/comment.html' with comment=comment %}
+    {% empty %}
+    <p class="text-no-comments">No comments yet. Be the first to comment!</p>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+  function toggleReplyForm(commentId) {
+    const formDiv = document.getElementById('reply-form-' + commentId);
+    if (formDiv.style.display === 'none') {
+      formDiv.style.display = 'block';
+    } else {
+      formDiv.style.display = 'none';
     }
-  </script>
+  }
+</script>
+<script src="{% static 'forum/scripts/timestamp_converter.js' %}" defer></script>
 {% endblock %}

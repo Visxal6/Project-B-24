@@ -32,8 +32,10 @@
         <a href="{% url 'forum:post_detail' post.id %}?next={{ request.path }}">View</a>
       </div>
       <div class="forum-image-container">
-        {% if post.image %}
-        <img src="{{ post.image.url }}" alt="Post image" class="forum-img">
+        {% if post.images.all %}
+          <img src="{{ post.images.all.0.image.url }}" alt="Post image" class="forum-img">
+        {% elif post.image %}
+          <img src="{{ post.image.url }}" alt="Post image" class="forum-img">
         {% endif %}
       </div>
     </div>
@@ -41,4 +43,47 @@
     <p>No posts yet.</p>
   {% endfor %}
   </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const sidebar = document.getElementById('sidebar');
+    const newPostBtn = document.querySelector('.new-post-btn');
+    
+    if (sidebar && newPostBtn) {
+      // Get the sidebar width
+      function getSidebarWidth() {
+        const computed = window.getComputedStyle(sidebar);
+        const width = computed.width;
+        return parseInt(width) || 0;
+      }
+      
+      // Update button position
+      function updateButtonPosition() {
+        if (sidebar.classList.contains('active')) {
+          const sidebarWidth = getSidebarWidth();
+          const newLeft = 32 + sidebarWidth;
+          newPostBtn.style.left = newLeft + 'px';
+        } else {
+          newPostBtn.style.left = '32px';
+        }
+      }
+      
+      // Use MutationObserver to watch for class changes on sidebar
+      const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          if (mutation.attributeName === 'class') {
+            updateButtonPosition();
+          }
+        });
+      });
+      
+      observer.observe(sidebar, { attributes: true, attributeFilter: ['class'] });
+      
+      // Initial position
+      updateButtonPosition();
+    }
+  });
+</script>
 {% endblock %}

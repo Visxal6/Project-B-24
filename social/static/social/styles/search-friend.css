@@ -18,7 +18,7 @@
 
 .search-friend-bar {
   background: none;
-  color: var(--line);
+  color: white;
   border: 1px solid var(--line);
   font-family: 'Poppins';
   border-radius: 20px;

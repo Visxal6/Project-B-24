@@ -5,42 +5,51 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
-from django.db.models import Q
+from django.db.models import Q, Value
+from django.db.models.functions import Concat
 from django.db.models import Max
 from django.urls import reverse
 from users.models import Notification
 
 from django.conf import settings
-from .models import FriendRequest, Friendship, Conversation, Message
+from .models import FriendRequest, Friendship, Conversation, Message, ConversationParticipant
 from users.models import Profile
 User = settings.AUTH_USER_MODEL
 
 UserModel = get_user_model()
 
 # Search and return user that match the input
-
-
 @login_required
 def user_search(request):
-    # Get user name from query
     q = request.GET.get("q", "").strip()
     results = []
 
-    # Find users
     if q:
-        results = UserModel.objects.filter(
+        terms = q.split()
+
+        # Start with single-field matching
+        query = (
             Q(username__icontains=q) |
             Q(first_name__icontains=q) |
             Q(last_name__icontains=q) |
             Q(email__icontains=q)
-        ).exclude(id=request.user.id)[:20]
+        )
 
-    # Return users results
-    return render(request, "social/user_search.html",
-                  {"q": q,
-                   "results": results
-                   })
+        for term in terms:
+            query |= Q(first_name__icontains=term) | Q(last_name__icontains=term)
 
+        results = (
+            UserModel.objects
+            .filter(query)
+            .exclude(id=request.user.id)
+            .distinct()[:20]
+        )
+
+    return render(
+        request,
+        "social/user_search.html",
+        {"q": q, "results": results}
+    )
 
 # Send friend request
 @login_required
@@ -241,12 +250,25 @@ def _sidebar_convos(request):
 
     convos = []
     for c in qs:
-        other = c.participants.exclude(id=request.user.id).first()
-        if other:
-            display = other.username
+        participants = list(c.participants.all())
+
+        # Group chat if more than 2 members
+        if len(participants) > 2:
+            # Auto name: comma-separated first names
+            group_name = ", ".join([p.first_name or p.username for p in participants[:3]])
+            if len(participants) > 3:
+                group_name += " + others"
+            display = f"👥 {group_name}"
         else:
-            display = f"Conversation {c.id}"
-        convos.append({"id": c.id, "display": display})
+            # 1-on-1 chat
+            other = c.participants.exclude(id=request.user.id).first()
+            display = other.username if other else f"Conversation {c.id}"
+
+        convos.append({
+            "id": c.id,
+            "display": display,
+            "is_group": len(participants) > 2
+        })
     return convos
 
 
@@ -256,7 +278,8 @@ def chat_detail(request, convo_id):
     convo = get_object_or_404(
         Conversation, id=convo_id, participants=request.user)
     msgs = convo.messages.select_related("sender").all()
-    other = convo.participants.exclude(id=request.user.id).first()
+    participants = convo.participants.all()
+    other = participants.exclude(id=request.user.id).first()
     convos = _sidebar_convos(request)
 
     # 🔔 mark message notifications for this convo as read
@@ -275,6 +298,7 @@ def chat_detail(request, convo_id):
             "convo": convo,
             "messages": msgs,
             "other": other,
+            "participants": participants, 
             "convos": convos,
         },
     )
@@ -375,3 +399,34 @@ def find_cios(request):
     return render(request, "social/find_cios.html", {
         "cios": cios_data
     })
+
+@login_required
+def create_group_chat(request):
+    friends = Friendship.friends_of(request.user)
+
+    if request.method == "POST":
+        name = request.POST.get("name", "").strip()
+        member_ids = request.POST.getlist("members")
+
+        if not name:
+            messages.error(request, "Group name is required.")
+            return redirect("social:create_group_chat")
+
+        if len(member_ids) < 2:
+            messages.error(request, "Select at least 2 people to form a group.")
+            return redirect("social:create_group_chat")
+
+        convo = Conversation.objects.create()
+        ConversationParticipant.objects.create(conversation=convo, user=request.user)
+
+        # Add selected members
+        for uid in member_ids:
+            ConversationParticipant.objects.create(conversation=convo, user_id=uid)
+
+        messages.success(request, f"Group '{name}' created.")
+        return redirect("social:chat_detail", convo_id=convo.id)
+
+    return render(request, "social/create_group_chat.html", {
+        "friends": friends
+    })
+

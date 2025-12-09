@@ -17,6 +17,136 @@
   </div>
   {% endif %}
 
+  {% if not request.user.is_authenticated %}
+  <!-- Login Prompt for Non-Authenticated Users -->
+  <div class="login-prompt-container">
+    <div class="login-prompt-content">
+      <div class="welcome-icon">🌱</div>
+      <h1>Welcome to Sustainability Challenges</h1>
+      <p class="welcome-subtitle">Join our community and start making a difference today!</p>
+      <p class="welcome-description">Track your progress, complete daily and weekly challenges, and compete with others to make the world more sustainable.</p>
+      <a href="{% url 'login' %}" class="login-prompt-button">Login to Get Started</a>
+      <p class="signup-text">Don't have an account? <a href="{% url 'account_signup' %}" class="signup-link">Sign up here</a></p>
+    </div>
+  </div>
+
+  <style>
+    .login-prompt-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 80vh;
+      padding: 20px;
+    }
+
+    .login-prompt-content {
+      text-align: center;
+      max-width: 600px;
+      background: white;
+      padding: 60px 40px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .welcome-icon {
+      font-size: 80px;
+      margin-bottom: 40px;
+      animation: bounce 2s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .login-prompt-content h1 {
+      font-size: 36px;
+      color: #333;
+      margin: 0 0 30px 0;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+
+    .welcome-subtitle {
+      font-size: 18px;
+      color: #666;
+      margin: 0 0 30px 0;
+      font-weight: 500;
+    }
+
+    .welcome-description {
+      font-size: 16px;
+      color: #777;
+      line-height: 1.6;
+      margin: 0 0 40px 0;
+    }
+
+    .login-prompt-button {
+      display: inline-block;
+      background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
+      color: white;
+      padding: 16px 48px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 18px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+    }
+
+    .login-prompt-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+      background: linear-gradient(135deg, #43a047 0%, #5cb860 100%);
+    }
+
+    .signup-text {
+      margin-top: 25px;
+      font-size: 14px;
+      color: #666;
+    }
+
+    .signup-link {
+      color: #4caf50;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    .signup-link:hover {
+      color: #43a047;
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .login-prompt-content {
+        padding: 40px 30px;
+      }
+
+      .login-prompt-content h1 {
+        font-size: 28px;
+      }
+
+      .welcome-subtitle {
+        font-size: 16px;
+      }
+
+      .welcome-description {
+        font-size: 14px;
+      }
+
+      .login-prompt-button {
+        padding: 14px 36px;
+        font-size: 16px;
+      }
+
+      .welcome-icon {
+        font-size: 60px;
+      }
+    }
+  </style>
+  {% else %}
+
   {% if request.user.is_authenticated and tasks_remaining > 0 %}
   <div class="tasks-reminder-banner">
     <div class="reminder-content">
@@ -168,6 +298,9 @@
     }
   </style>
   {% endif %}
+
+  {% endif %}
+  {# End of authenticated user content #}
 
   <br>
   <br>

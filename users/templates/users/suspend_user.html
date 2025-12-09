@@ -1,0 +1,48 @@
+{% extends "app/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card border-danger">
+        <div class="card-header bg-danger text-white">
+          <h3 class="mb-0">Suspend User Account</h3>
+        </div>
+        <div class="card-body">
+          <div class="alert alert-danger" role="alert">
+            <strong>Warning:</strong> This action will suspend {{ target_user.username }}'s account, preventing them
+            from posting or commenting.
+          </div>
+
+          <div class="card bg-light mb-3">
+            <div class="card-body">
+              <h5 class="card-title">User Information</h5>
+              <p class="card-text"><strong>Username:</strong> {{ target_user.username }}</p>
+              <p class="card-text"><strong>Email:</strong> {{ target_user.email }}</p>
+              <p class="card-text"><strong>Display Name:</strong> {{ profile.display_name }}</p>
+              <p class="card-text"><strong>Role:</strong> {{ profile.get_role_display }}</p>
+            </div>
+          </div>
+
+          <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="suspension_reason"><strong>Reason for Suspension:</strong></label>
+              <textarea class="form-control" id="suspension_reason" name="suspension_reason" rows="5"
+                placeholder="Provide a detailed reason for this suspension (e.g., repeated violations, harassment, spam, etc.)"
+                required></textarea>
+              <small class="form-text text-muted">This reason will be visible to the suspended user and recorded in the
+                system.</small>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-danger">Suspend User</button>
+              <a href="{% url 'users:profile_view' target_user.username %}" class="btn btn-secondary">Cancel</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

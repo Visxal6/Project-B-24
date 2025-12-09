@@ -148,6 +148,35 @@
         padding-bottom: 5px;
         padding-top: 5px;
     }
+
+    .profile-picture-display {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .profile-picture-display img {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 5px solid #4CAF50;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .default-profile-display {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 80px;
+        color: #999;
+        margin: 0 auto;
+        border: 5px solid #e0e0e0;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
 </style>
 
 
@@ -158,27 +187,77 @@
 
 <div class="content-wrapper">
     <div class="page-header">
+<<<<<<< HEAD
         <h1>{{ user|get_display_name }}</h1>
                 {% if not user.profile.display_name %}
                 <div class="page-sub">@{{ user.username }}</div>
                 {% endif %}
+=======
+        <h1>
+            {% if user.profile.display_name %}
+            {{ user.profile.display_name }}
+            {% elif user.get_full_name %}
+            {{ user.get_full_name }}
+            {% else %}
+            {{ user.username }}
+            {% endif %}
+        </h1>
+        {% if not user.profile.display_name %}
+        <div class="page-sub">@{{ user.username }}</div>
+        {% endif %}
+        {% if profile.is_suspended %}
+        <div class="page-sub" style="color: #ff6b6b; font-weight: bold;">
+            Account Suspended
+        </div>
+        {% endif %}
+>>>>>>> eb8b5fd6ddafe658733d88a98d0797800b08d142
 
-                {% if request.user.is_authenticated and request.user.id != user.id and profile.role == 'cio' %}
-                <div style="margin-top:8px;">
-                        {% if is_friend %}
-                            <a href="{% url 'social:start_chat' user.id %}"><button class="button button-secondary">Message</button></a>
-                        {% elif request_pending %}
-                            <span class="status-badge status-pending">⏱ Request Pending</span>
-                        {% else %}
-                            <a href="{% url 'social:send_request' user.id %}"><button class="button button-primary">Follow</button></a>
-                        {% endif %}
-                        <a href="{% url 'social:incoming_requests' %}" style="margin-left:12px;">Requests</a>
-                </div>
+        {% if request.user.is_authenticated and request.user.id != user.id and profile.role == 'cio' %}
+        <div style="margin-top:8px;">
+                {% if is_friend %}
+                    <a href="{% url 'social:start_chat' user.id %}"><button class="button button-secondary">Message</button></a>
+                {% elif request_pending %}
+                    <span class="status-badge status-pending">⏱ Request Pending</span>
+                {% else %}
+                    <a href="{% url 'social:send_request' user.id %}"><button class="button button-primary">Follow</button></a>
                 {% endif %}
+                <a href="{% url 'social:incoming_requests' %}" style="margin-left:12px;">Requests</a>
+        </div>
+        {% endif %}
     </div>
+
+    <!-- Moderator Actions -->
+    {% if request.user.is_authenticated and request.user.profile.is_moderator and request.user != user %}
+    <div style="margin: 20px 0; padding: 15px; background: #fff3cd; border-radius: 6px;">
+        {% if not profile.is_suspended %}
+        <a href="{% url 'users:suspend_user' user.username %}" class="btn btn-danger"
+            style="padding: 8px 16px; text-decoration: none; color: white; background: #dc3545; border-radius: 4px; display: inline-block;">
+            Suspend User
+        </a>
+        {% else %}
+        <a href="{% url 'users:reinstate_user' user.username %}" class="btn btn-success"
+            style="padding: 8px 16px; text-decoration: none; color: white; background: #28a745; border-radius: 4px; display: inline-block;">
+            Reinstate User
+        </a>
+        <p style="margin: 10px 0; font-size: 14px;">
+            <strong>Suspension Reason:</strong> {{ profile.suspension_reason }}<br>
+            <strong>Suspended By:</strong> {{ profile.suspended_by.username }}<br>
+            <strong>Suspended At:</strong> {{ profile.suspended_at|date:"M d, Y H:i" }}
+        </p>
+        {% endif %}
+    </div>
+    {% endif %}
 
     <!-- User Info Section -->
     <div class="section">
+        <div class="profile-picture-display">
+            {% if profile_picture.image %}
+                <img src="{{ profile_picture.image.url }}" alt="{{ user.username }}'s Profile Picture">
+            {% else %}
+                <div class="default-profile-display">👤</div>
+            {% endif %}
+        </div>
+        
         <h2>Basic Information</h2>
 
         <div class="full-width">
@@ -189,9 +268,9 @@
         <div class="full-width">
             <h3>Sustainability Interests</h3>
             {% for interest in profile.interests.all %}
-                {{ interest.name }}{% if not forloop.last %}, {% endif %}
+            {{ interest.name }}{% if not forloop.last %}, {% endif %}
             {% empty %}
-                No interests listed.
+            No interests listed.
             {% endfor %}
         </div>
 

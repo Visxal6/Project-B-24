@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils import timezone
 
 
 class Interest(models.Model):
@@ -28,10 +29,32 @@ class Profile(models.Model):
     )
 
     is_completed = models.BooleanField(default=False)
+    is_moderator = models.BooleanField(default=False)
+    is_suspended = models.BooleanField(default=False)
+    suspended_at = models.DateTimeField(null=True, blank=True)
+    suspension_reason = models.TextField(blank=True, null=True)
+    suspended_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name='suspended_users')
 
     @property
     def is_leader(self):
         return self.role == "cio"
+
+    def suspend(self, moderator, reason):
+        """Suspend this user"""
+        self.is_suspended = True
+        self.suspended_at = timezone.now()
+        self.suspension_reason = reason
+        self.suspended_by = moderator
+        self.save()
+
+    def reinstate(self):
+        """Reinstate this user"""
+        self.is_suspended = False
+        self.suspended_at = None
+        self.suspension_reason = None
+        self.suspended_by = None
+        self.save()
 
     def __str__(self):
         if self.display_name:
@@ -45,11 +68,27 @@ class ProfilePicture(models.Model):
         on_delete=models.CASCADE,
         related_name="profile_picture"
     )
-    image = models.ImageField(upload_to="profile_pictures/")
+    image = models.ImageField(upload_to="profile_pictures/", blank=True, null=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"ProfilePicture for {self.user.username}"
+    
+    def delete(self, *args, **kwargs):
+        # Delete the image file from S3 when the model instance is deleted
+        if self.image:
+            self.image.delete(save=False)
+        super().delete(*args, **kwargs)
+    
+    def save(self, *args, **kwargs):
+        # Delete old image when replacing with a new one
+        try:
+            old_instance = ProfilePicture.objects.get(pk=self.pk)
+            if old_instance.image and old_instance.image != self.image:
+                old_instance.image.delete(save=False)
+        except ProfilePicture.DoesNotExist:
+            pass
+        super().save(*args, **kwargs)
 
 class Notification(models.Model):
     NOTIFICATION_TYPES = [

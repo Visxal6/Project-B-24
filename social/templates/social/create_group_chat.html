@@ -1,0 +1,132 @@
+{% extends "social/base_chat.html" %}
+{% load static %}
+{% load display_name %}
+
+{% block content %}
+
+<div class="group-create-container">
+
+    <h2> </h2>
+    <h2> </h2>
+    <h2>Create Group Chat</h2>
+
+    <form method="post" class="group-create-form">
+        {% csrf_token %}
+
+        <!-- Group Name -->
+        <label class="label">Group Name</label>
+        <input type="text" name="name" class="group-input" placeholder="Enter group name..." required>
+
+        <!-- Member selection -->
+        <label class="label members-label">Select Members</label>
+
+        <div class="member-list">
+            {% for f in friends %}
+            <label class="member-item">
+                <input type="checkbox" name="members" value="{{ f.id }}" class="member-checkbox">
+
+                <!-- Avatar style matches social.html -->
+                {% if f.profile.image %}
+                <img src="{{ f.profile.image.url }}" class="member-avatar">
+                {% else %}
+                <img src="{% static 'social/icons/user.svg' %}" class="member-avatar">
+                {% endif %}
+
+                <span class="member-name">{{ f|get_display_name }}</span>
+            </label>
+            {% endfor %}
+        </div>
+
+        <button type="submit" class="button create-group-btn">Create Group</button>
+    </form>
+
+</div>
+
+<style>
+    .group-create-container {
+    padding: 20px;
+    width: 100%;
+    }
+    
+    .group-create-container h2 {
+        font-size: 22px;
+        font-weight: bold;
+        margin-bottom: 18px;
+    }
+    
+    .group-create-form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .label {
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+    
+    .group-input {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 15px;
+    }
+    
+    .member-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-height: 300px;
+        overflow-y: auto;
+        padding-right: 4px;
+    }
+    
+    .member-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px;
+        border-radius: 8px;
+        transition: background 0.2s ease;
+        cursor: pointer;
+    }
+    
+    .member-item:hover {
+        background: #f3f3f3;
+    }
+    
+    .member-checkbox {
+        transform: scale(1.2);
+        cursor: pointer;
+    }
+    
+    .member-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    
+    .member-name {
+        font-size: 15px;
+    }
+    
+    .create-group-btn {
+        background: #0066ff;
+        color: white;
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        width: fit-content;
+        margin-top: 12px;
+    }
+    
+    .create-group-btn:hover {
+        background: #0053d4;
+    }
+</style>
+{% endblock %}

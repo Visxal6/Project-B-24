@@ -1,0 +1,44 @@
+{% extends "app/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card border-danger">
+        <div class="card-header bg-danger text-white">
+          <h3 class="mb-0">Remove Post (Moderation)</h3>
+        </div>
+        <div class="card-body">
+          <div class="alert alert-danger" role="alert">
+            <strong>Warning:</strong> This action will permanently delete the post and cannot be undone.
+          </div>
+
+          <div class="card bg-light mb-3">
+            <div class="card-body">
+              <h5 class="card-title">{{ post.title }}</h5>
+              <p class="card-text"><strong>Author:</strong> {{ post.author }}</p>
+              <p class="card-text"><strong>Created:</strong> {{ post.created_at }}</p>
+              <p class="card-text"><strong>Category:</strong> {{ post.get_tag_display }}</p>
+            </div>
+          </div>
+
+          <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="moderation_note"><strong>Reason for Removal:</strong></label>
+              <textarea class="form-control" id="moderation_note" name="moderation_note" rows="4"
+                placeholder="Document why this post was removed..." required></textarea>
+              <small class="form-text text-muted">This will be recorded in the system.</small>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-danger">Remove Post Permanently</button>
+              <a href="{% url 'forum:post_detail' post.pk %}" class="btn btn-secondary">Cancel</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
