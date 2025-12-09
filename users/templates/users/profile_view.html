@@ -195,7 +195,6 @@
             {{ user.username }}
             {% endif %}
         </h1>
-<<<<<<< HEAD
         {% if not user.profile.display_name %}
         <div class="page-sub">@{{ user.username }}</div>
         {% endif %}
@@ -204,24 +203,19 @@
             Account Suspended
         </div>
         {% endif %}
-=======
-                {% if not user.profile.display_name %}
-                <div class="page-sub">@{{ user.username }}</div>
-                {% endif %}
 
-                {% if request.user.is_authenticated and request.user.id != user.id and profile.role == 'cio' %}
-                <div style="margin-top:8px;">
-                        {% if is_friend %}
-                            <a href="{% url 'social:start_chat' user.id %}"><button class="button button-secondary">Message</button></a>
-                        {% elif request_pending %}
-                            <span class="status-badge status-pending">⏱ Request Pending</span>
-                        {% else %}
-                            <a href="{% url 'social:send_request' user.id %}"><button class="button button-primary">Follow</button></a>
-                        {% endif %}
-                        <a href="{% url 'social:incoming_requests' %}" style="margin-left:12px;">Requests</a>
-                </div>
+        {% if request.user.is_authenticated and request.user.id != user.id and profile.role == 'cio' %}
+        <div style="margin-top:8px;">
+                {% if is_friend %}
+                    <a href="{% url 'social:start_chat' user.id %}"><button class="button button-secondary">Message</button></a>
+                {% elif request_pending %}
+                    <span class="status-badge status-pending">⏱ Request Pending</span>
+                {% else %}
+                    <a href="{% url 'social:send_request' user.id %}"><button class="button button-primary">Follow</button></a>
                 {% endif %}
->>>>>>> 0d89449ca40b8a6a691be2496f6d17c11e7ed708
+                <a href="{% url 'social:incoming_requests' %}" style="margin-left:12px;">Requests</a>
+        </div>
+        {% endif %}
     </div>
 
     <!-- Moderator Actions -->
