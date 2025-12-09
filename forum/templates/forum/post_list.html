@@ -32,8 +32,10 @@
         <a href="{% url 'forum:post_detail' post.id %}?next={{ request.path }}">View</a>
       </div>
       <div class="forum-image-container">
-        {% if post.image %}
-        <img src="{{ post.image.url }}" alt="Post image" class="forum-img">
+        {% if post.images.all %}
+          <img src="{{ post.images.all.0.image.url }}" alt="Post image" class="forum-img">
+        {% elif post.image %}
+          <img src="{{ post.image.url }}" alt="Post image" class="forum-img">
         {% endif %}
       </div>
     </div>
