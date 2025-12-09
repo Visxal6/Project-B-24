@@ -18,23 +18,56 @@
   <br>
   <div id="dashboard-container">
     <div class="dashboard-widget-container">
-      <a class="dashboard-widget" href="#">
+      <a class="dashboard-widget">
         <div class="img-container">
           <img src="../../static/users/assets/icons/score.svg" alt="score-icon">
         </div>
-        <span style="color: lightgrey;">Score</span>
+        <div style="display:flex; flex-direction:column; gap:4px; align-items:flex-start;">
+          <span style="color: lightgrey;">Score</span>
+          <strong style="font-size:1.05rem;">{{ my_score|default:0 }}</strong>
+        </div>
       </a>
+
       <a class="dashboard-widget" href="{% url 'leaderboard:task_list' %}">
         <div class="img-container">
           <img src="../../static/users/assets/icons/task.svg" alt="task-icon">
         </div>
-        <span style="color: lightgrey;">Daily Task</span>
+        <div style="display:flex; flex-direction:column; gap:6px; align-items:flex-start;">
+          <span style="color: lightgrey;">Daily Task</span>
+          <small style="color: #a2a2a2; font-size:0.8rem;">{{ daily_completed|default:0 }} / {{ daily_total|default:0 }} done</small>
+        </div>
       </a>
-      <a class="dashboard-widget" href="#">
+
+      <a class="dashboard-widget" href="{% url 'leaderboard:weekly_list' %}">
+        <div class="img-container">
+          <img src="../../static/users/assets/icons/task.svg" alt="task-icon">
+        </div>
+        <div style="display:flex; flex-direction:column; gap:6px; align-items:flex-start;">
+          <span style="color: lightgrey;">Weekly Challenge</span>
+          <small style="color: #a2a2a2; font-size:0.8rem;">{{ weekly_completed|default:0 }} / {{ weekly_total|default:0 }} done</small>
+        </div>
+      </a>
+
+      <a class="dashboard-widget" href="{% url 'leaderboard:events_list' %}">
         <div class="img-container">
           <img src="../../static/users/assets/icons/events.svg" alt="events-icon">
         </div>
-        <span style="color: lightgrey;">Events</span>
+        <div style="display:flex; flex-direction:column; gap:2px;">
+          <span style="color: lightgrey;">Events</span>
+          <small style="color: #a2a2a2; font-size:0.8rem;">{{ upcoming_events|default:0 }} upcoming</small>
+        </div>
+      </a>
+
+      <a class="dashboard-widget" href="{% url 'notifications' %}">
+        <div class="img-container">
+          <img src="../../static/users/assets/icons/events.svg" alt="notifications-icon">
+        </div>
+        <div style="display:flex; flex-direction:column; gap:6px; align-items:flex-start;">
+          <span style="color: lightgrey;">Notifications</span>
+          <small style="color:#a2a2a2; font-size:0.8rem;">
+            {{ unread_notifications|default:0 }} unread
+          </small>
+        </div>
       </a>
     </div>
 
@@ -42,7 +75,7 @@
 
       <div class="leaderboard-title">
         <img src="../../static/users/assets/icons/leaderboard.svg" alt="leaderboard-icons">
-        <span>Leaderboard</span>
+        <span>Individual Leaderboard</span>
       </div>
 
       <div class="leaderboard">
@@ -52,8 +85,8 @@
           <div class="user">User</div>
         </div>
 
-        {% if leaderboard %}
-          {% for entry in leaderboard %}
+        {% if individual_leaderboard %}
+          {% for entry in individual_leaderboard %}
             <div class="row">
               <div class="rank">{{ entry.rank }}</div>
               <div class="points">{{ entry.points }}</div>
@@ -69,9 +102,109 @@
         {% endif %}
       </div>
       
+      <br>
+      <br>
+
+      <div class="leaderboard-title">
+        <img src="../../static/users/assets/icons/leaderboard.svg" alt="leaderboard-icons">
+        <span>CIO Leaderboard</span>
+      </div>
+
+      <div class="leaderboard">
+        <div class="row header">
+          <div class="rank">Rank#</div>
+          <div class="points">Points</div>
+          <div class="user">CIO</div>
+        </div>
+
+        {% if cio_leaderboard %}
+          {% for entry in cio_leaderboard %}
+            <div class="row">
+              <div class="rank">{{ entry.rank }}</div>
+              <div class="points">{{ entry.points }}</div>
+              <div class="user">{{ entry.user|get_display_name }}</div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="row">
+            <div class="rank">—</div>
+            <div class="points">0</div>
+            <div class="user">No CIO scores yet</div>
+          </div>
+        {% endif %}
+      </div>
+
+      {% if is_cio %}
+        <br>
+        <br>
+
+        <div class="leaderboard-title">
+          <img src="../../static/users/assets/icons/leaderboard.svg" alt="leaderboard-icons">
+          <span>Member Leaderboard</span>
+        </div>
+
+        <div class="leaderboard">
+          <div class="row header">
+            <div class="rank">Rank#</div>
+            <div class="points">Points</div>
+            <div class="user">Member</div>
+          </div>
+
+          {% if member_leaderboard %}
+            {% for entry in member_leaderboard %}
+              <div class="row">
+                <div class="rank">{{ entry.rank }}</div>
+                <div class="points">{{ entry.points }}</div>
+                <div class="user">{{ entry.user|get_display_name }}</div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="row">
+              <div class="rank">—</div>
+              <div class="points">0</div>
+              <div class="user">No team members yet</div>
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
 
     </div>
   </div>
 
 </section>
 {% endblock %}
+<script src="{% static 'leaderboard/scripts/task_list.js' %}" defer></script>
+<script src="{% static 'leaderboard/scripts/weekly_list.js' %}" defer></script>
+
+<!--
+####################################################################################################
+####################################################################################################
+####################################################################################################
+####################################################################################################
+########################+#+-+###+###+++#####++-+####++++-+#++++++++++++++++++++++++++++++++#####++++
+#####################++++++-+###+++++-++####++-+++#+++++--+++-++++++#+++++++++++++++++++++++++++++++
++++##+++#####+++++++++++++-.+----++++--++--+--.+++++--++-++++++##- +#++- .      ++++++++++++++++++++
+####+++++++++++++++++---+---++++++++---++------------+.---+++-.++++--  ---+#+##+---+++++++++++++++++
+####+++++++++++++++------+. +++--  ----------..-..-----------+++++.  -##########++--++++++++++++++++
+++++++++++--+++++++---+++++-+++------------...............------- -################--++--+-+++++++++
+++++++++---------------++++++++--------........           ..----. ++#################+++++++++++++++
+++++++------------------+---++----------......             ..----..+#################-+----++-++++++
+++++++---------------------------------......               ......  .-++++###########+-+---+++++++++
++++++++------------------------------......                    .. . .###+++###++######-.-+---+++++++
+++++++++------------------------..........                     ....-.-++++++++#+#######++----+++++++
+++++++++-++--------------------...........                     ...-- ++++++++##++#####++++++++--++++
+++++++++++++++++-   -------...... ........                  ..  ....--.+++++###++##+#######++-------
++++++++++++++++ ######-   +.....   ..               ...   . .......----- +##-#+++###############+++-
+++++++++++++++++###############++---                   ..---....-+#############+####################
++++++++++++++++---+-#################++-               ..-----+#####################################
++++++++++++++-------+######################++    .++--..--+#########################################
+++++++++++++-----.......######################+++###################################################
++++++++++++----..... ..+############################################################################
+++++++++-+-----...     #############################################################################
++++++++++------...     #############################################################################
++++++++--------...     #############################################################################
+####################################################################################################
+####################################################################################################
+####################################################################################################
+####################################################################################################
+-->

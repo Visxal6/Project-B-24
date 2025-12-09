@@ -1,5 +1,10 @@
 from django.db import models
 from django.conf import settings
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def forum_image_upload_to(instance, filename):
@@ -19,6 +24,12 @@ class Post(models.Model):
         ('cio_leaders', 'CIO Leaders'),
     ]
 
+    PRIVACY_CHOICES = [
+        ('public', 'Public'),
+        ('cio_wide', 'CIO-Wide'),
+        ('friends_only', 'Friends Only'),
+    ]
+
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='forum_posts')
     image = models.ImageField(
@@ -28,6 +39,7 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     tag = models.CharField(
         max_length=50, choices=TAG_CHOICES, default='general')
+    privacy = models.CharField(max_length=20, choices=PRIVACY_CHOICES, default='public')
     is_flagged_inappropriate = models.BooleanField(default=False)
     moderation_note = models.TextField(blank=True, null=True)
 
@@ -60,3 +72,15 @@ class Comment(models.Model):
             return 0
         else:
             return 1 + self.parent.level
+
+
+@receiver(pre_delete, sender=Post)
+def delete_post_image_from_s3(sender, instance, **kwargs):
+    """Delete the associated image from S3 when a Post is deleted."""
+    if instance.image:
+        try:
+            logger.info(f"Deleting image from S3: {instance.image.name}")
+            instance.image.delete(save=False)
+            logger.info(f"Successfully deleted image: {instance.image.name}")
+        except Exception as e:
+            logger.error(f"Error deleting image from S3: {str(e)}", exc_info=True)

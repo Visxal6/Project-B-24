@@ -1,0 +1,47 @@
+[
+  {
+    "title": "Zero-waste challenge",
+    "content": "Create no waste for one day (no single-use plastics). Take a picture of your packed lunch or reusable items.",
+    "points": 30
+  },
+  {
+    "title": "Local transport day",
+    "content": "Use public transit, walk, or cycle for all short trips. Upload a photo of your route or bike.",
+    "points": 25
+  },
+  {
+    "title": "Plant or tend a plant",
+    "content": "Plant a seed or care for a houseplant and show progress with a photo proof.",
+    "points": 20
+  },
+  {
+    "title": "Community clean-up",
+    "content": "Spend at least 30 minutes cleaning up a local area. Show your results with a photo.",
+    "points": 35
+  },
+  {
+    "title": "Host a Local Recycling Drive",
+    "content": "Organize or coordinate a small recycling collection (paper, batteries, e-waste) and document the results.",
+    "points": 30
+  },
+  {
+    "title": "Reduce Energy Use",
+    "content": "Make a measurable change to reduce energy consumption (set displays to sleep, unplug unused devices, use power strips) and report what you changed.",
+    "points": 20
+  },
+  {
+    "title": "Sustainable Code Contribution",
+    "content": "Make a code change that reduces waste (improve performance, add tests to reduce rework, or simplify a build) and explain how it helps sustainability.",
+    "points": 25
+  },
+  {
+    "title": "Green Outreach",
+    "content": "Share a short post or mini-presentation to your team/class about a sustainability idea (recycling, commuting, energy saving).",
+    "points": 15
+  },
+  {
+    "title": "Zero-waste Lunch",
+    "content": "Bring a zero-waste lunch (reusable containers, no disposables) and describe how you did it.",
+    "points": 10
+  }
+]

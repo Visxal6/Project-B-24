@@ -47,6 +47,25 @@
           </a>
         </div>
 
+        <!-- Notifications -->
+        <div id="notifications-button">
+          <a href="{% url 'users:notifications' %}">
+            <span class="notification-icon-wrapper">
+              <img
+                src="{% static 'app/assets/icons/notification.png' %}"
+                alt="Notifications icon"
+                class="notification-icon"
+                style="width:18px; height:18px; object-fit:contain; filter: invert(1);"
+              >
+              {% if has_unread_notifications %}
+                <span class="notification-dot"></span>
+              {% endif %}
+            </span>
+            <span id="notifications-text">Notifications</span>
+          </a>
+        </div>
+
+
         <!-- Profile button (image only) -->
         <div id="profile-button">
           <img class="profile-image" src="{% static 'app/assets/icons/profile.svg' %}" alt="Profile icon">
@@ -129,22 +148,6 @@
         </a>
       </li>
 
-
-      <li>
-        <button class="dropdown-btn">
-          <img src="{% static 'app/assets/icons/todo-list.svg' %}" alt="Todo-List icon">
-          <span>Todo-List</span>
-          <img class="arrow-down" src="{% static 'app/assets/icons/keyboard_arrow.svg' %}" alt="Arrow Down">
-        </button>
-        <ul class="sub-menu">
-          <div>
-            <li><a href="#">List Item</a></li>
-            <li><a href="#">List Item</a></li>
-            <li><a href="#">List Item</a></li>
-          </div>
-        </ul>
-      </li>
-
       <li>
         <button class="dropdown-btn">
           <img src="{% static 'app/assets/icons/channels.svg' %}" alt="Channels icon">
@@ -208,6 +211,10 @@
     {% block content %}
     {% endblock %}
   </main>
+
+  {# Per-page scripts inserted here by child templates via {% block scripts %} #}
+  {% block scripts %}
+  {% endblock %}
 
 </body>
 

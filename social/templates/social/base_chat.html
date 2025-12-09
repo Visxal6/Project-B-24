@@ -24,6 +24,12 @@
         <span>Friends</span>
       </div>
     </a>
+    <a href="{% url 'social:find_cios' %}">
+      <div class="friends-link">
+        <img src="{% static 'social/icons/user.svg' %}" alt="find cios icon">
+        <span>Find CIOs</span>
+      </div>
+    </a>
     <a href="{% url 'social:incoming_requests' %}">
       <div class="friends-link">
         <img src="{% static 'social/icons/plus.svg' %}" alt="social icon">
@@ -37,13 +43,23 @@
       <span>Messages</span>
     </div>
 
+   <div class="create gc">
+     <a href="{% url 'social:create_group_chat' %}">
+      <button class="button">+ New Group Chat</button>
+     </a>
+   </div>
+
     <!--Chats-->
     <div id="chats">
       <ul>
         {% for c in convos %}
         <li class="{% if convo and c.id == convo.id %}active{% endif %}">
           <a href="{% url 'social:chat_detail' c.id %}">
-            {{ c.display }}
+            {% if c.is_group %}
+              <span class="chat-name group">{{ c.display }}</span>
+            {% else %}
+              <span class="chat-name">{{ c.display }}</span>
+            {% endif %}
           </a>
         </li>
         {% empty %}

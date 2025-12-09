@@ -4,6 +4,20 @@
 <!-- Styles -->
 {% block styles %}
   <link rel="stylesheet" href="{% static 'forum/styles/post_create.css' %}">
+  <style>
+    .file-error {
+      display: none;
+      color: #721c24;
+      background-color: #f8d7da;
+      border: 1px solid #f5c6cb;
+      border-radius: 0.25rem;
+      padding: 0.75rem 1.25rem;
+      margin-top: 0.5rem;
+    }
+    .file-error.show {
+      display: block;
+    }
+  </style>
 {% endblock %}
 
 <title>{% block title %}Channels | Create Post{% endblock %}</title>
@@ -11,7 +25,7 @@
 {% block content %}
   <div class="content-container">
     <h2 class="form-title">New Forum Post</h2>
-    <form method="post" enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data" id="post-form">
       {% csrf_token %}
 
       <div class="form-group">
@@ -27,6 +41,7 @@
       <div class="form-group">
         <label for="{{ form.image.id_for_label }}">Upload Image <span style="color: red;">*</span></label>
         {{ form.image }}
+        <div id="file-error" class="file-error"></div>
         {% if form.image.errors %}
           <div class="alert alert-danger">{{ form.image.errors }}</div>
         {% endif %}
@@ -36,8 +51,56 @@
         <label for="{{ form.tag.id_for_label }}">Tags: </label>
         {{ form.tag }}
       </div>
+
+      <div class="form-group">
+        <label for="{{ form.privacy.id_for_label }}">Privacy: </label>
+        {{ form.privacy }}
+      </div>
       
       <button type="submit" class="btn btn-primary">Create</button>
     </form>
   </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const imageInput = document.getElementById('{{ form.image.id_for_label }}');
+      const fileErrorDiv = document.getElementById('file-error');
+      const postForm = document.getElementById('post-form');
+      
+      const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/bmp'];
+      
+      imageInput.addEventListener('change', function() {
+        fileErrorDiv.classList.remove('show');
+        fileErrorDiv.textContent = '';
+        
+        if (this.files && this.files.length > 0) {
+          const file = this.files[0];
+          
+          // Check if file is an image
+          if (!validImageTypes.includes(file.type)) {
+            fileErrorDiv.textContent = 'Please upload a valid image file (JPEG, PNG, GIF, WebP, or BMP).';
+            fileErrorDiv.classList.add('show');
+            this.value = ''; // Clear the input
+            return;
+          }
+          
+          // Check file size (5MB limit)
+          const maxSize = 5 * 1024 * 1024; // 5MB
+          if (file.size > maxSize) {
+            fileErrorDiv.textContent = 'Image file is too large (max 5MB).';
+            fileErrorDiv.classList.add('show');
+            this.value = ''; // Clear the input
+            return;
+          }
+        }
+      });
+      
+      // Prevent form submission if file validation fails
+      postForm.addEventListener('submit', function(e) {
+        if (fileErrorDiv.classList.contains('show')) {
+          e.preventDefault();
+        }
+      });
+    });
+  </script>
 {% endblock %}

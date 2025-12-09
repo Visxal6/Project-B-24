@@ -1,0 +1,95 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="task-container">
+    <h1 class="task-header">Weekly Sustainability Challenges</h1>
+    <div id="weekly-countdown" class="daily-timer" aria-live="polite">--:--:--:--</div>
+
+    <div class="task-summary">
+        <p><strong>Your points:</strong> {{ points.score }}</p>
+    </div>
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="alert {{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block styles %}
+            <link rel="stylesheet" href="{% static 'leaderboard/styles/task_list.css' %}">
+            <link rel="stylesheet" href="{% static 'leaderboard/styles/weekly_list.css' %}">
+        {% endblock %}
+
+    <div class="task-to-do">
+        <h2 class="task-header">Weekly Tasks To Do</h2>
+        {% if tasks_todo %}
+            <ul>
+            {% for t in tasks_todo %}
+                <li class="task-item weekly-list">
+                        <div class="task-meta">
+                            <div class="task-title">{{ t.title }}</div>
+                            <div class="task-content">{{ t.content }}</div>
+                        </div>
+                        <div>
+                            <div class="points-pill">{{ t.points }} pts</div>
+                        </div>
+                        <form method="post" enctype="multipart/form-data" action="{% url 'leaderboard:weekly_toggle' t.idx %}" class="upload-and-submit" style="display:contents;">
+                          {% csrf_token %}
+                          <div class="proof-col">
+                              <div id="preview-{{ t.idx }}" class="proof-preview" aria-hidden="true"></div>
+                              <label class="file-input-btn">
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5v14m7-7H5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                  <span>Choose</span>
+                                  <input id="proof-{{ t.idx }}" name="proof" type="file" accept="image/*" required data-idx="{{ t.idx }}">
+                              </label>
+                          </div>
+                          <div class="action-col">
+                              <button class="button inline" type="submit">Mark as done</button>
+                          </div>
+                        </form>
+                    </li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>No weekly tasks configured.</p>
+        {% endif %}
+    </div>
+
+    <div class="task-done">
+        <h2 class="task-header">Completed this week</h2>
+        {% if tasks_done %}
+            <ul>
+            {% for t in tasks_done %}
+                <li class="task-item weekly-list completed">
+                    <div class="task-meta">
+                        <div class="task-title">{{ t.title }}</div>
+                        <div class="task-content">{{ t.content }}</div>
+                    </div>
+                    <div>
+                        <div class="points-pill">{{ t.points }} pts</div>
+                    </div>
+                    <div class="proof-col">
+                        {% if t.task and t.task.image %}
+                            <img src="{{ t.task.image.url }}" class="proof-preview" alt="proof"/>
+                        {% else %}
+                            <div class="proof-preview" aria-hidden="true"></div>
+                        {% endif %}
+                    </div>
+                    <div class="action-col">
+                        <form method="post" action="{% url 'leaderboard:weekly_toggle' t.idx %}" style="display:inline">
+                            {% csrf_token %}
+                            <button class="button inline" type="submit">Mark as not done</button>
+                        </form>
+                    </div>
+                </li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>No completed weekly tasks yet.</p>
+        {% endif %}
+    </div>
+</div>
+<script src="{% static 'leaderboard/scripts/weekly_list.js' %}" defer></script>
+{% endblock %}

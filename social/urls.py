@@ -24,11 +24,17 @@ urlpatterns = [
     # Chat
     path("chats/<int:convo_id>/", views.chat_detail, name="chat_detail"),
     path("chats/<int:convo_id>/send/", views.send_message, name="send_message"),
+    path("group/create/", views.create_group_chat, name="create_group_chat"), # for group chats
+
+
+    # CIOs
+    path("cios/", views.find_cios, name="find_cios"),
 
     # new paths need testing
     path("api/chats/<int:convo_id>/messages/",
          views.chat_messages_api, name="chat_messages_api"),
     path("api/chats/<int:convo_id>/send/",
          views.send_message_api, name="send_message_api"),
+    
 
 ]

@@ -20,7 +20,7 @@
   <div class="friends-list">
     <div>
       <h2>Friends</h2>
-      <div>
+      <div class="friends-header-actions">
         <a href="{% url 'social:incoming_requests' %}">
           <span class="request">Request</span>
         </a>
@@ -33,6 +33,8 @@
         <div class="message-button">
           <a href="{% url 'social:start_chat' f.id %}">
             <img src="{% static 'social/icons/message.svg' %}" alt="message icon">
+          </a>
+          <a href="{% url 'users:profile' f.username %}" >
             <img src="{% static 'social/icons/user.svg' %}" alt="user icon">
           </a>
         </div>

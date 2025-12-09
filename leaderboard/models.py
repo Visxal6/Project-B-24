@@ -23,6 +23,8 @@ class Task(models.Model):
     title = models.CharField(max_length=200)
     content = models.TextField(blank=True)
     points = models.IntegerField(default=0)
+    # optional photo proof for weekly challenges
+    image = models.ImageField(upload_to='task_proofs/', blank=True, null=True)
     completed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -46,3 +48,30 @@ class Task(models.Model):
             self.save(update_fields=["completed", "updated_at"])
             pts, _ = Points.objects.get_or_create(user=self.user)
             pts.add(-self.points)
+
+    def delete(self, *args, **kwargs):
+        # remove stored image file (if any) when deleting the Task
+        try:
+            if self.image:
+                self.image.delete(save=False)
+        except Exception:
+            pass
+        return super().delete(*args, **kwargs)
+
+
+class Event(models.Model):
+    """An event created by CIO users — members can view upcoming events."""
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True)
+    start_at = models.DateTimeField()
+    end_at = models.DateTimeField(blank=True, null=True)
+    location = models.CharField(max_length=250, blank=True)
+    image = models.ImageField(upload_to='event_images/', blank=True, null=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['start_at']
+
+    def __str__(self):
+        return f"{self.title} @ {self.start_at:%Y-%m-%d %H:%M}"

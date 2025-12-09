@@ -68,8 +68,53 @@ class ProfilePicture(models.Model):
         on_delete=models.CASCADE,
         related_name="profile_picture"
     )
-    image = models.ImageField(upload_to="profile_pictures/")
+    image = models.ImageField(upload_to="profile_pictures/", blank=True, null=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"ProfilePicture for {self.user.username}"
+    
+    def delete(self, *args, **kwargs):
+        # Delete the image file from S3 when the model instance is deleted
+        if self.image:
+            self.image.delete(save=False)
+        super().delete(*args, **kwargs)
+    
+    def save(self, *args, **kwargs):
+        # Delete old image when replacing with a new one
+        try:
+            old_instance = ProfilePicture.objects.get(pk=self.pk)
+            if old_instance.image and old_instance.image != self.image:
+                old_instance.image.delete(save=False)
+        except ProfilePicture.DoesNotExist:
+            pass
+        super().save(*args, **kwargs)
+
+class Notification(models.Model):
+    NOTIFICATION_TYPES = [
+        ("message", "Message"),
+        ("event", "Event"),
+        ("mention", "Mention"),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notifications")
+    notif_type = models.CharField(max_length=20, choices=NOTIFICATION_TYPES)
+    text = models.CharField(max_length=255)
+    url = models.CharField(max_length=255, blank=True)
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.user.username} - {self.text[:40]}"
+    
+def create_notification(user, notif_type, text, url=""):
+    from .models import Notification
+    Notification.objects.create(
+        user=user,
+        notif_type=notif_type,
+        text=text,
+        url=url,
+    )

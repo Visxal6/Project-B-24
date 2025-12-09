@@ -17,6 +17,291 @@
   </div>
   {% endif %}
 
+  {% if not request.user.is_authenticated %}
+  <!-- Login Prompt for Non-Authenticated Users -->
+  <div class="login-prompt-container">
+    <div class="login-prompt-content">
+      <div class="welcome-icon">🌱</div>
+      <h1>Welcome to Sustainability Challenges</h1>
+      <p class="welcome-subtitle">Join our community and start making a difference today!</p>
+      <p class="welcome-description">Track your progress, complete daily and weekly challenges, and compete with others to make the world more sustainable.</p>
+      <a href="{% url 'login' %}" class="login-prompt-button">Login to Get Started</a>
+      <p class="signup-text">Don't have an account? <a href="{% url 'account_signup' %}" class="signup-link">Sign up here</a></p>
+    </div>
+  </div>
+
+  <style>
+    .login-prompt-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 80vh;
+      padding: 20px;
+    }
+
+    .login-prompt-content {
+      text-align: center;
+      max-width: 600px;
+      background: white;
+      padding: 60px 40px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .welcome-icon {
+      font-size: 80px;
+      margin-bottom: 40px;
+      animation: bounce 2s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .login-prompt-content h1 {
+      font-size: 36px;
+      color: #333;
+      margin: 0 0 30px 0;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+
+    .welcome-subtitle {
+      font-size: 18px;
+      color: #666;
+      margin: 0 0 30px 0;
+      font-weight: 500;
+    }
+
+    .welcome-description {
+      font-size: 16px;
+      color: #777;
+      line-height: 1.6;
+      margin: 0 0 40px 0;
+    }
+
+    .login-prompt-button {
+      display: inline-block;
+      background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
+      color: white;
+      padding: 16px 48px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 18px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+    }
+
+    .login-prompt-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+      background: linear-gradient(135deg, #43a047 0%, #5cb860 100%);
+    }
+
+    .signup-text {
+      margin-top: 25px;
+      font-size: 14px;
+      color: #666;
+    }
+
+    .signup-link {
+      color: #4caf50;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    .signup-link:hover {
+      color: #43a047;
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .login-prompt-content {
+        padding: 40px 30px;
+      }
+
+      .login-prompt-content h1 {
+        font-size: 28px;
+      }
+
+      .welcome-subtitle {
+        font-size: 16px;
+      }
+
+      .welcome-description {
+        font-size: 14px;
+      }
+
+      .login-prompt-button {
+        padding: 14px 36px;
+        font-size: 16px;
+      }
+
+      .welcome-icon {
+        font-size: 60px;
+      }
+    }
+  </style>
+  {% else %}
+
+  {% if request.user.is_authenticated and tasks_remaining > 0 %}
+  <div class="tasks-reminder-banner">
+    <div class="reminder-content">
+      <div class="reminder-icon">📋</div>
+      <div class="reminder-text">
+        <h3>Daily Tasks Reminder</h3>
+        <p>You have <strong>{{ tasks_remaining }}</strong> task{{ tasks_remaining|pluralize }} remaining today!</p>
+        {% if time_until_reset %}
+          <p class="countdown">Due in: <span id="daily-countdown">{{ time_until_reset }}</span></p>
+        {% endif %}
+      </div>
+      <a href="{% url 'leaderboard:task_list' %}" class="reminder-button">Go to Tasks</a>
+    </div>
+  </div>
+  
+  <style>
+    .tasks-reminder-banner {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 8px;
+      margin: 20px 0;
+      padding: 20px;
+      color: white;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .reminder-content {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      max-width: 100%;
+    }
+
+    .reminder-icon {
+      font-size: 32px;
+      min-width: 50px;
+      text-align: center;
+    }
+
+    .reminder-text {
+      flex: 1;
+    }
+
+    .reminder-text h3 {
+      margin: 0 0 8px 0;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .reminder-text p {
+      margin: 0 0 8px 0;
+      font-size: 14px;
+    }
+
+    .countdown {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .reminder-button {
+      background: white;
+      color: #667eea;
+      padding: 8px 16px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .reminder-button:hover {
+      background: #f0f0f0;
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+      .reminder-content {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .reminder-icon {
+        font-size: 24px;
+      }
+
+      .reminder-text h3 {
+        font-size: 16px;
+      }
+
+      .reminder-text p {
+        font-size: 13px;
+      }
+    }
+  </style>
+  {% endif %}
+
+  {% if request.user.is_authenticated and weekly_tasks_remaining > 0 %}
+  <div class="weekly-reminder-banner">
+    <div class="reminder-content">
+      <div class="reminder-icon">🌿</div>
+      <div class="reminder-text">
+        <h3>Weekly Tasks Reminder</h3>
+        <p>You have <strong>{{ weekly_tasks_remaining }}</strong> weekly task{{ weekly_tasks_remaining|pluralize }} remaining this week!</p>
+        {% if time_until_weekly_reset %}
+          <p class="countdown">Due in: <span id="weekly-countdown">{{ time_until_weekly_reset }}</span></p>
+        {% endif %}
+      </div>
+      <a href="{% url 'leaderboard:weekly_list' %}" class="reminder-button">Go to Tasks</a>
+    </div>
+  </div>
+  
+  <style>
+    .weekly-reminder-banner {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      border-radius: 8px;
+      margin: 20px 0;
+      padding: 20px;
+      color: white;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .weekly-reminder-banner .reminder-button {
+      background: white;
+      color: #f5576c;
+    }
+
+    .weekly-reminder-banner .reminder-button:hover {
+      background: #f0f0f0;
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+      .weekly-reminder-banner .reminder-content {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .weekly-reminder-banner .reminder-icon {
+        font-size: 24px;
+      }
+
+      .weekly-reminder-banner .reminder-text h3 {
+        font-size: 16px;
+      }
+
+      .weekly-reminder-banner .reminder-text p {
+        font-size: 13px;
+      }
+    }
+  </style>
+  {% endif %}
+
+  {% endif %}
+  {# End of authenticated user content #}
+
   <br>
   <br>
 
@@ -119,4 +404,8 @@
   </div>
   -->
 </section>
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'leaderboard/scripts/task_list.js' %}" defer></script>
+<script src="{% static 'leaderboard/scripts/weekly_list.js' %}" defer></script>
 {% endblock %}

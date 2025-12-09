@@ -1,0 +1,53 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}Create Event{% endblock %}
+
+{% block styles %}
+  <link rel="stylesheet" href="{% static 'leaderboard/styles/weekly_list.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="task-container">
+  <h1 class="task-header">Create Event</h1>
+
+  <div class="task-summary">
+    <p>Only CIO users can create events.</p>
+  </div>
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <div class="task-to-do">
+      <div class="field">
+        {{ form.title.label_tag }}<br>
+        {{ form.title }}
+        {{ form.title.errors }}
+      </div>
+      <div class="field">
+        {{ form.description.label_tag }}<br>
+        {{ form.description }}
+        {{ form.description.errors }}
+      </div>
+      <div class="field">
+        {{ form.start_at.label_tag }} {{ form.start_at }} {{ form.start_at.errors }}
+      </div>
+      <div class="field">
+        {{ form.end_at.label_tag }} {{ form.end_at }} {{ form.end_at.errors }}
+      </div>
+      <div class="field">
+        {{ form.location.label_tag }} {{ form.location }} {{ form.location.errors }}
+      </div>
+      <div class="field">
+        {{ form.image.label_tag }} {{ form.image }} {{ form.image.errors }}
+      </div>
+
+      <div style="margin-top:12px">
+        <button class="button inline" type="submit">Create Event</button>
+        <a class="button inline" href="{% url 'leaderboard:events_list' %}">Cancel</a>
+      </div>
+    </div>
+  </form>
+  
+</div>
+{% endblock %}

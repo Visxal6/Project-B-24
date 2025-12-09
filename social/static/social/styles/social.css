@@ -94,17 +94,43 @@ section.chat-layout {
   padding: 3rem;
 }
 
+#add-friend-container {
+  display: flex;
+  gap: 1rem;
+  align-items: stretch;
+}
+
+#add-friend-container a {
+  flex: 1;
+}
+
+#add-friend-container .button {
+  width: 100%;
+  height: 100%;
+}
+
 #add-friends {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 1rem;
   padding-top: .5rem;
+  width: 100%;
 }
 
 #add-friends img {
   width: 20px;
   height: auto;
+}
+
+.friends-header-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.friends-header-actions a {
+  text-decoration: none;
 }
 
 .friends-list h2 {
