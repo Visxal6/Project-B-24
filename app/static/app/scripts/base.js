@@ -27,15 +27,24 @@ if (profileButton) {
   });
 }
 
+const homeContentLeft = document.querySelector('.home-content-left');
+const homeContentRight = document.querySelector('.home-content-rigth');
+
 function toggleSidebar() {
   if (aside.classList.contains('active')) {
     aside.classList.remove('active');
     aside.classList.add('close');
+
     body.classList.remove('active');
+    homeContentLeft.classList.remove('.active');
+    homeContentRight.classList.remove('.active');
   } else {
     aside.classList.add('active');
     aside.classList.remove('close');
+
     body.classList.add('active');
+    homeContentLeft.classList.add('.active');
+    homeContentRight.classList.add('.active');
   }
   closeAllSubMenus();
 }
