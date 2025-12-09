@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Post, Comment
+from .models import Post, Comment, PostImage
 
 
 @admin.register(Post)
@@ -54,3 +54,10 @@ class CommentAdmin(admin.ModelAdmin):
     unflag.short_description = "Clear inappropriate flag"
 
     actions = [make_flagged, unflag]
+
+
+@admin.register(PostImage)
+class PostImageAdmin(admin.ModelAdmin):
+    list_display = ('id', 'post', 'uploaded_at')
+    list_filter = ('uploaded_at', 'post__author')
+    search_fields = ('post__title', 'post__author__username')
