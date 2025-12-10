@@ -2,31 +2,187 @@
 
 {% block title %}Notifications | CS3240 Project{% endblock %}
 
+{% block styles %}
+<style>
+  #notifications {
+    max-width: 800px;
+    margin: 80px auto;
+    padding: 20px;
+  }
+
+  #notifications h2 {
+    margin-bottom: 30px;
+    font-size: 28px;
+    color: #e0e0e0;
+  }
+
+  .notifications-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .notification-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 15px 18px;
+    background: #f9f9f9;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: #555;
+  }
+
+  .notification-box:hover {
+    background: #f0f0f0;
+    border-color: #4CAF50;
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.15);
+    transform: translateX(4px);
+  }
+
+  .notification-box.unread {
+    background: #f0f8f0;
+    border-color: #4CAF50;
+    font-weight: 600;
+  }
+
+  .notification-icon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: white;
+  }
+
+  .notification-icon.message {
+    background: #2196F3;
+  }
+
+  .notification-icon.event {
+    background: #FF9800;
+  }
+
+  .notification-icon.mention {
+    background: #9C27B0;
+  }
+
+  .notification-icon.friend_request {
+    background: #E91E63;
+  }
+
+  .notification-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .notification-text {
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .notification-time {
+    font-size: 0.8rem;
+    color: #999;
+    margin: 0;
+  }
+
+  .no-notifications {
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+  }
+
+  .no-notifications p {
+    font-size: 16px;
+    margin: 0;
+  }
+
+  @media (max-width: 600px) {
+    #notifications {
+      margin-top: 60px;
+      padding: 10px;
+    }
+
+    #notifications h2 {
+      font-size: 22px;
+    }
+
+    .notification-box {
+      gap: 12px;
+      padding: 12px 15px;
+    }
+
+    .notification-icon {
+      width: 36px;
+      height: 36px;
+      font-size: 18px;
+    }
+  }
+</style>
+{% endblock %}
+
 {% block content %}
-<section id="notifications" style="max-width: 900px; margin: 80px auto;">
+<section id="notifications">
   <h2>Notifications</h2>
 
   {% if notifications %}
-    <ul style="list-style:none; padding:0; margin-top:20px;">
+    <div class="notifications-container">
       {% for n in notifications %}
-        <li style="padding:10px 0; border-bottom:1px solid #eee;">
-          {% if n.url %}
-            <a href="{{ n.url }}" style="font-weight:{% if not n.is_read %}bold{% else %}normal{% endif %};">
-              {{ n.text }}
-            </a>
-          {% else %}
-            <span style="font-weight:{% if not n.is_read %}bold{% else %}normal{% endif %};">
-              {{ n.text }}
-            </span>
-          {% endif %}
-          <div style="font-size:0.8rem; color:#999;">
-            {{ n.created_at|date:"M j, g:i a" }}
+        {% if n.url %}
+          <a href="{{ n.url }}" class="notification-box {% if not n.is_read %}unread{% endif %}">
+            <div class="notification-icon {{ n.notif_type }}">
+              {% if n.notif_type == "message" %}
+                💬
+              {% elif n.notif_type == "event" %}
+                📅
+              {% elif n.notif_type == "mention" %}
+                @
+              {% elif n.notif_type == "friend_request" %}
+                👥
+              {% else %}
+                🔔
+              {% endif %}
+            </div>
+            <div class="notification-content">
+              <p class="notification-text">{{ n.text }}</p>
+              <p class="notification-time">{{ n.created_at|date:"M j, g:i a" }}</p>
+            </div>
+          </a>
+        {% else %}
+          <div class="notification-box {% if not n.is_read %}unread{% endif %}">
+            <div class="notification-icon {{ n.notif_type }}">
+              {% if n.notif_type == "message" %}
+                💬
+              {% elif n.notif_type == "event" %}
+                📅
+              {% elif n.notif_type == "mention" %}
+                @
+              {% elif n.notif_type == "friend_request" %}
+                👥
+              {% else %}
+                🔔
+              {% endif %}
+            </div>
+            <div class="notification-content">
+              <p class="notification-text">{{ n.text }}</p>
+              <p class="notification-time">{{ n.created_at|date:"M j, g:i a" }}</p>
+            </div>
           </div>
-        </li>
+        {% endif %}
       {% endfor %}
-    </ul>
+    </div>
   {% else %}
-    <p>No notifications yet.</p>
+    <div class="no-notifications">
+      <p>🔔 No notifications yet.</p>
+    </div>
   {% endif %}
 </section>
 {% endblock %}

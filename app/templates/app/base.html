@@ -59,7 +59,13 @@
                 style="width:18px; height:18px; object-fit:contain; filter: invert(1);"
               >
               {% if has_unread_notifications %}
-                <span class="notification-dot"></span>
+                <span class="notification-dot">
+                  {% if unread_notifications_count > 9 %}
+                    9+
+                  {% else %}
+                    {{ unread_notifications_count }}
+                  {% endif %}
+                </span>
               {% endif %}
             </span>
             <span id="notifications-text">Notifications</span>
