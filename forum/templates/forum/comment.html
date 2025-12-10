@@ -1,12 +1,6 @@
-{% extends 'app/base.html' %}
 {% load static %}
 {% load display_name %}
 
-{% block styles %}
-<link rel="stylesheet" href="{% static 'forum/styles/comment.css' %}">
-{% endblock %}
-
-{% block content %}
 <div class="comment-container"
     style="container: {{ comment.level }}em; margin-bottom: 1em; border-left: 1px solid #ccc; padding-left: 2em;">
     {% if not comment.is_deleted %}
@@ -66,4 +60,3 @@
     {% endfor %}
     {% endif %}
 </div>
-{% endblock %}
