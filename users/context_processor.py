@@ -2,9 +2,11 @@ from .models import Notification
 
 def unread_notifications(request):
     has_any = False
+    count = 0
     if request.user.is_authenticated:
-        has_any = Notification.objects.filter(
+        count = Notification.objects.filter(
             user=request.user,
             is_read=False,
-        ).exists()
-    return {"has_unread_notifications": has_any}
+        ).count()
+        has_any = count > 0
+    return {"has_unread_notifications": has_any, "unread_notifications_count": count}

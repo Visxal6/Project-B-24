@@ -15,13 +15,11 @@ from .models import Notification
 
 @login_required
 def notifications_list(request):
-    # fetch newest first
+    # fetch newest first, only show unread notifications
     notifications = Notification.objects.filter(
-        user=request.user
+        user=request.user,
+        is_read=False
     ).order_by("-created_at")
-
-    # optional: mark them all as read once the page is opened
-    notifications.filter(is_read=False).update(is_read=True)
 
     return render(
         request,

@@ -95,6 +95,7 @@ class Notification(models.Model):
         ("message", "Message"),
         ("event", "Event"),
         ("mention", "Mention"),
+        ("friend_request", "Friend Request"),
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notifications")
