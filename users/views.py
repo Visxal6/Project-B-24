@@ -158,8 +158,6 @@ def profile_view(request):
 
 
 def dashboard(request):
-    if request.user.is_authenticated:
-        messages.success(request, f"Welcome back, {request.user.username}!")
 
     individual_leaderboard = []
     cio_leaderboard = []

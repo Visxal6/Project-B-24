@@ -19,7 +19,7 @@
       <div class="event-meta"><strong>{{ event.start_at|date:"M d, Y H:i" }}</strong>{% if event.location %} • {{ event.location }}{% endif %}</div>
       <div class="event-meta" style="margin-top:6px"><small>Created by <a href="{% url 'users:profile' username=event.created_by.username %}">{{ event.created_by|get_display_name }}</a></small></div>
       <div class="event-desc" style="margin-top:12px">{{ event.description|linebreaksbr }}</div>
-      <div style="margin-top:12px; color: var(--muted); font-size:0.9rem;">Created by: {{ event.created_by|get_display_name }}</div>
+      <div class="event-meta" style="margin-top:12px; font-size:0.9rem;">Created by: {{ event.created_by|get_display_name }}</div>
     </div>
   </div>
 
