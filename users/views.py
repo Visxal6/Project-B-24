@@ -369,6 +369,13 @@ def complete_profile(request):
 
         profile.role = role
         profile.is_completed = True
+        
+        # Set display_name to first and last name if not already set
+        if not profile.display_name:
+            full_name = f"{request.user.first_name} {request.user.last_name}".strip()
+            if full_name:
+                profile.display_name = full_name
+        
         profile.save()
 
         interest_objs = []
