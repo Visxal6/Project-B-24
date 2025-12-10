@@ -7,6 +7,11 @@ const navbar = document.querySelector('#navbar');
 const aside = document.querySelector('aside');
 const body = document.querySelector('body');
 
+// Early return if critical elements are missing
+if (!aside || !body) {
+  console.warn('Critical sidebar elements not found');
+}
+
 if (toggleButton) {
   toggleButton.addEventListener('click', toggleSidebar);
 }
@@ -31,20 +36,22 @@ const homeContentLeft = document.querySelector('.home-content-left');
 const homeContentRight = document.querySelector('.home-content-rigth');
 
 function toggleSidebar() {
+  if (!aside || !body) return;
+  
   if (aside.classList.contains('active')) {
     aside.classList.remove('active');
     aside.classList.add('close');
 
     body.classList.remove('active');
-    homeContentLeft.classList.remove('.active');
-    homeContentRight.classList.remove('.active');
+    if (homeContentLeft) homeContentLeft.classList.remove('active');
+    if (homeContentRight) homeContentRight.classList.remove('active');
   } else {
     aside.classList.add('active');
     aside.classList.remove('close');
 
     body.classList.add('active');
-    homeContentLeft.classList.add('.active');
-    homeContentRight.classList.add('.active');
+    if (homeContentLeft) homeContentLeft.classList.add('active');
+    if (homeContentRight) homeContentRight.classList.add('active');
   }
   closeAllSubMenus();
 }
