@@ -187,12 +187,6 @@
 
 <div class="content-wrapper">
     <div class="page-header">
-<<<<<<< HEAD
-        <h1>{{ user|get_display_name }}</h1>
-                {% if not user.profile.display_name %}
-                <div class="page-sub">@{{ user.username }}</div>
-                {% endif %}
-=======
         <h1>
             {% if user.profile.display_name %}
             {{ user.profile.display_name }}
@@ -210,7 +204,6 @@
             Account Suspended
         </div>
         {% endif %}
->>>>>>> eb8b5fd6ddafe658733d88a98d0797800b08d142
 
         {% if request.user.is_authenticated and request.user.id != user.id and profile.role == 'cio' %}
         <div style="margin-top:8px;">
