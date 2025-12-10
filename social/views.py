@@ -123,10 +123,14 @@ def incoming_requests(request):
     reqs = FriendRequest.objects.filter(
         to_user=request.user, status="pending"
     ).order_by("-created_at")
+    
+    convos = _sidebar_convos(request)
 
     return render(request, "social/incoming_requests.html",
                   {
-                      "requests": reqs
+                      "requests": reqs,
+                      "convos": convos,
+                      "convo": None,
                   })
 
 # Accept request
@@ -396,8 +400,12 @@ def find_cios(request):
             "request_pending": cio.id in pending_requests,
         })
     
+    convos = _sidebar_convos(request)
+    
     return render(request, "social/find_cios.html", {
-        "cios": cios_data
+        "cios": cios_data,
+        "convos": convos,
+        "convo": None,
     })
 
 @login_required
