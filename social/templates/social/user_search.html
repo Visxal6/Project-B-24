@@ -37,5 +37,42 @@
     {% endif %}
     {% endfor %}
   </ul>
+
+  <div class="back-button">
+    <a href="{% url 'social:friends' %}">
+      <button class="button button-secondary">Back to Social</button>
+    </a>
+  </div>
 </div>
+
+<style>
+  .search-container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  .back-button {
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  .back-button .button {
+    padding: 10px 20px;
+  }
+
+  .button-secondary {
+    background: #757575;
+    color: white;
+  }
+
+  .button-secondary:hover {
+    background: #616161;
+  }
+</style>
 {% endblock %}
