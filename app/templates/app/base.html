@@ -186,13 +186,6 @@
     </ul>
 
     <ul>
-      <li class="settings-button">
-        <a href="#">
-          <img src="{% static 'app/assets/icons/settings.svg' %}" alt="Settings icon">
-          <span>Settings</span>
-        </a>
-      </li>
-
       {% if user.is_authenticated %}
       <li>
         <form method="post" action="{% url 'logout' %}"> {# or 'account_logout' #}
