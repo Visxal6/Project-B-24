@@ -81,15 +81,22 @@ def task_toggle(request, idx):
 
 
 def events_list(request):
-    # show upcoming events (include events that started very recently so newly-created events
-    # with start_at equal to now still appear). Also include events that are currently running
-    # (end_at in the future).
-    window = timezone.now() - timedelta(minutes=1)
+    now = timezone.now()
+    
+    # Upcoming events: events whose start time hasn't passed yet
     upcoming = Event.objects.filter(
-        # either the event hasn't ended yet, or it starts in the near future
-        models.Q(end_at__gte=timezone.now()) | models.Q(start_at__gte=window)
+        start_at__gte=now
     ).order_by('start_at')
-    return render(request, "leaderboard/events_list.html", {"events": upcoming})
+    
+    # Past events: events whose start time has already passed
+    past = Event.objects.filter(
+        start_at__lt=now
+    ).order_by('-start_at')  # Most recent first
+    
+    return render(request, "leaderboard/events_list.html", {
+        "upcoming_events": upcoming,
+        "past_events": past
+    })
 
 
 @login_required

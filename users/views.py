@@ -296,12 +296,27 @@ def dashboard(request):
 
     # Upcoming events count for dashboard
     upcoming_events = 0
+    past_events = []
     try:
         from leaderboard.models import Event
-        upcoming_events = Event.objects.filter(
-            start_at__gte=timezone.now()).count()
+        now = timezone.now()
+        upcoming_events = Event.objects.filter(start_at__gte=now).count()
+        
+        # Get past events (last 5)
+        past_events_qs = Event.objects.filter(
+            start_at__lt=now
+        ).order_by('-start_at')[:5]
+        
+        for event in past_events_qs:
+            past_events.append({
+                'title': event.title,
+                'start_at': event.start_at,
+                'location': event.location,
+                'created_by': event.created_by,
+            })
     except Exception:
         upcoming_events = 0
+        past_events = []
 
     # current user's personal score
     my_score = 0
@@ -333,6 +348,7 @@ def dashboard(request):
         'daily_total': daily_total,
         'daily_completed': daily_completed,
         'upcoming_events': upcoming_events,
+        'past_events': past_events,
         'my_score': my_score,
         'unread_notifications': unread_notifications,
     })

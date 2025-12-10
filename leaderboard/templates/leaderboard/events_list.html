@@ -12,12 +12,12 @@
     <h1 class="task-header">Upcoming Events</h1>
 
     <div class="task-summary">
-      <p style="padding-top: 10px">{{ events|length }} upcoming event{{ events|length|pluralize }}</p>
+      <p style="padding-top: 10px">{{ upcoming_events|length }} upcoming event{{ upcoming_events|length|pluralize }}</p>
     </div>
 
     <div class="events-feed" role="list">
-      {% if events %}
-        {% for ev in events %}
+      {% if upcoming_events %}
+        {% for ev in upcoming_events %}
           <a href="{% url 'leaderboard:event_detail' ev.id %}" style="text-decoration:none;color:inherit;">
             <article class="event-card" role="listitem">
             {% if ev.image %}
@@ -45,6 +45,42 @@
         <p>No upcoming events.</p>
       {% endif %}
     </div>
+
+    <!-- Past Events Section -->
+    {% if past_events %}
+      <h2 class="task-header" style="margin-top: 60px; padding-top: 40px; border-top: 2px solid #e0e0e0;">Past Events</h2>
+
+      <div class="task-summary">
+        <p style="padding-top: 10px">{{ past_events|length }} past event{{ past_events|length|pluralize }}</p>
+      </div>
+
+      <div class="events-feed" role="list" style="opacity: 0.8;">
+        {% for ev in past_events %}
+          <a href="{% url 'leaderboard:event_detail' ev.id %}" style="text-decoration:none;color:inherit;">
+            <article class="event-card" role="listitem" style="background: #f5f5f5;">
+            {% if ev.image %}
+              <div class="event-image" style="background-image: url('{{ ev.image.url }}'); filter: grayscale(30%);" aria-hidden="true"></div>
+            {% else %}
+              <div class="event-image" style="filter: grayscale(30%);" aria-hidden="true"></div>
+            {% endif %}
+
+            <div class="event-body">
+              <h3 class="event-title">{{ ev.title }}</h3>
+              <div class="event-meta"><small>{{ ev.start_at|date:"M d, Y H:i" }}{% if ev.location %} • {{ ev.location }}{% endif %}</small></div>
+              <div class="event-desc">{{ ev.description|linebreaksbr }}</div>
+              <div class="event-meta"><small>Created by
+                {% if ev.created_by %}
+                  <a href="{% url 'users:profile' username=ev.created_by.username %}">{{ ev.created_by|get_display_name }}</a>
+                {% else %}
+                  Unknown
+                {% endif %}
+              </small></div>
+            </div>
+            </article>
+          </a>
+        {% endfor %}
+      </div>
+    {% endif %}
 
     {# floating create button for CIOs (bottom-left) #}
     {% if user.is_authenticated and user.profile.role == 'cio' %}
